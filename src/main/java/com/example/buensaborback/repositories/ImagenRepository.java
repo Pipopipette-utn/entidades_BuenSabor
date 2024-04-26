@@ -1,6 +1,6 @@
 package com.example.buensaborback.repositories;
 
-import com.example.buensaborback.domain.entities.Imagen;
+import com.example.buensaborback.entities.Imagen;
 import org.springframework.stereotype.Repository;
 
 @Repository
