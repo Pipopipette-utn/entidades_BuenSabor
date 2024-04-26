@@ -1,7 +1,8 @@
-package com.example.buensaborback.business.controllers;
+package com.example.buensaborback.controllers.impl;
 
-import com.example.buensaborback.business.services.impl.BaseServiceImpl;
-import com.example.buensaborback.domain.entities.Base;
+import com.example.buensaborback.controllers.IBaseController;
+import com.example.buensaborback.services.impl.BaseServiceImpl;
+import com.example.buensaborback.entities.Base;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,12 +80,35 @@ public abstract class BaseControllerImpl <E extends Base, baseService extends Ba
         }
     }
 
+    @PutMapping("/alta/{id}")
+    public ResponseEntity<?> darDeAlta(@PathVariable Long id){
+        try{
+            boolean dadoDeAlta =  servicio.darDeAlta(id);
+            if (dadoDeAlta){
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body("{\"éxito\":\""+"Registro dado de alta exitosamente."+ "\"}");
+            }else{
+                throw new Exception("{\"error\":\""+"Error al dar de alta el registro."+ "\"}");
+            }
+        }catch (Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\":\""+ e.getMessage() + "\"}");
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         try{
-            return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
-                    .body(servicio.delete(id));
+            boolean dadoDeBaja =  servicio.delete(id);
+            if (dadoDeBaja){
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body("{\"éxito\":\""+ "Dado de baja con éxito."+ "\"}");
+            }else{
+                throw new Exception("{\"error\":\""+ "Error al dar de baja el registro."+ "\"}");
+            }
         }catch (Exception e){
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
