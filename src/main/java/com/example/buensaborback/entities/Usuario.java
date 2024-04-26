@@ -1,4 +1,4 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

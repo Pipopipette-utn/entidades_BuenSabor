@@ -1,10 +1,10 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -13,7 +13,6 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
-@Builder
 public class Cliente extends Base{
 
     private String nombre;
@@ -27,13 +26,8 @@ public class Cliente extends Base{
     @OneToOne
     private Usuario usuario;
 
-    @OneToMany
-    //SE AGREGA EL JOIN COLUMN PARA QUE JPA NO CREE LA TABLA INTERMEDIA EN UNA RELACION ONE TO MANY
-    //DE ESTA MANERA PONE EL FOREIGN KEY 'cliente_id' EN LA TABLA DE LOS MANY
-    @JoinColumn(name = "cliente_id")
-    //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
-    @Builder.Default
-    private Set<Pedido> pedidos = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "cliente")
+    private List<Pedido> pedidos;
 
     @OneToOne
     private Imagen imagen;
@@ -45,7 +39,6 @@ public class Cliente extends Base{
             inverseJoinColumns = {@JoinColumn(name = "domicilio_id")}
     )
     //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
-    @Builder.Default
-    private Set<Domicilio> domicilios = new HashSet<>();
+    private List<Domicilio> domicilios;
 
 }

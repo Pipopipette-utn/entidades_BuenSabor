@@ -1,6 +1,6 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 
-import com.example.buensaborback.domain.entities.enums.FormaPago;
+import com.example.buensaborback.entities.enums.FormaPago;
 import jakarta.persistence.Entity;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,6 +14,7 @@ public class ArticuloInsumo extends Articulo {
     private Double precioCompra;
     private Integer stockActual;
     private Integer stockMaximo;
+    private Integer stockMinimo;
     private Boolean esParaElaborar;
 
     @Builder

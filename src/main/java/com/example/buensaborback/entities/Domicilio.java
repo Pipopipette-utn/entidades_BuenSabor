@@ -1,6 +1,7 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class Domicilio extends Base{
     private Integer nroDpto;
 
     @ManyToOne
+    @JoinColumn(name = "localidad_id")
     private Localidad localidad;
 
 }

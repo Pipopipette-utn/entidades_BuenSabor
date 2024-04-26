@@ -1,7 +1,8 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 
 import jakarta.persistence.Entity;
 import lombok.*;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -10,8 +11,8 @@ import lombok.*;
 @Entity
 @ToString
 @Builder
-public class Imagen extends Base{
+public class Pais extends Base{
 
-    private String url;
-    
+    private String nombre;
+
 }

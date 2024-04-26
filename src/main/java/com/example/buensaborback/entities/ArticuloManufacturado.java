@@ -1,8 +1,10 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -13,17 +15,12 @@ import java.util.Set;
 @Entity
 public class ArticuloManufacturado extends Articulo {
 
-
     private String descripcion;
     private Integer tiempoEstimadoMinutos;
     private String preparacion;
 
-
-    @OneToMany(cascade = CascadeType.ALL)
-    //SE AGREGA EL JOIN COLUMN PARA QUE JPA NO CREE LA TABLA INTERMEDIA EN UNA RELACION ONE TO MANY
-    //DE ESTA MANERA PONE EL FOREIGN KEY 'articuloManufacturado_id' EN LA TABLA DE LOS MANY
-    @JoinColumn(name = "articuloManufacturado_id")
-    private Set<ArticuloManufacturadoDetalle> articuloManufacturadoDetalles;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "articuloManufacturado")
+    private List<ArticuloManufacturadoDetalle> articuloManufacturadoDetalles;
 
     @Builder
     public ArticuloManufacturado(String denominacion, Double precioVenta, UnidadMedida unidadMedida, String descripcion, Integer tiempoEstimadoMinutos, String preparacion) {
@@ -31,7 +28,7 @@ public class ArticuloManufacturado extends Articulo {
         this.descripcion = descripcion;
         this.tiempoEstimadoMinutos = tiempoEstimadoMinutos;
         this.preparacion = preparacion;
-        this.articuloManufacturadoDetalles = new HashSet<>();
+        this.articuloManufacturadoDetalles = new ArrayList<>();
     }
 
 }

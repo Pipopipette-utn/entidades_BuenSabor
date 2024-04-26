@@ -1,6 +1,6 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 
-import com.example.buensaborback.domain.entities.enums.TipoPromocion;
+import com.example.buensaborback.entities.enums.TipoPromocion;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +17,6 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
-@Builder
 public class Promocion extends Base {
 
     private String denominacion;
@@ -34,13 +33,9 @@ public class Promocion extends Base {
     @JoinTable(name = "promocion_articulo",
             joinColumns = @JoinColumn(name = "promocion_id"),
             inverseJoinColumns = @JoinColumn(name = "articulo_id"))
-    //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
-    @Builder.Default
-    private List<Articulo> articulos = new ArrayList<>();
+    private List<Articulo> articulos;
 
-    @OneToMany
-    @JoinColumn(name = "promocion_id")
-    @Builder.Default
-    private Set<Imagen> imagenes = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "promocion")
+    private List<Imagen> imagenes;
 
 }

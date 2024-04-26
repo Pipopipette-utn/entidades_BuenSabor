@@ -1,6 +1,7 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
@@ -11,11 +12,12 @@ import lombok.*;
 @Entity
 @ToString
 @Builder
-public class Localidad extends Base{
+public class Provincia extends Base{
 
     private String nombre;
 
     @ManyToOne
-    private Provincia provincia;
+    @JoinColumn(name = "pais_id")
+    private Pais pais;
 
 }

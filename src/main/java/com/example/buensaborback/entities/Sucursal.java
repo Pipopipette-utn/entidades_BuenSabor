@@ -1,24 +1,28 @@
-package com.example.buensaborback.domain.entities;
+package com.example.buensaborback.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Getter
 @Setter
-@Entity
-@ToString
-@Builder
 public class Sucursal extends Base{
 
     private String nombre;
     private LocalTime horarioApertura;
     private LocalTime horarioCierre;
+
+    @ManyToOne
+    @JoinColumn(name="empresa_id")
+    @JsonIgnoreProperties("sucursales")
+    private Empresa empresa;
+
     @OneToOne
     private Domicilio domicilio;
 
@@ -28,9 +32,7 @@ public class Sucursal extends Base{
             joinColumns = @JoinColumn(name = "sucursal_id"),
             inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
-    //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
-    @Builder.Default
-    private Set<Categoria> categorias = new HashSet<>();
+    private List<Categoria> categorias;
 
     @ManyToMany
     @JoinTable(
@@ -38,7 +40,7 @@ public class Sucursal extends Base{
             joinColumns = {@JoinColumn(name = "sucursal_id")},
             inverseJoinColumns = {@JoinColumn(name = "promocion_id")}
     )
-    //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
-    @Builder.Default
-    private Set<Promocion> promociones = new HashSet<>();
+    private List<Promocion> promociones;
+
+
 }

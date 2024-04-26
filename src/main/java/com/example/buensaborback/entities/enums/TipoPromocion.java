@@ -1,4 +1,4 @@
-package com.example.buensaborback.domain.entities.enums;
+package com.example.buensaborback.entities.enums;
 
 public enum TipoPromocion {
     happyHour,
