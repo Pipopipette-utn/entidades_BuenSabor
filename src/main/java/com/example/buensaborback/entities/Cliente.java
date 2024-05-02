@@ -3,6 +3,7 @@ package com.example.buensaborback.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -46,5 +47,7 @@ public class Cliente extends Base{
         this.nombre = nombre;
         this.apellido = apellido;
         this.telefono = telefono;
+        this.domicilios = new ArrayList<>();
+        this.pedidos = new ArrayList<>();
     }
 }

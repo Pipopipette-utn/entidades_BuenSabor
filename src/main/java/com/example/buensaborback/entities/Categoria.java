@@ -31,6 +31,11 @@ public class Categoria extends Base{
     @JsonIgnoreProperties("subCategorias")
     private Categoria categoriaPadre;
 
+    public Categoria(String denominacion, Categoria categoriaPadre){
+        this.denominacion = denominacion;
+        this.categoriaPadre = categoriaPadre;
+    }
+
     public Categoria(String denominacion){
         this.denominacion = denominacion;
         this.subCategorias = new ArrayList<>();

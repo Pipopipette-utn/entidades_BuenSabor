@@ -47,5 +47,6 @@ public class Promocion extends Base {
         this.descripcionDescuento = descripcionDescuento;
         this.precioPromocional = precioPromocional;
         this.tipoPromocion = tipoPromocion;
+        this.articulos = new ArrayList<>();
     }
 }

@@ -23,18 +23,11 @@ public class ArticuloManufacturado extends Articulo {
     private List<ArticuloManufacturadoDetalle> articuloManufacturadoDetalles;
 
     @Builder
-    public ArticuloManufacturado(String denominacion, Double precioVenta, UnidadMedida unidadMedida, String descripcion, Integer tiempoEstimadoMinutos, String preparacion) {
-        super(denominacion, precioVenta, unidadMedida);
+    public ArticuloManufacturado(String denominacion, String descripcion, UnidadMedida unidadMedida, Double precioVenta, Integer tiempoEstimadoMinutos, String preparacion, Categoria categoria, ArrayList<Imagen> imagenes) {
+        super(denominacion, precioVenta, unidadMedida, categoria, imagenes);
         this.descripcion = descripcion;
         this.tiempoEstimadoMinutos = tiempoEstimadoMinutos;
         this.preparacion = preparacion;
         this.articuloManufacturadoDetalles = new ArrayList<>();
-    }
-
-    public ArticuloManufacturado(String denominacion, String descripcion, UnidadMedida unidadMedida, double precioVenta, Integer tiempoEstimadoMinutos, String preparacion) {
-        super(denominacion, precioVenta, unidadMedida);
-        this.descripcion = descripcion;
-        this.tiempoEstimadoMinutos = tiempoEstimadoMinutos;
-        this.preparacion = preparacion;
     }
 }

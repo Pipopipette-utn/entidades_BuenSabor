@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,5 +57,6 @@ public class Pedido extends Base{
         this.tipoEnvio = tipoEnvio;
         this.sucursal = sucursal;
         this.domicilio = domicilio;
+        this.detallePedidos = new ArrayList<>();
     }
 }

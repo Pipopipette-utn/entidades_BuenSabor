@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -47,6 +48,8 @@ public class Sucursal extends Base{
         this.nombre = nombre;
         this.horarioApertura = horarioApertura;
         this.horarioCierre = horarioCierre;
+        this.categorias = new ArrayList<>();
+        this.promociones = new ArrayList<>();
     }
 
 
