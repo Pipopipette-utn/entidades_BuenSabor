@@ -21,5 +21,9 @@ public class Imagen extends Base{
     @ManyToOne
     @JoinColumn(name = "promocion_id")
     private Promocion promocion;
+
+    public Imagen(String url){
+        this.url = url;
+    }
     
 }

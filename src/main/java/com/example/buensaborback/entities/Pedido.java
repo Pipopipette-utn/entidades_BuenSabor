@@ -46,4 +46,15 @@ public class Pedido extends Base{
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "pedido")
     private List<DetallePedido> detallePedidos;
+
+    public Pedido(LocalTime horaEstimadaFinalizacion, double total, double totalCosto, Estado estado, FormaPago formaPago, TipoEnvio tipoEnvio, Sucursal sucursal, Domicilio domicilio) {
+        this.horaEstimadaFinalizacion = horaEstimadaFinalizacion;
+        this.total = total;
+        this.totalCosto = totalCosto;
+        this.estado = estado;
+        this.formaPago = formaPago;
+        this.tipoEnvio = tipoEnvio;
+        this.sucursal = sucursal;
+        this.domicilio = domicilio;
+    }
 }

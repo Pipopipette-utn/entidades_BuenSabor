@@ -23,7 +23,7 @@ public class Sucursal extends Base{
     @JsonIgnoreProperties("sucursales")
     private Empresa empresa;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Domicilio domicilio;
 
     @ManyToMany
@@ -41,6 +41,13 @@ public class Sucursal extends Base{
             inverseJoinColumns = {@JoinColumn(name = "promocion_id")}
     )
     private List<Promocion> promociones;
+
+    public Sucursal(Empresa empresa, String nombre, LocalTime horarioApertura, LocalTime horarioCierre){
+        this.empresa = empresa;
+        this.nombre = nombre;
+        this.horarioApertura = horarioApertura;
+        this.horarioCierre = horarioCierre;
+    }
 
 
 }

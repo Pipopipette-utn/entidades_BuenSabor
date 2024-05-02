@@ -26,10 +26,16 @@ public class Articulo extends Base{
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "unidad_medida_id")
     private UnidadMedida unidadMedida;
 
+    public Articulo(String denominacion,  UnidadMedida unidadMedida){
+        super();
+        this.denominacion = denominacion;
+        this.unidadMedida = unidadMedida;
+        this.imagenes = new ArrayList<>();
+    }
     public Articulo(String denominacion, Double precioVenta, UnidadMedida unidadMedida){
         super();
         this.denominacion = denominacion;

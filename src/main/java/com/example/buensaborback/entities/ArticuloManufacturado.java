@@ -31,4 +31,10 @@ public class ArticuloManufacturado extends Articulo {
         this.articuloManufacturadoDetalles = new ArrayList<>();
     }
 
+    public ArticuloManufacturado(String denominacion, String descripcion, UnidadMedida unidadMedida, double precioVenta, Integer tiempoEstimadoMinutos, String preparacion) {
+        super(denominacion, precioVenta, unidadMedida);
+        this.descripcion = descripcion;
+        this.tiempoEstimadoMinutos = tiempoEstimadoMinutos;
+        this.preparacion = preparacion;
+    }
 }
