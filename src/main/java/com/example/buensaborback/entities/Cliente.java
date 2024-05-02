@@ -3,9 +3,8 @@ package com.example.buensaborback.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -41,4 +40,14 @@ public class Cliente extends Base{
     //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
     private List<Domicilio> domicilios;
 
+    public Cliente(Usuario usuario, Imagen imagen, String email, String nombre, String apellido, String telefono) {
+        this.usuario = usuario;
+        this.imagen = imagen;
+        this.email = email;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.telefono = telefono;
+        this.domicilios = new ArrayList<>();
+        this.pedidos = new ArrayList<>();
+    }
 }

@@ -23,4 +23,9 @@ public class DetallePedido extends Base{
     @JoinColumn(name = "articulo_id")
     private Articulo articulo;
 
+    public DetallePedido(Articulo pizzaMuzarella, int cantidad, double subTotal) {
+        this.articulo = pizzaMuzarella;
+        this.cantidad = cantidad;
+        this.subTotal = subTotal;
+    }
 }

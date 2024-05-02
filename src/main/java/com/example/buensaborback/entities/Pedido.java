@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,4 +47,16 @@ public class Pedido extends Base{
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "pedido")
     private List<DetallePedido> detallePedidos;
+
+    public Pedido(LocalTime horaEstimadaFinalizacion, double total, double totalCosto, Estado estado, FormaPago formaPago, TipoEnvio tipoEnvio, Sucursal sucursal, Domicilio domicilio) {
+        this.horaEstimadaFinalizacion = horaEstimadaFinalizacion;
+        this.total = total;
+        this.totalCosto = totalCosto;
+        this.estado = estado;
+        this.formaPago = formaPago;
+        this.tipoEnvio = tipoEnvio;
+        this.sucursal = sucursal;
+        this.domicilio = domicilio;
+        this.detallePedidos = new ArrayList<>();
+    }
 }

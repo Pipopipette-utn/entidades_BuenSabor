@@ -24,4 +24,11 @@ public class Domicilio extends Base{
     @JoinColumn(name = "localidad_id")
     private Localidad localidad;
 
+    public Domicilio(String calle, Integer numero, Integer cp, Localidad localidad) {
+        this.calle = calle;
+        this.numero = numero;
+        this.cp = cp;
+        this.localidad = localidad;
+    }
+
 }
