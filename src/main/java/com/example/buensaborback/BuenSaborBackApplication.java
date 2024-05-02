@@ -204,7 +204,7 @@ public class BuenSaborBackApplication {
 			promocionRepository.save(promocionDiaEnamorados);
 
 			Imagen imagenPromo = new Imagen("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv0GnvcTHDxxmjqHXgKbDBSnK4yuEqwtxOZV31rmA-dg&s");
-			imagenPizzaMuzarella.setPromocion(promocionDiaEnamorados);
+			imagenPromo.setPromocion(promocionDiaEnamorados);
 			imagenRepository.save(imagenPromo);
 
 			//Agregar categorias y promociones a sucursales
