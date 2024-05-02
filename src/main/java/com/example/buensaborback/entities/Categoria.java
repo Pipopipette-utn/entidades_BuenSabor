@@ -20,6 +20,7 @@ public class Categoria extends Base{
     private String denominacion;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "categoria")
+    @JsonIgnoreProperties("categoria")
     private List<Articulo> articulos;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "categoriaPadre")

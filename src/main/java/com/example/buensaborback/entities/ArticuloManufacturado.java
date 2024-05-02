@@ -1,4 +1,5 @@
 package com.example.buensaborback.entities;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class ArticuloManufacturado extends Articulo {
     private String preparacion;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "articuloManufacturado")
+    @JsonIgnoreProperties("articuloManufacturado")
     private List<ArticuloManufacturadoDetalle> articuloManufacturadoDetalles;
 
     @Builder

@@ -83,7 +83,7 @@ public class BuenSaborBackApplication {
 	CommandLineRunner init() {
 		return args -> {
 			logger.info("----------------ESTOY----FUNCIONANDO---------------------");
-
+/*
 			// Etapa del dashboard
 			// Crear 1 pais
 			// Crear 2 provincias para ese pais
@@ -247,6 +247,7 @@ public class BuenSaborBackApplication {
 			cliente.getPedidos().add(pedido);
 			clienteRepository.save(cliente);
 
+
 			logger.info("----------------Sucursal Chacras ---------------------");
 			logger.info("{}", sucursalChacras);
 			logger.info("----------------Sucursal Godoy Cruz ---------------------");
@@ -254,7 +255,7 @@ public class BuenSaborBackApplication {
 			logger.info("----------------Pedido ---------------------");
 
 			logger.info("{}", pedido);
-
+*/
 		};
 	}
 }
