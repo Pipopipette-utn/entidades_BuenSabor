@@ -3,6 +3,7 @@ package com.example.buensaborback.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @NoArgsConstructor
@@ -20,6 +21,7 @@ public class Domicilio extends Base{
     private Integer piso;
     private Integer nroDpto;
 
+    @NotBlank(message = "La localidad es requerida")
     @ManyToOne
     @JoinColumn(name = "localidad_id")
     private Localidad localidad;

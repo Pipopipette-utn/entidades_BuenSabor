@@ -1,8 +1,7 @@
 package com.example.buensaborback.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @NoArgsConstructor
@@ -12,10 +11,13 @@ import lombok.*;
 @Entity
 @ToString
 @Builder
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre" }) })
 public class Provincia extends Base{
 
+    @NotBlank(message = "El nombre es requerido")
     private String nombre;
 
+    @NotBlank(message = "El pais es requerido")
     @ManyToOne
     @JoinColumn(name = "pais_id")
     private Pais pais;

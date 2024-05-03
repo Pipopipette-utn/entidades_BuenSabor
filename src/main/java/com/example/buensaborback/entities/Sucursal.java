@@ -2,6 +2,7 @@ package com.example.buensaborback.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalTime;
@@ -13,9 +14,12 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "domicilio"}) })
 public class Sucursal extends Base{
 
+    @NotBlank(message = "El nombre es requerido")
     private String nombre;
+
     private LocalTime horarioApertura;
     private LocalTime horarioCierre;
 

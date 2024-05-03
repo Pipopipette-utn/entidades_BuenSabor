@@ -1,6 +1,7 @@
 package com.example.buensaborback.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -14,10 +15,16 @@ import java.util.ArrayList;
 public class ArticuloInsumo extends Articulo {
 
     private Double precioCompra;
+
+    // Método que calcule el stockActual
     private Integer stockActual;
     private Integer stockMaximo;
+
+    @NotBlank(message = "El stockMinimo es requerido")
     private Integer stockMinimo;
-    private Boolean esParaElaborar;
+
+    @Builder.Default
+    private Boolean esParaElaborar = true;
 
     public ArticuloInsumo(String denominacion, UnidadMedida unidadMedida, Boolean esParaElaborar, Integer stockMinimo, Integer stockMaximo, Integer stockActual, Double precioCompra) {
         super(denominacion, unidadMedida);

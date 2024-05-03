@@ -12,7 +12,10 @@ import lombok.*;
 @Builder
 public class DetallePedido extends Base{
 
-    private Integer cantidad;
+    @Builder.Default
+    private Integer cantidad = 1;
+
+    // Método que calcule el subTotal dependiendo del precioVenta de Articulo y la cantidad
     private Double subTotal;
 
     @ManyToOne

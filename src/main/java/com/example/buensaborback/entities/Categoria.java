@@ -2,6 +2,7 @@ package com.example.buensaborback.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -15,8 +16,10 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "denominacio" }) })
 public class Categoria extends Base{
 
+    @NotBlank(message = "La denominacion es requerida")
     private String denominacion;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "categoria")
