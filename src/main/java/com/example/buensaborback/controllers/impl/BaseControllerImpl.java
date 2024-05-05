@@ -3,6 +3,7 @@ package com.example.buensaborback.controllers.impl;
 import com.example.buensaborback.controllers.IBaseController;
 import com.example.buensaborback.services.impl.BaseServiceImpl;
 import com.example.buensaborback.entities.Base;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public abstract class BaseControllerImpl <E extends Base, baseService extends Ba
     }
 
     @PostMapping("")
-    public ResponseEntity<?> save(@RequestBody E entity){
+    public ResponseEntity<?> save(@Valid @RequestBody E entity){
         try{
             return ResponseEntity
                     .status(HttpStatus.OK)

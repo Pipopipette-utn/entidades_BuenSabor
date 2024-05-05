@@ -1,4 +1,4 @@
-package com.example.buensaborback.error.dto;
+package com.example.buensaborback.exception.dto;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
