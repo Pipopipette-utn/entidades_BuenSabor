@@ -15,11 +15,13 @@ import java.io.Serializable;
 @Getter
 @ToString
 @Setter
+@SuperBuilder
 public abstract class Base implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Builder.Default
     private boolean baja = false;
 
 }

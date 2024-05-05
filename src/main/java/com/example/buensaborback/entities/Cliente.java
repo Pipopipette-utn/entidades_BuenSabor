@@ -1,6 +1,7 @@
 package com.example.buensaborback.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -25,7 +26,7 @@ public class Cliente extends Base{
     //private LocalDate fechaNacimiento;
 
     @NotBlank(message = "El email es requerido")
-    @Column(unique=true)
+    @Email(message = "El formato de email es incorrecto")
     private String email;
 
     @NotNull(message = "El usuario es requerido")

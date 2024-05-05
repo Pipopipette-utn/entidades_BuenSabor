@@ -25,14 +25,14 @@ public class Promocion extends Base {
     @NotBlank(message = "La denominacion es requerida")
     private String denominacion;
 
-    private LocalDate fechaDesde = LocalDate.now();
+    private LocalDate fechaDesde;
 
     @NotNull(message = "La fechaHasta es requerida")
     private LocalDate fechaHasta;
 
-    private LocalTime horaDesde = LocalTime.now();
+    private LocalTime horaDesde;
 
-    private LocalTime horaHasta = LocalTime.now();
+    private LocalTime horaHasta;
     private String descripcionDescuento;
 
     @NotNull(message = "El precioPromocional es requerido")

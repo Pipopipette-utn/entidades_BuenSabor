@@ -33,12 +33,14 @@ public class Pedido extends Base{
     private Double total;
     private Double totalCosto;
 
+    @Builder.Default
     private Estado estado = Estado.Pendiente;
     private TipoEnvio tipoEnvio;
 
     @NotNull(message = "formaPago es requerida")
     private FormaPago formaPago;
 
+    @Builder.Default
     private LocalDate fechaPedido = LocalDate.now();
 
     @NotNull(message = "La sucursal es requerida")

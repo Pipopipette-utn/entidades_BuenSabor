@@ -14,6 +14,7 @@ import lombok.*;
 @Builder
 public class Imagen extends Base{
 
+    @Builder.Default
     private String url = "https://cdn.icon-icons.com/icons2/1874/PNG/512/iconfinder-hamburgerburgerdrinksoftfastfoodfastfood-4306475_119909.png";
 
     @ManyToOne
