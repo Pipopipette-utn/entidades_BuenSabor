@@ -2,6 +2,7 @@ package com.example.buensaborback.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -27,15 +28,15 @@ public class Cliente extends Base{
     @Column(unique=true)
     private String email;
 
+    @NotNull(message = "El usuario es requerido")
     @OneToOne
     private Usuario usuario;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "cliente")
     private List<Pedido> pedidos;
 
-    // Añadir @Builder.Default
     @OneToOne
-    private Imagen imagen;
+    private Imagen imagen = new Imagen("https://cdn.icon-icons.com/icons2/2483/PNG/512/user_icon_149851.png");
 
     @ManyToMany
     @JoinTable(

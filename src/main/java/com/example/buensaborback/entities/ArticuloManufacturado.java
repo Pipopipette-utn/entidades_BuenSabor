@@ -2,6 +2,7 @@ package com.example.buensaborback.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class ArticuloManufacturado extends Articulo {
     @NotBlank(message = "La descripcion es requerida")
     private String descripcion;
 
-    @NotBlank(message = "El tiempoEstimadoMinutos es requerido")
+    @NotNull(message = "El tiempoEstimadoMinutos es requerido")
     private Integer tiempoEstimadoMinutos;
     private String preparacion;
 

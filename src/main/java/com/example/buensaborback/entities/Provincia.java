@@ -2,6 +2,7 @@ package com.example.buensaborback.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @NoArgsConstructor
@@ -17,7 +18,7 @@ public class Provincia extends Base{
     @NotBlank(message = "El nombre es requerido")
     private String nombre;
 
-    @NotBlank(message = "El pais es requerido")
+    @NotNull(message = "El pais es requerido")
     @ManyToOne
     @JoinColumn(name = "pais_id")
     private Pais pais;

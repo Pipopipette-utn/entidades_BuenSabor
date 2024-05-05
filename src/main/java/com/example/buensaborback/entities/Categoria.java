@@ -6,9 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +14,7 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "denominacio" }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "denominacion" }) })
 public class Categoria extends Base{
 
     @NotBlank(message = "La denominacion es requerida")

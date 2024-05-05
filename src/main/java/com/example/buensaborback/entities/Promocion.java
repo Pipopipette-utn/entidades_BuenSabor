@@ -3,6 +3,7 @@ package com.example.buensaborback.entities;
 import com.example.buensaborback.entities.enums.TipoPromocion;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -24,20 +25,17 @@ public class Promocion extends Base {
     @NotBlank(message = "La denominacion es requerida")
     private String denominacion;
 
-    @Builder.Default
     private LocalDate fechaDesde = LocalDate.now();
 
-    @NotBlank(message = "La fechaHasta es requerida")
+    @NotNull(message = "La fechaHasta es requerida")
     private LocalDate fechaHasta;
 
-    @Builder.Default
     private LocalTime horaDesde = LocalTime.now();
 
-    @Builder.Default
     private LocalTime horaHasta = LocalTime.now();
     private String descripcionDescuento;
 
-    @NotBlank(message = "El precioPromocional es requerido")
+    @NotNull(message = "El precioPromocional es requerido")
     private Double precioPromocional;
     private TipoPromocion tipoPromocion;
 

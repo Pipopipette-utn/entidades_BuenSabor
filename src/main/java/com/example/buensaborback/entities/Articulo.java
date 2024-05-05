@@ -16,12 +16,11 @@ import java.util.Set;
 @Setter
 @ToString
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "denominacio" }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "denominacion" }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Articulo extends Base{
 
     @NotBlank(message = "La denominacion es requerida")
-    @UniqueElements
     protected String denominacion;
 
     protected Double precioVenta;

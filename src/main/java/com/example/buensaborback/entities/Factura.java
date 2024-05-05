@@ -3,6 +3,7 @@ package com.example.buensaborback.entities;
 import com.example.buensaborback.entities.enums.FormaPago;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @Builder
 public class Factura extends Base{
 
-    @NotBlank(message = "La fechaFacturacion es requerida")
+    @NotNull(message = "La fechaFacturacion es requerida")
     private LocalDate fechaFacturacion;
     private Integer mpPaymentId;
     private Integer mpMerchantOrderId;

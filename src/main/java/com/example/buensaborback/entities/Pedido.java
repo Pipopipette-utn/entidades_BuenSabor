@@ -5,6 +5,7 @@ import com.example.buensaborback.entities.enums.FormaPago;
 import com.example.buensaborback.entities.enums.TipoEnvio;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -25,22 +26,22 @@ import java.util.Set;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "factura" }) })
 public class Pedido extends Base{
 
-    @NotBlank(message = "La horaEstimadaFinalizacion es requerida")
+    @NotNull(message = "La horaEstimadaFinalizacion es requerida")
     private LocalTime horaEstimadaFinalizacion;
 
     // Crear un método que calcule el total
     private Double total;
     private Double totalCosto;
 
-    @Builder.Default
     private Estado estado = Estado.Pendiente;
     private TipoEnvio tipoEnvio;
+
+    @NotNull(message = "formaPago es requerida")
     private FormaPago formaPago;
 
-    @Builder.Default
     private LocalDate fechaPedido = LocalDate.now();
 
-    @NotBlank(message = "La sucursal es requerida")
+    @NotNull(message = "La sucursal es requerida")
     @ManyToOne
     @JoinColumn(name = "sucursal_id")
     private Sucursal sucursal;
@@ -49,7 +50,7 @@ public class Pedido extends Base{
     @JoinColumn(name = "domicilio_id")
     private Domicilio domicilio;
 
-    @NotBlank(message = "El cliente es requerido")
+    // @NotNull(message = "El cliente es requerido")
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;

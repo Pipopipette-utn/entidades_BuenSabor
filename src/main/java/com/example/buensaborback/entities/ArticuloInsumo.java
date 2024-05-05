@@ -2,7 +2,9 @@ package com.example.buensaborback.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.ArrayList;
 
@@ -20,11 +22,11 @@ public class ArticuloInsumo extends Articulo {
     private Integer stockActual;
     private Integer stockMaximo;
 
-    @NotBlank(message = "El stockMinimo es requerido")
+    @NotNull(message = "El stockMinimo es requerido")
     private Integer stockMinimo;
 
-    @Builder.Default
-    private Boolean esParaElaborar = true;
+    @NotNull(message = "El esParaElaborar es requerido")
+    private Boolean esParaElaborar;
 
     public ArticuloInsumo(String denominacion, UnidadMedida unidadMedida, Boolean esParaElaborar, Integer stockMinimo, Integer stockMaximo, Integer stockActual, Double precioCompra) {
         super(denominacion, unidadMedida);
