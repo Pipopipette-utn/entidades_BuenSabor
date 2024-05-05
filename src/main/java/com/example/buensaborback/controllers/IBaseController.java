@@ -1,6 +1,7 @@
 package com.example.buensaborback.controllers;
 
 import com.example.buensaborback.entities.Base;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.io.Serializable;
 
 public interface IBaseController <E extends Base, Id extends Serializable> {
+    ResponseEntity<?> findAllByBajaFalse(Pageable pageable);
+
     ResponseEntity<?> findAll();
 
     ResponseEntity<?> findAll(Pageable pageable);

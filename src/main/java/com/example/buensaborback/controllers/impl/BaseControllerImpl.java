@@ -17,6 +17,19 @@ public abstract class BaseControllerImpl <E extends Base, baseService extends Ba
     }
 
     @GetMapping("")
+    public ResponseEntity<?> findAllByBajaFalse(Pageable pageable){
+        try{
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(servicio.findAllByBajaFalse(pageable));
+        }catch (Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\":\""+ e.getMessage() + "\"}");
+        }
+    }
+
+    @GetMapping("/includeDeleted")
     public ResponseEntity<?> findAll(){
         try{
             return ResponseEntity
@@ -29,7 +42,7 @@ public abstract class BaseControllerImpl <E extends Base, baseService extends Ba
         }
     }
 
-    @GetMapping("/paged")
+    @GetMapping("/includeDeleted/paged")
     public ResponseEntity<?> findAll(Pageable pageable){
         try{
             return ResponseEntity

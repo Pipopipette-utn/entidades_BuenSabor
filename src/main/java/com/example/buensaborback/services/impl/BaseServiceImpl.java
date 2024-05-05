@@ -17,6 +17,15 @@ public abstract class BaseServiceImpl<E extends Base, Id extends Serializable> i
         this.baseRepository = baseRepository;
     }
 
+    @Transactional
+    public Page<E> findAllByBajaFalse(Pageable pageable) throws Exception {
+        try{
+            return baseRepository.findAllByBajaFalse(pageable);
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
     @Override
     @Transactional
     public Page<E> findAll(Pageable pageable) throws Exception{
