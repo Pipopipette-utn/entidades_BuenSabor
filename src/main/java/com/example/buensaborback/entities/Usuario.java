@@ -2,6 +2,8 @@ package com.example.buensaborback.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.*;
 
 @NoArgsConstructor
@@ -11,11 +13,10 @@ import lombok.*;
 @Entity
 @ToString
 @Builder
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "auth0Id", "username" }) })
 public class Usuario extends Base{
 
-    @Column(unique=true)
     private String auth0Id;
-    @Column(unique=true)
     private String username;
 
 }

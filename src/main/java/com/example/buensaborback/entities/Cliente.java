@@ -1,6 +1,9 @@
 package com.example.buensaborback.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -12,16 +15,21 @@ import java.util.List;
 @Setter
 @Entity
 @ToString
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "telefono", "email", "usuario" }) })
 public class Cliente extends Base{
 
+    @NotBlank(message = "El nombre es requerido")
     private String nombre;
+    @NotBlank(message = "El apellido es requerido")
     private String apellido;
     private String telefono;
     //private LocalDate fechaNacimiento;
 
-    @Column(unique=true)
+    @NotBlank(message = "El email es requerido")
+    @Email(message = "El formato de email es incorrecto")
     private String email;
 
+    @NotNull(message = "El usuario es requerido")
     @OneToOne
     private Usuario usuario;
 
@@ -29,7 +37,7 @@ public class Cliente extends Base{
     private List<Pedido> pedidos;
 
     @OneToOne
-    private Imagen imagen;
+    private Imagen imagen = new Imagen("https://cdn.icon-icons.com/icons2/2483/PNG/512/user_icon_149851.png");
 
     @ManyToMany
     @JoinTable(

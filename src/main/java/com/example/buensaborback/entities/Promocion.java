@@ -2,6 +2,8 @@ package com.example.buensaborback.entities;
 
 import com.example.buensaborback.entities.enums.TipoPromocion;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -17,14 +19,23 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "denominacion" }) })
 public class Promocion extends Base {
 
+    @NotBlank(message = "La denominacion es requerida")
     private String denominacion;
+
     private LocalDate fechaDesde;
+
+    @NotNull(message = "La fechaHasta es requerida")
     private LocalDate fechaHasta;
+
     private LocalTime horaDesde;
+
     private LocalTime horaHasta;
     private String descripcionDescuento;
+
+    @NotNull(message = "El precioPromocional es requerido")
     private Double precioPromocional;
     private TipoPromocion tipoPromocion;
 

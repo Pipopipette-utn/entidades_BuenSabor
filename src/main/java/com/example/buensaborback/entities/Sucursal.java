@@ -2,6 +2,8 @@ package com.example.buensaborback.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalTime;
@@ -13,17 +15,22 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "domicilio"}) })
 public class Sucursal extends Base{
 
+    @NotBlank(message = "El nombre es requerido")
     private String nombre;
+
     private LocalTime horarioApertura;
     private LocalTime horarioCierre;
 
+    @NotNull(message = "La empresa es requerida")
     @ManyToOne
     @JoinColumn(name="empresa_id")
     @JsonIgnoreProperties("sucursales")
     private Empresa empresa;
 
+    @NotNull(message = "El domicilio es requerido")
     @OneToOne(cascade = CascadeType.ALL)
     private Domicilio domicilio;
 

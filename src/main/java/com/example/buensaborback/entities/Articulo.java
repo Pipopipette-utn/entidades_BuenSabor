@@ -2,7 +2,9 @@ package com.example.buensaborback.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,10 +16,13 @@ import java.util.Set;
 @Setter
 @ToString
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "denominacion" }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Articulo extends Base{
 
+    @NotBlank(message = "La denominacion es requerida")
     protected String denominacion;
+
     protected Double precioVenta;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "articulo")

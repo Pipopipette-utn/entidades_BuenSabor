@@ -127,7 +127,7 @@ m1=n
 m2=.1
 m1=.1
 
-</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>264</x><y>286</y><w>231</w><h>297</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>264</x><y>286</y><w>231</w><h>297</h></coordinates><panel_attributes>lt=-&gt;
 m1=n
 m2=n
 </panel_attributes><additional_attributes>10;10;10;240;190;240</additional_attributes></element><element><id>Relation</id><coordinates><x>1067</x><y>341</y><w>121</w><h>44</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
@@ -152,7 +152,7 @@ m1=n
 
 m2=n
 
-</panel_attributes><additional_attributes>90;10;10;30</additional_attributes></element><element><id>Relation</id><coordinates><x>693</x><y>99</y><w>209</w><h>132</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes>90;10;10;30</additional_attributes></element><element><id>Relation</id><coordinates><x>693</x><y>99</y><w>209</w><h>132</h></coordinates><panel_attributes>lt=-&gt;
 m1=n
 
 m2=n
@@ -193,7 +193,7 @@ m2=1
 - stockMaximo : Integer
 - esParaElaborar  : Boolean
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>946</x><y>55</y><w>594</w><h>264</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>946</x><y>55</y><w>594</w><h>264</h></coordinates><panel_attributes>lt=&lt;-
 m1=n
 
 m2=n
