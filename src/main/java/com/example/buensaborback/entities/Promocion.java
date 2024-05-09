@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.envers.NotAudited;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,6 +21,7 @@ import java.util.Set;
 @Entity
 @ToString
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "denominacion" }) })
+@Builder
 public class Promocion extends Base {
 
     @NotBlank(message = "La denominacion es requerida")
@@ -46,8 +48,27 @@ public class Promocion extends Base {
             inverseJoinColumns = @JoinColumn(name = "articulo_id"))
     private List<Articulo> articulos;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "promocion")
-    private List<Imagen> imagenes;
+    @OneToMany
+    //SE AGREGA EL JOIN COLUMN PARA QUE JPA NO CREE LA TABLA INTERMEDIA EN UNA RELACION ONE TO MANY
+    //DE ESTA MANERA PONE EL FOREIGN KEY 'promocion_id' EN LA TABLA DE LOS MANY
+    @JoinColumn(name = "promocion_id")
+    //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
+    @Builder.Default
+    @NotAudited
+    private Set<ImagenArticulo> imagenes = new HashSet<>();
+
+    public Promocion(String denominacion, LocalDate fechaDesde, LocalDate fechaHasta, LocalTime horaDesde, LocalTime horaHasta, String descripcionDescuento, double precioPromocional, TipoPromocion tipoPromocion, Set<ImagenArticulo> imagenes) {
+        this.denominacion = denominacion;
+        this.fechaDesde = fechaDesde;
+        this.fechaHasta = fechaHasta;
+        this.horaDesde = horaDesde;
+        this.horaHasta = horaHasta;
+        this.descripcionDescuento = descripcionDescuento;
+        this.precioPromocional = precioPromocional;
+        this.tipoPromocion = tipoPromocion;
+        this.articulos = new ArrayList<>();
+        this.imagenes = imagenes;
+    }
 
     public Promocion(String denominacion, LocalDate fechaDesde, LocalDate fechaHasta, LocalTime horaDesde, LocalTime horaHasta, String descripcionDescuento, double precioPromocional, TipoPromocion tipoPromocion) {
         this.denominacion = denominacion;

@@ -6,12 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -31,7 +30,7 @@ public class ArticuloManufacturado extends Articulo {
     private List<ArticuloManufacturadoDetalle> articuloManufacturadoDetalles;
 
     @Builder
-    public ArticuloManufacturado(String denominacion, String descripcion, UnidadMedida unidadMedida, Double precioVenta, Integer tiempoEstimadoMinutos, String preparacion, Categoria categoria, ArrayList<Imagen> imagenes) {
+    public ArticuloManufacturado(String denominacion, String descripcion, UnidadMedida unidadMedida, Double precioVenta, Integer tiempoEstimadoMinutos, String preparacion, Categoria categoria, Set<ImagenArticulo> imagenes) {
         super(denominacion, precioVenta, unidadMedida, categoria, imagenes);
         this.descripcion = descripcion;
         this.tiempoEstimadoMinutos = tiempoEstimadoMinutos;

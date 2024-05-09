@@ -1,6 +1,6 @@
 package com.example.buensaborback.controllers;
 
-import com.example.buensaborback.entities.Imagen;
+import com.example.buensaborback.entities.ImagenArticulo;
 
-public interface IImagenController extends IBaseController<Imagen, Long> {
+public interface IImagenController extends IBaseController<ImagenArticulo, Long> {
 }

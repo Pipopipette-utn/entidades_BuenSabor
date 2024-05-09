@@ -10,18 +10,15 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
-@ToString
 @Builder
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "factura" }) })
 public class Pedido extends Base{
@@ -52,7 +49,7 @@ public class Pedido extends Base{
     @JoinColumn(name = "domicilio_id")
     private Domicilio domicilio;
 
-    // @NotNull(message = "El cliente es requerido")
+    @NotNull(message = "El cliente es requerido")
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
@@ -63,7 +60,11 @@ public class Pedido extends Base{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "pedido")
     private List<DetallePedido> detallePedidos;
 
-    public Pedido(LocalTime horaEstimadaFinalizacion, double total, double totalCosto, Estado estado, FormaPago formaPago, TipoEnvio tipoEnvio, Sucursal sucursal, Domicilio domicilio) {
+    @ManyToOne
+    @JoinColumn(name = "empleado_id")
+    private Empleado empleado;
+
+    public Pedido(LocalTime horaEstimadaFinalizacion, double total, double totalCosto, Estado estado, FormaPago formaPago, TipoEnvio tipoEnvio, Sucursal sucursal, Domicilio domicilio, Cliente cliente) {
         this.horaEstimadaFinalizacion = horaEstimadaFinalizacion;
         this.total = total;
         this.totalCosto = totalCosto;
@@ -73,5 +74,22 @@ public class Pedido extends Base{
         this.sucursal = sucursal;
         this.domicilio = domicilio;
         this.detallePedidos = new ArrayList<>();
+        this.cliente = cliente;
+
     }
+
+    public Pedido(LocalTime horaEstimadaFinalizacion, double total, double totalCosto, Estado estado, FormaPago formaPago, TipoEnvio tipoEnvio, Sucursal sucursal, Domicilio domicilio, Cliente cliente, Empleado empleado) {
+        this.horaEstimadaFinalizacion = horaEstimadaFinalizacion;
+        this.total = total;
+        this.totalCosto = totalCosto;
+        this.estado = estado;
+        this.formaPago = formaPago;
+        this.tipoEnvio = tipoEnvio;
+        this.sucursal = sucursal;
+        this.domicilio = domicilio;
+        this.detallePedidos = new ArrayList<>();
+        this.cliente = cliente;
+        this.empleado = empleado;
+    }
+
 }

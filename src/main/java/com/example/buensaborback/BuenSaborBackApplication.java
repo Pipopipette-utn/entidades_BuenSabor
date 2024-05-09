@@ -1,10 +1,7 @@
 package com.example.buensaborback;
 
 import com.example.buensaborback.entities.*;
-import com.example.buensaborback.entities.enums.Estado;
-import com.example.buensaborback.entities.enums.FormaPago;
-import com.example.buensaborback.entities.enums.TipoEnvio;
-import com.example.buensaborback.entities.enums.TipoPromocion;
+import com.example.buensaborback.entities.enums.*;
 import com.example.buensaborback.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +14,9 @@ import org.springframework.context.annotation.Bean;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @SpringBootApplication
 public class BuenSaborBackApplication {
@@ -27,6 +27,8 @@ public class BuenSaborBackApplication {
 
 	@Autowired
 	private ClienteRepository clienteRepository;
+
+	@Autowired EmpleadoRepository empleadoRepository;
 
 	@Autowired
 	private PaisRepository paisRepository;
@@ -62,7 +64,10 @@ public class BuenSaborBackApplication {
 	private ArticuloManufacturadoDetalleRepository articuloManufacturadoDetalleRepository;
 
 	@Autowired
-	private ImagenRepository imagenRepository;
+	private ImagenArticuloRepository imagenArticuloRepository;
+
+	@Autowired
+	private ImagenPersonaRepository imagenPersonaRepository;
 
 	@Autowired
 	private PromocionRepository promocionRepository;
@@ -143,32 +148,39 @@ public class BuenSaborBackApplication {
 			categoriaRepository.save(categoriaPizzas);
 
 			// crear fotos para cada insumo
-			Imagen imagenCoca = new Imagen("https://m.media-amazon.com/images/I/51v8nyxSOYL._SL1500_.jpg");
-			ArrayList<Imagen> imagenesCoca = new ArrayList<>();
+			ImagenArticulo imagenCoca = new ImagenArticulo("https://m.media-amazon.com/images/I/51v8nyxSOYL._SL1500_.jpg");
+			ImagenArticulo imagenHarina = new ImagenArticulo("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvbND1ZXps60cfLzgC2AYjZ1yj3vlmgSjNzIzF7iZNcQ&s");
+			imagenArticuloRepository.save(imagenCoca);
+			imagenArticuloRepository.save(imagenHarina);
+
+			Set<ImagenArticulo> imagenesCoca = new HashSet<>();
 			imagenesCoca.add(imagenCoca);
 
+			Set<ImagenArticulo> imagenesHarina = new HashSet<>();
+			imagenesHarina.add(imagenHarina);
+
 			// Crear Insumos , coca cola , harina , etc
-			ArticuloInsumo cocaCola = new ArticuloInsumo("Coca cola 0.5L", unidadMedidaCantidad, 5, 50, 10, 800.0, 1800.0, categoriaGaseosas, imagenesCoca);
-			ArticuloInsumo harina = new ArticuloInsumo("Harina", unidadMedidaKilos, true, 4, 40, 10, 600.0);
-			ArticuloInsumo queso = new ArticuloInsumo("Queso", unidadMedidaKilos, true, 20, 50, 10, 10000.0);
-			ArticuloInsumo tomate = new ArticuloInsumo("Tomate", unidadMedidaCantidad, true, 5, 50, 15, 500.0);
+			ArticuloInsumo cocaCola = new ArticuloInsumo("Coca cola", 2000.00, unidadMedidaLitros, categoriaBebidas, imagenesCoca, 2000.00, 50, 5000, 50, false);
+			ArticuloInsumo harina = new ArticuloInsumo("Harina", unidadMedidaKilos, imagenesHarina, 900.0, 40, 600, 30, true);
+			ArticuloInsumo queso = new ArticuloInsumo("Queso", unidadMedidaKilos, 10000.0, 50, 10, 100, true);
+			ArticuloInsumo tomate = new ArticuloInsumo("Tomate", unidadMedidaCantidad, 500.0, 50, 15, 60, true);
 
 			articuloInsumoRepository.save(cocaCola);
 			articuloInsumoRepository.save(harina);
 			articuloInsumoRepository.save(queso);
 			articuloInsumoRepository.save(tomate);
 
-			imagenCoca.setArticulo(cocaCola);
-			imagenRepository.save(imagenCoca);
 
 			// Crear fotos para los artículos manufacturados
-			Imagen imagenPizzaMuzarella = new Imagen("https://storage.googleapis.com/fitia-api-bucket/media/images/recipe_images/1002846.jpg");
-			ArrayList<Imagen> imagenesPizzaMuzarella = new ArrayList<>();
+			ImagenArticulo imagenPizzaMuzarella = new ImagenArticulo("https://storage.googleapis.com/fitia-api-bucket/media/images/recipe_images/1002846.jpg");
+			Set<ImagenArticulo> imagenesPizzaMuzarella = new HashSet<>();
 			imagenesPizzaMuzarella.add(imagenPizzaMuzarella);
+			imagenArticuloRepository.save(imagenPizzaMuzarella);
 
-			Imagen imagenPizzaNapolitana = new Imagen("https://assets.elgourmet.com/wp-content/uploads/2023/03/8metlvp345_portada-pizza-1024x686.jpg.webp");
-			ArrayList<Imagen> imagenesPizzaNapolitana = new ArrayList<>();
+			ImagenArticulo imagenPizzaNapolitana = new ImagenArticulo("https://assets.elgourmet.com/wp-content/uploads/2023/03/8metlvp345_portada-pizza-1024x686.jpg.webp");
+			Set<ImagenArticulo> imagenesPizzaNapolitana = new HashSet<>();
 			imagenesPizzaMuzarella.add(imagenPizzaNapolitana);
+			imagenArticuloRepository.save(imagenPizzaNapolitana);
 
 			// Crear Articulos Manufacturados
 			ArticuloManufacturado pizzaMuzarella = new ArticuloManufacturado("Pizza Muzarella", "Una pizza clasica", unidadMedidaPorciones, 7000.0, 15, "Pasos de preparacion de una muzza de toda la vida", categoriaPizzas, imagenesPizzaMuzarella);
@@ -176,11 +188,6 @@ public class BuenSaborBackApplication {
 
 			articuloManufacturadoRepository.save(pizzaNapolitana);
 			articuloManufacturadoRepository.save(pizzaMuzarella);
-
-			imagenPizzaMuzarella.setArticulo(pizzaMuzarella);
-			imagenRepository.save(imagenPizzaMuzarella);
-			imagenPizzaNapolitana.setArticulo(pizzaNapolitana);
-			imagenRepository.save(imagenPizzaNapolitana);
 
 			// Creo detalles de artículo manufacturado
 			ArticuloManufacturadoDetalle detalle1 = new ArticuloManufacturadoDetalle(300, harina, pizzaMuzarella);
@@ -195,17 +202,20 @@ public class BuenSaborBackApplication {
 			articuloManufacturadoDetalleRepository.save(detalle4);
 			articuloManufacturadoDetalleRepository.save(detalle5);
 
+			// Crear imagen promocion
+			ImagenArticulo imagenPromo = new ImagenArticulo("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv0GnvcTHDxxmjqHXgKbDBSnK4yuEqwtxOZV31rmA-dg&s");
+			Set<ImagenArticulo> imagenesPromo = new HashSet<>();
+			imagenArticuloRepository.save(imagenPromo);
+			imagenesPromo.add(imagenPromo);
+
 			// Crear promocion para sucursal - Dia de los enamorados
 			// Tener en cuenta que esa promocion es exclusivamente para una sucursal determinada de una empresa determinada
-			Promocion promocionDiaEnamorados = new Promocion("Dia de los Enamorados", LocalDate.of(2024, 2, 13), LocalDate.of(2024, 2, 15), LocalTime.of(0, 0), LocalTime.of(23, 59), "El descuento que se hace por san valentin, un dia antes y un dia despues", 100.0, TipoPromocion.promocion);
+			Promocion promocionDiaEnamorados = new Promocion("Dia de los Enamorados", LocalDate.of(2024, 2, 13), LocalDate.of(2024, 2, 15), LocalTime.of(0, 0), LocalTime.of(23, 59), "El descuento que se hace por san valentin, un dia antes y un dia despues", 100.0, TipoPromocion.promocion, imagenesPromo);
 			promocionDiaEnamorados.getArticulos().add(cocaCola);
 			promocionDiaEnamorados.getArticulos().add(cocaCola);
 			promocionDiaEnamorados.getArticulos().add(pizzaNapolitana);
 			promocionRepository.save(promocionDiaEnamorados);
 
-			Imagen imagenPromo = new Imagen("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv0GnvcTHDxxmjqHXgKbDBSnK4yuEqwtxOZV31rmA-dg&s");
-			imagenPromo.setPromocion(promocionDiaEnamorados);
-			imagenRepository.save(imagenPromo);
 
 			//Agregar categorias y promociones a sucursales
 			sucursalChacras.getCategorias().add(categoriaBebidas);
@@ -218,33 +228,51 @@ public class BuenSaborBackApplication {
 			sucursalGodoyCruz.getCategorias().add(categoriaPizzas);
 			sucursalGodoyCruz.getCategorias().add(categoriaGaseosas);
 			sucursalGodoyCruz.getCategorias().add(categoriaTragos);
+			sucursalGodoyCruz.getPromociones().add(promocionDiaEnamorados);
 
 			sucursalRepository.save(sucursalChacras);
 			sucursalRepository.save(sucursalGodoyCruz);
 
-			//Crea un cliente y un usuario
-			Imagen imagenCliente = new Imagen("https://hips.hearstapps.com/hmg-prod/images/la-la-land-final-1638446140.jpg");
-			imagenRepository.save(imagenCliente);
-			Usuario usuario = new Usuario("sebastian", "9565a49d-ecc1-4f4e-adea-6cdcb7edc4a3");
-			usuarioRepository.save(usuario);
-			Cliente cliente = new Cliente(usuario, imagenCliente, "correoFalso@gmail.com", "Sebastian", "Wilder", "2615920825");
-			Domicilio domicilioCl = new Domicilio("Viamonte", 5234, 5509, 1, 1, localidad1);
-			domicilioRepository.save(domicilioCl);
+			// Crear un empleado y un usuario
+			Usuario usuario1 = new Usuario("9565a49d-ecc1-4f4e-adea-cdcb7edc4a3", "lorena_", Rol.cocinero);
+			usuarioRepository.save(usuario1);
+			Empleado empleado = new Empleado("Lorena", "Lee", "2610000000", "lorena@lee.com", usuario1, sucursalChacras);
+			empleadoRepository.save(empleado);
 
-			cliente.getDomicilios().add(domicilioCl);
+			//Crea un cliente y un usuario
+			ImagenPersona imagenCliente = new ImagenPersona("https://hips.hearstapps.com/hmg-prod/images/la-la-land-final-1638446140.jpg");
+			imagenPersonaRepository.save(imagenCliente);
+			Usuario usuario = new Usuario("9565a49d-ecc1-4f4e-adea-6cdcb7edc4a3", "sebastian", Rol.Cliente);
+			usuarioRepository.save(usuario);
+			// Crear domicilios para el cliente
+			Domicilio domicilioCl = new Domicilio("Viamonte", 5234, 5509, 1, 1, localidad1);
+			Domicilio domicilioCl1 = new Domicilio("Maza", 54, 5507, localidad1);
+			domicilioRepository.save(domicilioCl);
+			domicilioRepository.save(domicilioCl1);
+
+			Set<Domicilio> domiciliosCl = new HashSet<>();
+			domiciliosCl.add(domicilioCl);
+			domiciliosCl.add(domicilioCl1);
+
+			Cliente cliente = new Cliente("Sebastian", "Wilder", "2615920825", "correoFalso@gmail.com", usuario, imagenCliente, domiciliosCl);
+
+
 			clienteRepository.save(cliente);
 
 			//Crea un pedido para el cliente
-			Pedido pedido = new Pedido(LocalTime.now(), 300.0, 170.6, Estado.Preparacion, FormaPago.MercadoPago, TipoEnvio.Delivery, sucursalChacras, domicilioViamonte);
+			Pedido pedido = new Pedido(LocalTime.now(), 300.0, 170.6, Estado.Preparacion, FormaPago.MercadoPago, TipoEnvio.Delivery, sucursalChacras, domicilioViamonte, cliente);
 
-			DetallePedido detallePedido1 = new DetallePedido(pizzaMuzarella, 1, 200.0);
-			DetallePedido detallePedido2 = new DetallePedido(cocaCola, 2, 100.0);
+			DetallePedido detallePedido1 = new DetallePedido(pizzaMuzarella, 1, 200.0, pedido);
+			DetallePedido detallePedido2 = new DetallePedido(cocaCola, 2, 100.0, pedido);
 
 			pedido.getDetallePedidos().add(detallePedido1);
 			pedido.getDetallePedidos().add(detallePedido2);
 			pedidoRepository.save(pedido);
 
-			cliente.getPedidos().add(pedido);
+			List<Pedido> pedidos = new ArrayList<>();
+			pedidos.add(pedido);
+
+			cliente.setPedidos(pedidos);
 			clienteRepository.save(cliente);
 
 
