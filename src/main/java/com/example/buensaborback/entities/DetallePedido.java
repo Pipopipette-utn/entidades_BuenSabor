@@ -19,7 +19,7 @@ public class DetallePedido extends Base{
     // Método que calcule el subTotal dependiendo del precioVenta de Articulo y la cantidad
     private Double subTotal;
 
-    // @NotNull(message = "El pedido es requerido")
+    @NotNull(message = "El pedido es requerido")
     @ManyToOne
     @JoinColumn(name = "pedido_id")
     private Pedido pedido;

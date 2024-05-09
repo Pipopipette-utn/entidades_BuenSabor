@@ -3,6 +3,7 @@ package com.example.buensaborback.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
+@SuperBuilder
 public class ArticuloInsumo extends Articulo {
 
     private Double precioCompra;

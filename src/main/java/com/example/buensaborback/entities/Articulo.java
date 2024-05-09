@@ -3,6 +3,7 @@ package com.example.buensaborback.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.NotAudited;
 
 import lombok.*;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Entity
+@SuperBuilder
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "denominacion" }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Articulo extends Base{
