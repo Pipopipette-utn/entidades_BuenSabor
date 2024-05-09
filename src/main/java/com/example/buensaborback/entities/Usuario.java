@@ -1,5 +1,6 @@
 package com.example.buensaborback.entities;
 
+import com.example.buensaborback.entities.enums.Rol;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -18,5 +19,6 @@ public class Usuario extends Base{
 
     private String auth0Id;
     private String username;
+    private Rol rol;
 
 }
