@@ -1,10 +1,7 @@
 package com.example.buensaborback.entities.dtos;
 
 import com.example.buensaborback.entities.enums.TipoPromocion;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,7 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
+@ToString
 public class PromocionDto extends BaseDto{
     private String denominacion;
     private LocalDate fechaDesde;

@@ -1,9 +1,6 @@
 package com.example.buensaborback.entities.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,6 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class ArticuloManufacturadoDto extends ArticuloDto {
     private String descripcion;
     private Integer tiempoEstimadoMinutos;

@@ -3,10 +3,7 @@ package com.example.buensaborback.entities.dtos;
 import com.example.buensaborback.entities.enums.Estado;
 import com.example.buensaborback.entities.enums.FormaPago;
 import com.example.buensaborback.entities.enums.TipoEnvio;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -17,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class PedidoDto extends BaseDto{
     private LocalTime horaEstimadaFinalizacion;
     private Double total;

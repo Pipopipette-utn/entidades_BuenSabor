@@ -1,10 +1,7 @@
 package com.example.buensaborback.entities.dtos;
 
 import com.example.buensaborback.entities.enums.FormaPago;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -12,6 +9,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class FacturaDto extends BaseDto{
 
     private LocalDate fechaFacturacion;

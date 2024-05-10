@@ -12,7 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-public class CategoriaDto extends BaseDto{
+public class CategoriaDto extends BaseDto {
     private String denominacion;
     private Set<ArticuloDto> articulos = new HashSet<>();
     private Set<CategoriaDto> subCategorias = new HashSet<>();

@@ -1,9 +1,6 @@
 package com.example.buensaborback.entities.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalTime;
 import java.util.HashSet;
@@ -13,6 +10,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class SucursalDto extends BaseDto{
     private String nombre;
     private LocalTime horarioApertura;
