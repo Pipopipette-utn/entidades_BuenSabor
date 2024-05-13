@@ -5,6 +5,9 @@ import com.example.buensaborback.business.mapper.BaseMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.entities.Base;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,14 +39,16 @@ public abstract class BaseFacadeImp<E extends Base,D extends BaseDto,ID extends 
         return baseMapper.toDTO(entity);
     }
 
-    public List<D> getAll(){
+    public Page<D> getAll(Pageable pageable){
         // trae una lista de entidades
-        var entities = baseService.getAll();
+        var entities = baseService.getAll(pageable);
         //  devuelve una lista de DTO
-        return entities
-                .stream()
+        List<D> dtos = entities
                 .map(baseMapper::toDTO)
-                .collect(Collectors.toList());
+                .getContent();
+
+        // Devuelve una página de DTO
+        return new PageImpl<>(dtos, pageable, entities.getTotalElements());
     }
 
     public void deleteById(ID id){

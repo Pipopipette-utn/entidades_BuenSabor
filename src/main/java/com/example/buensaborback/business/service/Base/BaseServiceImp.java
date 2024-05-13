@@ -5,6 +5,8 @@ import com.example.buensaborback.repositories.BaseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -33,8 +35,8 @@ public abstract class BaseServiceImp<E extends Base,ID extends Serializable> imp
     }
 
     @Override
-    public List<E> getAll(){
-        var entities = baseRepository.getAll();
+    public Page<E> getAll(Pageable pageable){
+        var entities = baseRepository.findAll(pageable);
         logger.info("Obtenidas entidades {}",entities);
         return entities;
     }

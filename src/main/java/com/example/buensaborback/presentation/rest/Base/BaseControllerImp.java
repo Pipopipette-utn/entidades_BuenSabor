@@ -5,12 +5,13 @@ import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.entities.Base;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Controller
 public abstract class BaseControllerImp <E extends Base,D extends BaseDto, ID extends Serializable, F extends BaseFacadeImp<E,D,ID>> implements BaseController<D,ID> {
@@ -28,9 +29,9 @@ public abstract class BaseControllerImp <E extends Base,D extends BaseDto, ID ex
     }
 
     @GetMapping
-    public ResponseEntity<List<D>> getAll() {
+    public ResponseEntity<Page<D>> getAll(Pageable pageable) {
         logger.info("INICIO GET ALL");
-        return ResponseEntity.ok(facade.getAll());
+        return ResponseEntity.ok(facade.getAll(pageable));
     }
 
     @PostMapping()
