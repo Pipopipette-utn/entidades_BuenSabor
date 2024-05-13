@@ -13,8 +13,6 @@ public interface BaseController <D extends BaseDto, ID extends Serializable> {
 
     ResponseEntity<Page<D>> getAll(Pageable pageable);
 
-    ResponseEntity<Page<D>> findAllByBajaFalse(Pageable pageable);
-
     ResponseEntity<D> create(D entity);
 
     ResponseEntity<D> edit(D entity, ID id);

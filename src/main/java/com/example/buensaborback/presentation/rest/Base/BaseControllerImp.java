@@ -28,15 +28,9 @@ public abstract class BaseControllerImp <E extends Base,D extends BaseDto, ID ex
         return ResponseEntity.ok(facade.getById(id));
     }
 
-    @GetMapping("/includeDeleted")
+    @GetMapping
     public ResponseEntity<Page<D>> getAll(Pageable pageable) {
-        logger.info("INICIO GET ALL INCLUYENDO ELIMINADOS LÓGICOS");
-        return ResponseEntity.ok(facade.getAll(pageable));
-    }
-
-    @GetMapping("/")
-    public ResponseEntity<Page<D>> findAllByBajaFalse(Pageable pageable) {
-        logger.info("INICIO GET ALL EXCLUYENDO ELIMINADOS LÓGICOS");
+        logger.info("INICIO GET ALL");
         return ResponseEntity.ok(facade.getAll(pageable));
     }
 

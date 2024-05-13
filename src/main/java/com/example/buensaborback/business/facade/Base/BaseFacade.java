@@ -11,7 +11,6 @@ public interface BaseFacade <D extends BaseDto, ID extends Serializable>{
     public D createNew(D request);
     public D getById(Long id);
     public Page<D> getAll(Pageable pageable);
-    public Page<D> findAllByBajaFalse(Pageable pageable);
     public void deleteById(Long id);
     public D update(D request, Long id);
 }
