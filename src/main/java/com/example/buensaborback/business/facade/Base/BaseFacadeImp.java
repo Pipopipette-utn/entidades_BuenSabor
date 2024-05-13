@@ -51,6 +51,18 @@ public abstract class BaseFacadeImp<E extends Base,D extends BaseDto,ID extends 
         return new PageImpl<>(dtos, pageable, entities.getTotalElements());
     }
 
+    public Page<D> findAllByBajaFalse(Pageable pageable){
+        // trae una lista de entidades
+        var entities = baseService.findAllByBajaFalse(pageable);
+        //  devuelve una lista de DTO
+        List<D> dtos = entities
+                .map(baseMapper::toDTO)
+                .getContent();
+
+        // Devuelve una página de DTO
+        return new PageImpl<>(dtos, pageable, entities.getTotalElements());
+    }
+
     public void deleteById(ID id){
         var entity = baseService.getById(id);
         baseService.deleteById(id);
