@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+
 @Service
 public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implements SucursalService {
    @Autowired
@@ -26,12 +28,17 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
     @Transactional
     public Sucursal guardarSucursal(Sucursal sucursal) {
         var domicilio = sucursal.getDomicilio();
-        domicilioRepository.save(domicilio);
+        var domicilioBd = domicilioRepository.findById(domicilio.getId());
+        if (domicilioBd.isEmpty()){
+            domicilioRepository.save(domicilio);
+            sucursal.setDomicilio(domicilio);
+        }else{
+            sucursal.setDomicilio(domicilioBd.get());
+        }
         var empresa = empresaRepository.findById(sucursal.getEmpresa().getId());
         if(empresa.isEmpty()){
             throw new RuntimeException("No se puede guardar el empresa");
         }
-        sucursal.setDomicilio(domicilio);
 
         return sucursalRepository.save(sucursal);
     }
