@@ -20,26 +20,26 @@ public interface BaseRepository <E extends Base, ID extends Serializable> extend
     @Override
     @Transactional
     default void delete(E entity) {
-        logger.info("EJECUTANDO DELETE SOBREESCRITO");
+        //logger.info("EJECUTANDO DELETE SOBREESCRITO");
         entity.setBaja(true);
         save(entity);
     }
 
     @Override
     default E getById(ID id){
-        logger.info("EJECUTANDO GEY BY ID SOBREESCRITO");
+        //logger.info("EJECUTANDO GEY BY ID SOBREESCRITO");
         var optionalEntity = findById(id);
 
         if (optionalEntity.isEmpty()){
             String errMsg = "La entidad con el id " + id + " se encuentra borrada logicamente";
-            logger.error(errMsg);
+            //logger.error(errMsg);
             throw new RuntimeException(errMsg);
         }
 
         var entity = optionalEntity.get();
         if(entity.isBaja()){
             String errMsg = "La entidad del tipo " + entity.getClass().getSimpleName() + " con el id " + id + " se encuentra borrada logicamente";
-            logger.error(errMsg);
+            //logger.error(errMsg);
             throw new RuntimeException(errMsg);
         }
         return entity;

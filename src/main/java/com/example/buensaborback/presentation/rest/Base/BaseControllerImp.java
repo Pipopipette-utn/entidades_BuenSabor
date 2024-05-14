@@ -24,37 +24,37 @@ public abstract class BaseControllerImp <E extends Base,D extends BaseDto, ID ex
 
     @GetMapping("/{id}")
     public ResponseEntity<D> getById(@PathVariable ID id){
-        logger.info("INICIO GET BY ID {}",id);
+        //logger.info("INICIO GET BY ID {}",id);
         return ResponseEntity.ok(facade.getById(id));
     }
 
     @GetMapping("/includeDeleted")
     public ResponseEntity<Page<D>> getAll(Pageable pageable) {
-        logger.info("INICIO GET ALL INCLUYENDO ELIMINADOS LÓGICOS");
+        //logger.info("INICIO GET ALL INCLUYENDO ELIMINADOS LÓGICOS");
         return ResponseEntity.ok(facade.getAll(pageable));
     }
 
     @GetMapping()
     public ResponseEntity<Page<D>> getAllByBajaFalse(Pageable pageable) {
-        logger.info("INICIO GET ALL EXCLUYENDO ELIMINADOS LÓGICOS");
+        //logger.info("INICIO GET ALL EXCLUYENDO ELIMINADOS LÓGICOS");
         return ResponseEntity.ok(facade.getAllByBajaFalse(pageable));
     }
 
     @PostMapping()
     public ResponseEntity<D> create(@RequestBody D entity){
-        logger.info("INICIO CREATE {}",entity.getClass());
+        //logger.info("INICIO CREATE {}",entity.getClass());
         return ResponseEntity.ok(facade.createNew(entity));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<D> edit(@RequestBody D entity, @PathVariable ID id){
-        logger.info("INICIO EDIT {}",entity.getClass());
+        //logger.info("INICIO EDIT {}",entity.getClass());
         return ResponseEntity.ok(facade.update(entity, id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable ID id){
-        logger.info("INICIO DELETE BY ID");
+        //logger.info("INICIO DELETE BY ID");
         facade.deleteById(id);
         return ResponseEntity.ok(null);
     }
