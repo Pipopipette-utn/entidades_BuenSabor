@@ -3,6 +3,7 @@ package com.example.buensaborback.business.facade.Base;
 
 import com.example.buensaborback.business.mapper.BaseMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
+import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.entities.Base;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,18 @@ public abstract class BaseFacadeImp<E extends Base,D extends BaseDto,ID extends 
     public Page<D> getAll(Pageable pageable){
         // trae una lista de entidades
         var entities = baseService.getAll(pageable);
+        //  devuelve una lista de DTO
+        List<D> dtos = entities
+                .map(baseMapper::toDTO)
+                .getContent();
+
+        // Devuelve una página de DTO
+        return new PageImpl<>(dtos, pageable, entities.getTotalElements());
+    }
+
+    public Page<D> getAllByBajaFalse(Pageable pageable){
+        // trae una lista de entidades
+        var entities = baseService.getAllByBajaFalse(pageable);
         //  devuelve una lista de DTO
         List<D> dtos = entities
                 .map(baseMapper::toDTO)

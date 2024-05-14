@@ -42,6 +42,13 @@ public abstract class BaseServiceImp<E extends Base,ID extends Serializable> imp
     }
 
     @Override
+    public Page<E> getAllByBajaFalse(Pageable pageable){
+        var entities = baseRepository.findAllByBajaFalse(pageable);
+        logger.info("Obtenidas entidades {}",entities);
+        return entities;
+    }
+
+    @Override
     public void deleteById(ID id){
         var entity = getById(id);
         baseRepository.delete(entity);
