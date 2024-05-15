@@ -28,12 +28,12 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
     @Transactional
     public Sucursal guardarSucursal(Sucursal sucursal) {
         var domicilio = sucursal.getDomicilio();
-        var domicilioBd = domicilioRepository.findById(domicilio.getId());
-        if (domicilioBd.isEmpty()){
+        if(domicilio.getId() != null){
+            var domicilioBd = domicilioRepository.findById(domicilio.getId());
+            domicilioBd.ifPresent(sucursal::setDomicilio);
+        }else{
             domicilioRepository.save(domicilio);
             sucursal.setDomicilio(domicilio);
-        }else{
-            sucursal.setDomicilio(domicilioBd.get());
         }
         var empresa = empresaRepository.findById(sucursal.getEmpresa().getId());
         if(empresa.isEmpty()){
