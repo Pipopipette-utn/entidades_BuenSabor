@@ -40,9 +40,19 @@ public abstract class BaseFacadeImp<E extends Base,D extends BaseDto,ID extends 
         return baseMapper.toDTO(entity);
     }
 
-    public Page<D> getAll(Pageable pageable){
+    public List<D> getAll(){
         // trae una lista de entidades
-        var entities = baseService.getAll(pageable);
+        var entities = baseService.getAll();
+        //  devuelve una lista de DTO
+        return entities
+                .stream()
+                .map(baseMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public Page<D> getAllPaged(Pageable pageable){
+        // trae una lista de entidades
+        var entities = baseService.getAllPaged(pageable);
         //  devuelve una lista de DTO
         List<D> dtos = entities
                 .map(baseMapper::toDTO)
@@ -52,9 +62,19 @@ public abstract class BaseFacadeImp<E extends Base,D extends BaseDto,ID extends 
         return new PageImpl<>(dtos, pageable, entities.getTotalElements());
     }
 
-    public Page<D> getAllByBajaFalse(Pageable pageable){
+    public List<D> getAllByBajaFalse(){
         // trae una lista de entidades
-        var entities = baseService.getAllByBajaFalse(pageable);
+        var entities = baseService.getAll();
+        //  devuelve una lista de DTO
+        return entities
+                .stream()
+                .map(baseMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public Page<D> getAllPagedByBajaFalse(Pageable pageable){
+        // trae una lista de entidades
+        var entities = baseService.getAllPagedByBajaFalse(pageable);
         //  devuelve una lista de DTO
         List<D> dtos = entities
                 .map(baseMapper::toDTO)

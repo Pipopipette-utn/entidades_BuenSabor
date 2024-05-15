@@ -10,7 +10,8 @@ import java.util.List;
 public interface BaseFacade <D extends BaseDto, ID extends Serializable>{
     public D createNew(D request);
     public D getById(Long id);
-    public Page<D> getAll(Pageable pageable);
+    public List<D> getAll();
+    public Page<D> getAllPaged(Pageable pageable);
     public void deleteById(Long id);
     public D update(D request, Long id);
 }

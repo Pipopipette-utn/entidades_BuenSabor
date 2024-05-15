@@ -46,4 +46,6 @@ public interface BaseRepository <E extends Base, ID extends Serializable> extend
     }
 
     Page<E> findAllByBajaFalse(Pageable pageable);
+
+    List<E> findAllByBajaFalse();
 }

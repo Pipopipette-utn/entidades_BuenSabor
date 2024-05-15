@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Controller
 public abstract class BaseControllerImp <E extends Base,D extends BaseDto, ID extends Serializable, F extends BaseFacadeImp<E,D,ID>> implements BaseController<D,ID> {
@@ -28,16 +29,28 @@ public abstract class BaseControllerImp <E extends Base,D extends BaseDto, ID ex
         return ResponseEntity.ok(facade.getById(id));
     }
 
-    @GetMapping("/includeDeleted")
-    public ResponseEntity<Page<D>> getAll(Pageable pageable) {
+    @GetMapping("/paged/includeDeleted")
+    public ResponseEntity<Page<D>> getAllPaged(Pageable pageable) {
         //logger.info("INICIO GET ALL INCLUYENDO ELIMINADOS LÓGICOS");
-        return ResponseEntity.ok(facade.getAll(pageable));
+        return ResponseEntity.ok(facade.getAllPaged(pageable));
+    }
+
+    @GetMapping("/includeDeleted")
+    public ResponseEntity<List<D>> getAll() {
+        //logger.info("INICIO GET ALL INCLUYENDO ELIMINADOS LÓGICOS");
+        return ResponseEntity.ok(facade.getAll());
     }
 
     @GetMapping()
+    public ResponseEntity<List<D>> getAllByBajaFalse() {
+        //logger.info("INICIO GET ALL EXCLUYENDO ELIMINADOS LÓGICOS");
+        return ResponseEntity.ok(facade.getAllByBajaFalse());
+    }
+
+    @GetMapping("/paged")
     public ResponseEntity<Page<D>> getAllByBajaFalse(Pageable pageable) {
         //logger.info("INICIO GET ALL EXCLUYENDO ELIMINADOS LÓGICOS");
-        return ResponseEntity.ok(facade.getAllByBajaFalse(pageable));
+        return ResponseEntity.ok(facade.getAllPagedByBajaFalse(pageable));
     }
 
     @PostMapping()

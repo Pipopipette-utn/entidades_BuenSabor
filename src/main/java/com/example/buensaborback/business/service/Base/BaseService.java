@@ -11,8 +11,10 @@ import java.util.List;
 public interface BaseService <E extends Base, ID extends Serializable>{
     public E create(E request);
     public E getById(ID id);
-    public Page<E> getAll(Pageable pageable);
-    public Page<E> getAllByBajaFalse(Pageable pageable);
+    public List<E> getAll();
+    public Page<E> getAllPaged(Pageable pageable);
+    public List<E> getAllByBajaFalse();
+    public Page<E> getAllPagedByBajaFalse(Pageable pageable);
     public void deleteById(ID id);
     public E update(E request, ID id);
 }

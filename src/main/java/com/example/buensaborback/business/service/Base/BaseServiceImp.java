@@ -35,14 +35,28 @@ public abstract class BaseServiceImp<E extends Base,ID extends Serializable> imp
     }
 
     @Override
-    public Page<E> getAll(Pageable pageable){
+    public List<E> getAll(){
+        var entities = baseRepository.findAll();
+        //logger.info("Obtenidas entidades {}",entities);
+        return entities;
+    }
+
+    @Override
+    public Page<E> getAllPaged(Pageable pageable){
         var entities = baseRepository.findAll(pageable);
         //logger.info("Obtenidas entidades {}",entities);
         return entities;
     }
 
     @Override
-    public Page<E> getAllByBajaFalse(Pageable pageable){
+    public List<E> getAllByBajaFalse(){
+        var entities = baseRepository.findAllByBajaFalse();
+        //logger.info("Obtenidas entidades {}",entities);
+        return entities;
+    }
+
+    @Override
+    public Page<E> getAllPagedByBajaFalse(Pageable pageable){
         var entities = baseRepository.findAllByBajaFalse(pageable);
         //logger.info("Obtenidas entidades {}",entities);
         return entities;
