@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.NotAudited;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -22,7 +23,7 @@ public class Persona extends Base {
     private String nombre;
     private String apellido;
     private String telefono;
-    private LocalTime fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
     @OneToOne
     private Usuario usuario;
