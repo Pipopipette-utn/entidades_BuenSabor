@@ -20,6 +20,7 @@ import java.util.Set;
 //@Audited
 public class Categoria extends Base{
     private String denominacion;
+    private boolean esIsumo;
 
 
     @ManyToMany(mappedBy = "categorias")
