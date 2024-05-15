@@ -5,6 +5,8 @@ import com.example.buensaborback.domain.entities.Base;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -18,34 +20,30 @@ public interface BaseRepository <E extends Base, ID extends Serializable> extend
     @Override
     @Transactional
     default void delete(E entity) {
-        logger.info("EJECUTANDO DELETE SOBREESCRITO");
+        //logger.info("EJECUTANDO DELETE SOBREESCRITO");
         entity.setBaja(true);
         save(entity);
     }
 
     @Override
     default E getById(ID id){
-        logger.info("EJECUTANDO GEY BY ID SOBREESCRITO");
+        //logger.info("EJECUTANDO GEY BY ID SOBREESCRITO");
         var optionalEntity = findById(id);
 
         if (optionalEntity.isEmpty()){
             String errMsg = "La entidad con el id " + id + " se encuentra borrada logicamente";
-            logger.error(errMsg);
+            //logger.error(errMsg);
             throw new RuntimeException(errMsg);
         }
 
         var entity = optionalEntity.get();
         if(entity.isBaja()){
             String errMsg = "La entidad del tipo " + entity.getClass().getSimpleName() + " con el id " + id + " se encuentra borrada logicamente";
-            logger.error(errMsg);
+            //logger.error(errMsg);
             throw new RuntimeException(errMsg);
         }
         return entity;
     }
 
-    default List<E> getAll(){
-        logger.info("EJECUTANDO GET ALL PERSONALIZADO");
-        var entities = findAll().stream().filter(e -> !e.isBaja()).toList();
-        return entities;
-    }
+    Page<E> findAllByBajaFalse(Pageable pageable);
 }

@@ -5,6 +5,8 @@ import com.example.buensaborback.repositories.BaseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -21,21 +23,28 @@ public abstract class BaseServiceImp<E extends Base,ID extends Serializable> imp
     @Override
     public E create(E request){
         var newEntity = baseRepository.save(request);
-        logger.info("Creada entidad {}",newEntity);
+        //logger.info("Creada entidad {}",newEntity);
         return newEntity;
     }
 
     @Override
     public E getById(ID id){
         var entity = baseRepository.getById(id);
-        logger.info("Obtenida entidad {}",entity);
+        //logger.info("Obtenida entidad {}",entity);
         return entity;
     }
 
     @Override
-    public List<E> getAll(){
-        var entities = baseRepository.getAll();
-        logger.info("Obtenidas entidades {}",entities);
+    public Page<E> getAll(Pageable pageable){
+        var entities = baseRepository.findAll(pageable);
+        //logger.info("Obtenidas entidades {}",entities);
+        return entities;
+    }
+
+    @Override
+    public Page<E> getAllByBajaFalse(Pageable pageable){
+        var entities = baseRepository.findAllByBajaFalse(pageable);
+        //logger.info("Obtenidas entidades {}",entities);
         return entities;
     }
 
@@ -43,18 +52,18 @@ public abstract class BaseServiceImp<E extends Base,ID extends Serializable> imp
     public void deleteById(ID id){
         var entity = getById(id);
         baseRepository.delete(entity);
-        logger.info("Borrada logicamente entidad {}",entity);
+        //logger.info("Borrada logicamente entidad {}",entity);
     }
 
     @Override
     public E update(E request, ID id){
         var optionalEntity = baseRepository.findById((ID) request.getId());
         if (optionalEntity.isEmpty()){
-            logger.error("No se encontro una entidad con el id " + request.getId());
+            //logger.error("No se encontro una entidad con el id " + request.getId());
             throw new RuntimeException("No se encontro una entidad con el id " + request.getId());
         }
         var newEntity = baseRepository.save(request);
-        logger.info("Actualizada entidad {}",newEntity);
+        //logger.info("Actualizada entidad {}",newEntity);
         return newEntity;
     }
 }
