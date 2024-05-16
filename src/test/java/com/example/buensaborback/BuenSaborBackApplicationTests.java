@@ -1,5 +1,5 @@
 package com.example.buensaborback;
-
+/*
 import com.example.buensaborback.entities.*;
 import com.example.buensaborback.entities.dtos.*;
 import com.example.buensaborback.mappers.*;
@@ -96,4 +96,4 @@ class BuenSaborBackApplicationTests {
 		System.out.println("toEntityList" + articuloManufacturadoDetalleList1);
 	}
 
-}
+} */

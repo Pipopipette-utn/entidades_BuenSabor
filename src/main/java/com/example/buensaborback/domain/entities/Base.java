@@ -21,6 +21,8 @@ public abstract class Base implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
-    protected boolean baja;
+
+    @Builder.Default
+    protected boolean baja = false;
 }
 

@@ -9,9 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ProvinciaDto extends BaseDto {
-
-    private String nombre;
-    private PaisDto pais;
-
+public class ArticuloInsumoDto extends ArticuloDto {
+    private Double precioCompra;
+    private Integer stockActual;
+    private Integer stockMaximo;
+    private Boolean esParaElaborar;
 }

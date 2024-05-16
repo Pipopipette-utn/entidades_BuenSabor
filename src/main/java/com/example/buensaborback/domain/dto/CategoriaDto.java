@@ -1,4 +1,4 @@
 package com.example.buensaborback.domain.dto;
 
-public class CategoriaDto {
+public class CategoriaDto extends BaseDto {
 }

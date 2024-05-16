@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.NotAudited;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Entity
 @NoArgsConstructor

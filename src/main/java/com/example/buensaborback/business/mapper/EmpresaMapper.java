@@ -8,8 +8,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface EmpresaMapper extends BaseMapper<Empresa, EmpresaDto> {
-
-
     EmpresaLargeDto toLargeDto(Empresa empresa);
 
 
