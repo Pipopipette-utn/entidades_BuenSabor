@@ -29,6 +29,18 @@ public abstract class BaseServiceImpl<E extends Base, Id extends Serializable> i
 
     @Override
     @Transactional
+    public List<E> findAllActive() throws Exception {
+        try{
+            List<E> entities = baseRepository.findAllByBajaFalse();
+            if(entities.isEmpty()) throw new Exception("Aún no se han cargado registros");
+            return entities;
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
     public List<E> findAll() throws Exception {
         try{
             List<E> entities = baseRepository.findAll();

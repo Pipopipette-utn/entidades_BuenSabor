@@ -10,6 +10,7 @@ import java.util.List;
 public interface IBaseService<E extends Base, Id extends Serializable> {
     Page<E> findAll(Pageable pageable) throws Exception;
     List<E> findAll() throws Exception;
+    List<E> findAllActive() throws Exception;
     E findById(Id id) throws Exception;
     E save(E entity) throws Exception;
     E update(Id id, E entity) throws Exception;

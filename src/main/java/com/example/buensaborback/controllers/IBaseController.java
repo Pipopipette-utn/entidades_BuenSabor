@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 public interface IBaseController <E extends Base, Id extends Serializable> {
     ResponseEntity<?> findAll();
+    ResponseEntity<?> findAllActive();
 
     ResponseEntity<?> findAll(Pageable pageable);
 

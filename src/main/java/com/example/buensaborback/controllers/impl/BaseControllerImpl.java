@@ -15,6 +15,19 @@ public abstract class BaseControllerImpl <E extends Base, baseService extends Ba
         this.servicio = servicio;
     }
 
+    @GetMapping("/active")
+    public ResponseEntity<?> findAllActive(){
+        try{
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(servicio.findAllActive());
+        }catch (Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\":\""+ e.getMessage() + "\"}");
+        }
+    }
+
     @GetMapping("")
     public ResponseEntity<?> findAll(){
         try{
