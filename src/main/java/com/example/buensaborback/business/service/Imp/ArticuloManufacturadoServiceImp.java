@@ -2,8 +2,12 @@ package com.example.buensaborback.business.service.Imp;
 
 import com.example.buensaborback.business.service.ArticuloManufacturadoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
+import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.ArticuloManufacturado;
+import com.example.buensaborback.domain.entities.ArticuloManufacturadoDetalle;
 import com.example.buensaborback.domain.entities.ImagenArticulo;
+import com.example.buensaborback.repositories.ArticuloInsumoRepository;
+import com.example.buensaborback.repositories.ArticuloManufacturadoDetalleRepository;
 import com.example.buensaborback.repositories.ArticuloManufacturadoRepository;
 import com.example.buensaborback.repositories.ImagenArticuloRepository;
 import jakarta.transaction.Transactional;
@@ -23,8 +27,11 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
     @Autowired
     ImagenArticuloRepository imagenArticuloRepository;
 
-    public ArticuloManufacturadoServiceImp() {
-    }
+    @Autowired
+    ArticuloManufacturadoDetalleRepository articuloManufacturadoDetalleRepository;
+
+    @Autowired
+    ArticuloInsumoRepository articuloInsumoRepository;
 
     @Override
     @Transactional
@@ -46,16 +53,32 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
             request.setImagenes(imagenesPersistidas);
         }
 
+        Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
+        Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
+
+        if (detalles != null && !detalles.isEmpty()) {
+            for (ArticuloManufacturadoDetalle detalle : detalles) {
+                ArticuloInsumo insumo = detalle.getArticuloInsumo();
+                if (insumo == null || insumo.getId() == null) {
+                    throw new RuntimeException("El insumo del detalle no puede ser nulo");
+                }
+                 insumo = articuloInsumoRepository.findById(detalle.getArticuloInsumo().getId())
+                        .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticuloInsumo().getId() + " no se ha encontrado"));
+                detalle.setArticuloInsumo(insumo);
+                ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
+                detallesPersistidos.add(savedDetalle);
+            }
+            request.setArticuloManufacturadoDetalles(detallesPersistidos);
+        }
+
         return articuloManufacturadoRepository.save(request);
     }
 
     @Override
     @Transactional
     public ArticuloManufacturado update(ArticuloManufacturado request, Long id) {
-        ArticuloManufacturado articulo = articuloManufacturadoRepository.getById(id);
-        if (articulo == null) {
-            throw new RuntimeException("Articulo manufacturado no encontrado: { id: " + id + " }");
-        }
+        ArticuloManufacturado articulo = articuloManufacturadoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("El articulo manufacturado con id " + id + " no se ha encontrado"));
 
         Set<ImagenArticulo> imagenes = request.getImagenes();
         Set<ImagenArticulo> imagenesPersistidas = new HashSet<>();
@@ -63,7 +86,8 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
         if (imagenes != null && !imagenes.isEmpty()) {
             for (ImagenArticulo imagen : imagenes) {
                 if (imagen.getId() != null) {
-                    ImagenArticulo imagenBd = imagenArticuloRepository.getById(imagen.getId());
+                    ImagenArticulo imagenBd = imagenArticuloRepository.findById(imagen.getId())
+                            .orElseThrow(() -> new RuntimeException("La imagen con id " + imagen.getId() + " no se ha encontrado"));
                     imagenesPersistidas.add(imagenBd);
                 } else {
                     ImagenArticulo savedImagen = imagenArticuloRepository.save(imagen);
@@ -75,6 +99,27 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
         if (!imagenesPersistidas.isEmpty()) {
             request.setImagenes(imagenesPersistidas);
+        }
+
+        Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
+        Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
+
+        if (detalles != null && !detalles.isEmpty()) {
+            for (ArticuloManufacturadoDetalle detalle : detalles) {
+                ArticuloInsumo insumo = detalle.getArticuloInsumo();
+                if (insumo == null || insumo.getId() == null) {
+                    throw new RuntimeException("El insumo del detalle no puede ser nulo");
+                }
+                 insumo = articuloInsumoRepository.findById(detalle.getArticuloInsumo().getId())
+                        .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticuloInsumo().getId() + " no se ha encontrado"));
+                ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
+                detallesPersistidos.add(savedDetalle);
+            }
+            articulo.setArticuloManufacturadoDetalles(detallesPersistidos);
+        }
+
+        if (!detallesPersistidos.isEmpty()) {
+            request.setArticuloManufacturadoDetalles(detallesPersistidos);
         }
 
         return articuloManufacturadoRepository.save(request);
