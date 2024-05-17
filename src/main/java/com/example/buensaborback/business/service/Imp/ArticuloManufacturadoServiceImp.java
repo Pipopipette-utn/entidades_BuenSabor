@@ -33,14 +33,11 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
         Set<ImagenArticulo> imagenesPersistidas = new HashSet<>();
 
         if (!imagenes.isEmpty()) {
-            System.out.println("Entro al if");
             for (ImagenArticulo imagen : imagenes) {
-                System.out.println("imagen: " + imagen);
                 if (imagen.getId() != null) {
                     Optional<ImagenArticulo> imagenBd = imagenArticuloRepository.findById(imagen.getId());
                     imagenBd.ifPresent(imagenesPersistidas::add);
                 } else {
-                    System.out.println("no tiene id: " + imagen);
                     imagen.setBaja(false);
                     ImagenArticulo savedImagen = imagenArticuloRepository.save(imagen);
                     imagenesPersistidas.add(savedImagen);
