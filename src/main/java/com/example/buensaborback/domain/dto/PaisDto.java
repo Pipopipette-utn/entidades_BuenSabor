@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PaisDto extends BaseDto{
+public class PaisDto extends BaseDto {
     private Long id;
     private String nombre;
 }

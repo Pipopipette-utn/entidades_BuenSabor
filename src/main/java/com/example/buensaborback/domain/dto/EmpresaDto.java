@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class EmpresaDto extends BaseDto{
+public class EmpresaDto extends BaseDto {
 
     private String nombre;
     private String razonSocial;

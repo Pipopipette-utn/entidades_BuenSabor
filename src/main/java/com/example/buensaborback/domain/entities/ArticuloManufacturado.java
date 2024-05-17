@@ -15,8 +15,8 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
-@SuperBuilder
 //@Audited
+@SuperBuilder
 public class ArticuloManufacturado  extends Articulo{
 
     private String descripcion;

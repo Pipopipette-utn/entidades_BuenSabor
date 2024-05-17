@@ -11,8 +11,8 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @ToString
 @Entity
-@SuperBuilder
 //@Audited
+@SuperBuilder
 public class ArticuloManufacturadoDetalle extends Base{
     private Integer cantidad;
 

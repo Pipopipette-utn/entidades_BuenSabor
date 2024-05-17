@@ -9,9 +9,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ProvinciaDto extends BaseDto {
-
-    private String nombre;
-    private PaisDto pais;
-
+public class ImagenPersonaDto extends BaseDto {
+    private String url;
 }

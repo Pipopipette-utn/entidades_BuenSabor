@@ -11,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-public class EmpresaLargeDto extends BaseDto{
+public class EmpresaLargeDto extends BaseDto {
     private String nombre;
     private String razonSocial;
     private Long cuil;

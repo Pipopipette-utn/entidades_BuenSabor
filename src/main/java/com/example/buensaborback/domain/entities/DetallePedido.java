@@ -11,8 +11,8 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @Getter
 @ToString
-@SuperBuilder
 //@Audited
+@SuperBuilder
 public class DetallePedido extends Base{
     private Integer cantidad;
     private Double subTotal;
