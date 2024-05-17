@@ -37,7 +37,7 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
         }
         var empresa = empresaRepository.findById(sucursal.getEmpresa().getId());
         if(empresa.isEmpty()){
-            throw new RuntimeException("No se puede guardar el empresa");
+            throw new RuntimeException("Empresa no encontrada");
         }
 
         return sucursalRepository.save(sucursal);
@@ -47,7 +47,7 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
     public Sucursal actualizarSucursal(Long id,Sucursal sucursal) {
         var sucursalActualizar = sucursalRepository.findById(sucursal.getId());
         if(sucursalActualizar.isEmpty()){
-            throw new RuntimeException("No se puede actualizar el sucursal");
+            throw new RuntimeException("Sucursal no encontrada: { id: " + id + " }");
         }
         var domicilio = domicilioRepository.findById(sucursal.getDomicilio().getId());
         domicilioRepository.save(sucursal.getDomicilio());

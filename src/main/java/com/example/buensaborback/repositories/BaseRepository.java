@@ -31,17 +31,17 @@ public interface BaseRepository <E extends Base, ID extends Serializable> extend
         var optionalEntity = findById(id);
 
         if (optionalEntity.isEmpty()){
-            String errMsg = "La entidad con el id " + id + " se encuentra borrada logicamente";
+            String errMsg = "Entidad no encontrada { id: " + id + " }";
             //logger.error(errMsg);
             throw new RuntimeException(errMsg);
         }
 
         var entity = optionalEntity.get();
-        if(entity.isBaja()){
+        /*if(entity.isBaja()){
             String errMsg = "La entidad del tipo " + entity.getClass().getSimpleName() + " con el id " + id + " se encuentra borrada logicamente";
             //logger.error(errMsg);
             throw new RuntimeException(errMsg);
-        }
+        }*/
         return entity;
     }
 
