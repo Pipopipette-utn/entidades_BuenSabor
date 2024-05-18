@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SucursalFacadeImp extends BaseFacadeImp<Sucursal, SucursalDto,Long> implements Sucursalfacade {
+public class SucursalFacadeImp extends BaseFacadeImp<Sucursal, SucursalDto, SucursalDto, Long> implements Sucursalfacade {
     private static final Logger logger = LoggerFactory.getLogger(BaseServiceImp.class);
     @Autowired
     SucursalService sucursalService;
-    public SucursalFacadeImp(BaseService<Sucursal, Long> baseService, BaseMapper<Sucursal, SucursalDto> baseMapper) {
+    public SucursalFacadeImp(BaseService<Sucursal, Long> baseService, BaseMapper<Sucursal, SucursalDto, SucursalDto> baseMapper) {
         super(baseService, baseMapper);
     }
 

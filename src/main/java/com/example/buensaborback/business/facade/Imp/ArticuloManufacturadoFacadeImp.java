@@ -12,8 +12,8 @@ import com.example.buensaborback.domain.entities.Empleado;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ArticuloManufacturadoFacadeImp extends BaseFacadeImp<ArticuloManufacturado, ArticuloManufacturadoDto, Long> implements ArticuloManufacturadoFacade {
-    public ArticuloManufacturadoFacadeImp(BaseService<ArticuloManufacturado, Long> baseService, BaseMapper<ArticuloManufacturado, ArticuloManufacturadoDto> baseMapper) {
+public class ArticuloManufacturadoFacadeImp extends BaseFacadeImp<ArticuloManufacturado, ArticuloManufacturadoDto,ArticuloManufacturadoDto, Long> implements ArticuloManufacturadoFacade {
+    public ArticuloManufacturadoFacadeImp(BaseService<ArticuloManufacturado, Long> baseService, BaseMapper<ArticuloManufacturado, ArticuloManufacturadoDto, ArticuloManufacturadoDto> baseMapper) {
         super(baseService, baseMapper);
     }
 }

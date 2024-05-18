@@ -7,6 +7,6 @@ import com.example.buensaborback.domain.entities.Pais;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface ImagenPersonaMapper extends BaseMapper<ImagenPersona, ImagenPersonaDto>{
+public interface ImagenPersonaMapper extends BaseMapper<ImagenPersona, ImagenPersonaDto, ImagenPersonaDto>{
 
 }

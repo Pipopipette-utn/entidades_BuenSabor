@@ -6,5 +6,5 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {UsuarioMapper.class})
-public interface PersonaMapper extends BaseMapper<Persona, PersonaDto>{
+public interface PersonaMapper extends BaseMapper<Persona, PersonaDto, PersonaDto>{
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/empleados")
 @CrossOrigin("*")
-public class EmpleadoController extends BaseControllerImp<Empleado, EmpleadoDto,Long, EmpleadoFacadeImp> {
+public class EmpleadoController extends BaseControllerImp<Empleado, EmpleadoDto,EmpleadoDto,Long, EmpleadoFacadeImp> {
     public EmpleadoController(EmpleadoFacadeImp facade) {
         super(facade);
     }

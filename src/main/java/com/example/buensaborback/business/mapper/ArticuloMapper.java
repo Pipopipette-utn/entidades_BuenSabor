@@ -7,6 +7,6 @@ import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {ImagenArticuloMapper.class})
-public interface ArticuloMapper extends BaseMapper<Articulo, ArticuloDto>{
+public interface ArticuloMapper extends BaseMapper<Articulo, ArticuloDto, ArticuloDto>{
 
 }

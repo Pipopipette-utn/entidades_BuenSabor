@@ -5,6 +5,6 @@ import com.example.buensaborback.domain.entities.UnidadMedida;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface UnidadMedidaMapper extends BaseMapper<UnidadMedida, UnidadMedidaDto>{
+public interface UnidadMedidaMapper extends BaseMapper<UnidadMedida, UnidadMedidaDto, UnidadMedidaDto>{
 
 }
