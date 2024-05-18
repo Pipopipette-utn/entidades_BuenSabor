@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/sucursal")
+@RequestMapping("/sucursales")
 @CrossOrigin("*")
 public class SucursalController extends BaseControllerImp<Sucursal, SucursalDto,Long, SucursalFacadeImp> {
     private static final Logger logger = LoggerFactory.getLogger(BaseServiceImp.class);

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/localidad")
+@RequestMapping("/localidades")
 @CrossOrigin("*")
 public class LocalidadController extends BaseControllerImp<Localidad, LocalidadDto, Long, LocalidadFacadeImp> {
 

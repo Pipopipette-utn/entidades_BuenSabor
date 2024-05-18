@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/pais")
+@RequestMapping("/paises")
 @CrossOrigin("*")
 public class PaisController extends BaseControllerImp<Pais, PaisDto,Long, PaisFacadeImp> {
 
