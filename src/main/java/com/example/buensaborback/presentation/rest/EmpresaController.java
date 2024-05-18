@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/empresa")
+@RequestMapping("/empresas")
 @CrossOrigin("*")
 public class EmpresaController extends BaseControllerImp<Empresa, EmpresaDto,EmpresaDto, Long, EmpresaFacadeImpl> {
     public EmpresaController(EmpresaFacadeImpl facade) {
