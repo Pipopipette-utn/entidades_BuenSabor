@@ -10,6 +10,8 @@ import com.example.buensaborback.repositories.ArticuloManufacturadoDetalleReposi
 import com.example.buensaborback.repositories.ImagenArticuloRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -97,4 +99,13 @@ public class ArticuloImsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
         articuloInsumoRepository.deleteById(id);
     }
 
+    @Override
+    public Page<ArticuloInsumo> findByEsParaElaborarTrue(Pageable pageable) {
+        return articuloInsumoRepository.findByEsParaElaborarTrue(pageable);
+    }
+
+    @Override
+    public Page<ArticuloInsumo> findByEsParaElaborarFalse(Pageable pageable) {
+        return articuloInsumoRepository.findByEsParaElaborarFalse(pageable);
+    }
 }
