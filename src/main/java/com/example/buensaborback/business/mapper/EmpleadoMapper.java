@@ -9,6 +9,6 @@ import com.example.buensaborback.domain.entities.Empresa;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface EmpleadoMapper extends BaseMapper<Empleado, EmpleadoDto> {
+public interface EmpleadoMapper extends BaseMapper<Empleado, EmpleadoDto, EmpleadoDto> {
 
 }

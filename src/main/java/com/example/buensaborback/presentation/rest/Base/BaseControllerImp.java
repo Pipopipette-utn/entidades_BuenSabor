@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Controller
-public abstract class BaseControllerImp <E extends Base,D extends BaseDto, ID extends Serializable, F extends BaseFacadeImp<E,D,ID>> implements BaseController<D,ID> {
+public abstract class BaseControllerImp <E extends Base,D extends BaseDto, GD extends BaseDto, ID extends Serializable, F extends BaseFacadeImp<E,D,GD,ID>> implements BaseController<D,GD, ID> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseControllerImp.class);
     protected F facade;
@@ -24,43 +24,43 @@ public abstract class BaseControllerImp <E extends Base,D extends BaseDto, ID ex
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<D> getById(@PathVariable ID id){
+    public ResponseEntity<GD> getById(@PathVariable ID id){
         //logger.info("INICIO GET BY ID {}",id);
         return ResponseEntity.ok(facade.getById(id));
     }
 
     @GetMapping("/paged/includeDeleted")
-    public ResponseEntity<Page<D>> getAllPaged(Pageable pageable) {
+    public ResponseEntity<Page<GD>> getAllPaged(Pageable pageable) {
         //logger.info("INICIO GET ALL INCLUYENDO ELIMINADOS LÓGICOS");
         return ResponseEntity.ok(facade.getAllPaged(pageable));
     }
 
     @GetMapping("/includeDeleted")
-    public ResponseEntity<List<D>> getAll() {
+    public ResponseEntity<List<GD>> getAll() {
         //logger.info("INICIO GET ALL INCLUYENDO ELIMINADOS LÓGICOS");
         return ResponseEntity.ok(facade.getAll());
     }
 
     @GetMapping()
-    public ResponseEntity<List<D>> getAllByBajaFalse() {
+    public ResponseEntity<List<GD>> getAllByBajaFalse() {
         //logger.info("INICIO GET ALL EXCLUYENDO ELIMINADOS LÓGICOS");
         return ResponseEntity.ok(facade.getAllByBajaFalse());
     }
 
     @GetMapping("/paged")
-    public ResponseEntity<Page<D>> getAllByBajaFalse(Pageable pageable) {
+    public ResponseEntity<Page<GD>> getAllByBajaFalse(Pageable pageable) {
         //logger.info("INICIO GET ALL EXCLUYENDO ELIMINADOS LÓGICOS");
         return ResponseEntity.ok(facade.getAllPagedByBajaFalse(pageable));
     }
 
     @PostMapping()
-    public ResponseEntity<D> create(@RequestBody D entity){
+    public ResponseEntity<GD> create(@RequestBody D entity){
         //logger.info("INICIO CREATE {}",entity.getClass());
         return ResponseEntity.ok(facade.createNew(entity));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<D> edit(@RequestBody D entity, @PathVariable ID id){
+    public ResponseEntity<GD> edit(@RequestBody D entity, @PathVariable ID id){
         //logger.info("INICIO EDIT {}",entity.getClass());
         return ResponseEntity.ok(facade.update(entity, id));
     }

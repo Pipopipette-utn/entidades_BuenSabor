@@ -7,11 +7,11 @@ import org.springframework.data.domain.Pageable;
 import java.io.Serializable;
 import java.util.List;
 
-public interface BaseFacade <D extends BaseDto, ID extends Serializable>{
-    public D createNew(D request);
-    public D getById(Long id);
-    public List<D> getAll();
-    public Page<D> getAllPaged(Pageable pageable);
+public interface BaseFacade <D extends BaseDto, GD extends BaseDto, ID extends Serializable>{
+    public GD createNew(D request);
+    public GD getById(Long id);
+    public List<GD> getAll();
+    public Page<GD> getAllPaged(Pageable pageable);
     public void deleteById(Long id);
-    public D update(D request, Long id);
+    public GD update(D request, Long id);
 }

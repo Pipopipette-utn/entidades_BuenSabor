@@ -5,6 +5,6 @@ import com.example.buensaborback.domain.entities.Provincia;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface ProvinciaMapper extends BaseMapper<Provincia,ProvinciaDto>{
+public interface ProvinciaMapper extends BaseMapper<Provincia,ProvinciaDto,ProvinciaDto>{
 
 }

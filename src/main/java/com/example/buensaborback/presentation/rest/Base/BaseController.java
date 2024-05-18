@@ -8,15 +8,15 @@ import org.springframework.http.ResponseEntity;
 import java.io.Serializable;
 import java.util.List;
 
-public interface BaseController <D extends BaseDto, ID extends Serializable> {
-    ResponseEntity<D> getById(ID id);
+public interface BaseController <D extends BaseDto, GD, ID extends Serializable> {
+    ResponseEntity<GD> getById(ID id);
 
-    ResponseEntity<List<D>> getAll();
-    ResponseEntity<Page<D>> getAllPaged(Pageable pageable);
+    ResponseEntity<List<GD>> getAll();
+    ResponseEntity<Page<GD>> getAllPaged(Pageable pageable);
 
-    ResponseEntity<D> create(D entity);
+    ResponseEntity<GD> create(D entity);
 
-    ResponseEntity<D> edit(D entity, ID id);
+    ResponseEntity<GD> edit(D entity, ID id);
 
     ResponseEntity<?> deleteById(ID id);
 }

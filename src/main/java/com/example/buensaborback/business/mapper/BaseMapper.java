@@ -8,8 +8,8 @@ import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.Base;
 import org.mapstruct.Mapping;
 
-public interface BaseMapper<E extends Base,D extends BaseDto>{
-    public D toDTO(E source);
+public interface BaseMapper<E extends Base,D extends BaseDto, GetDto extends BaseDto>{
+    public GetDto toDTO(E source);
     public E toEntity(D source);
     public List<D> toDTOsList(List<E> source);
 
