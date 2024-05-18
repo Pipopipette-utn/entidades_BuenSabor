@@ -1,9 +1,7 @@
 package com.example.buensaborback.domain.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -34,9 +32,12 @@ public class Categoria extends Base{
 
 
     @OneToMany
-    @JoinColumn(name = "categoria_id")
+    @JoinColumn(name = "subcategoria_id")
     @Builder.Default
     private Set<Categoria> subCategorias = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "categoria_padre_id")
+    private Categoria categoriaPadre;
 
 }
