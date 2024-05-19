@@ -2,14 +2,8 @@ package com.example.buensaborback.business.service.Imp;
 
 import com.example.buensaborback.business.service.ArticuloManufacturadoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
-import com.example.buensaborback.domain.entities.ArticuloInsumo;
-import com.example.buensaborback.domain.entities.ArticuloManufacturado;
-import com.example.buensaborback.domain.entities.ArticuloManufacturadoDetalle;
-import com.example.buensaborback.domain.entities.ImagenArticulo;
-import com.example.buensaborback.repositories.ArticuloInsumoRepository;
-import com.example.buensaborback.repositories.ArticuloManufacturadoDetalleRepository;
-import com.example.buensaborback.repositories.ArticuloManufacturadoRepository;
-import com.example.buensaborback.repositories.ImagenArticuloRepository;
+import com.example.buensaborback.domain.entities.*;
+import com.example.buensaborback.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +26,9 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
     @Autowired
     ArticuloInsumoRepository articuloInsumoRepository;
+
+    @Autowired
+    CategoriaRepository categoriaRepository;
 
     @Override
     @Transactional
@@ -69,6 +66,18 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
                 detallesPersistidos.add(savedDetalle);
             }
             request.setArticuloManufacturadoDetalles(detallesPersistidos);
+        }
+
+        if (request.getCategoria() != null) {
+            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
+            if (categoria == null ) {
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
+            }
+            if (categoria.isEsInsumo()) {
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos manufacturados");
+            }
+
+            request.setCategoria(categoria);
         }
 
         return articuloManufacturadoRepository.save(request);
@@ -120,6 +129,18 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
         if (!detallesPersistidos.isEmpty()) {
             request.setArticuloManufacturadoDetalles(detallesPersistidos);
+        }
+
+        if (request.getCategoria() != null) {
+            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
+            if (categoria == null ) {
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
+            }
+            if (categoria.isEsInsumo()) {
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos manufacturados");
+            }
+
+            request.setCategoria(categoria);
         }
 
         return articuloManufacturadoRepository.save(request);
