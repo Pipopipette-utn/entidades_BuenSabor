@@ -1,5 +1,6 @@
 package com.example.buensaborback.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -32,6 +33,11 @@ public class Articulo extends Base {
 
     @ManyToOne
     protected UnidadMedida unidadMedida;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    @JsonIgnoreProperties("articulos")
+    private Categoria categoria;
 
 
 }

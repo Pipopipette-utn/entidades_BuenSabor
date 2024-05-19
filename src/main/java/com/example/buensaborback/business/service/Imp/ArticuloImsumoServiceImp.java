@@ -4,9 +4,11 @@ import com.example.buensaborback.business.service.ArticuloInsumoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.ArticuloManufacturadoDetalle;
+import com.example.buensaborback.domain.entities.Categoria;
 import com.example.buensaborback.domain.entities.ImagenArticulo;
 import com.example.buensaborback.repositories.ArticuloInsumoRepository;
 import com.example.buensaborback.repositories.ArticuloManufacturadoDetalleRepository;
+import com.example.buensaborback.repositories.CategoriaRepository;
 import com.example.buensaborback.repositories.ImagenArticuloRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class ArticuloImsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
     @Autowired
     ArticuloManufacturadoDetalleRepository articuloManufacturadoDetalleRepository;
 
+    @Autowired
+    CategoriaRepository categoriaRepository;
+
     @Override
     @Transactional
     public ArticuloInsumo create(ArticuloInsumo request) {
@@ -51,6 +56,18 @@ public class ArticuloImsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
                 }
             }
             request.setImagenes(imagenesPersistidas);
+        }
+
+        if (request.getCategoria() != null) {
+            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
+            if (categoria == null ) {
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
+            }
+            if (!categoria.isEsInsumo()) {
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
+            }
+
+            request.setCategoria(categoria);
         }
 
         return articuloInsumoRepository.save(request);
@@ -81,6 +98,18 @@ public class ArticuloImsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
 
         if (!imagenesPersistidas.isEmpty()) {
             request.setImagenes(imagenesPersistidas);
+        }
+
+        if (request.getCategoria() != null) {
+            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
+            if (categoria == null ) {
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
+            }
+            if (!categoria.isEsInsumo()) {
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
+            }
+
+            request.setCategoria(categoria);
         }
 
         return articuloInsumoRepository.save(request);
