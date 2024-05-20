@@ -1,9 +1,12 @@
 package com.example.buensaborback.presentation.rest;
 
-import com.entidades.buenSabor.business.service.ImageService;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import com.example.buensaborback.business.service.ImagenArticuloService;
+import com.example.buensaborback.domain.dto.ImagenArticuloDto;
+import com.example.buensaborback.domain.entities.ImagenArticulo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,12 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping({"/images"})
 @CrossOrigin({"*"})
-public class ImageController {
+public class ImageController  {
     @Autowired
-    private ImageService imageService;
+    private ImagenArticuloService imageService;
 
-    public ImageController() {
-    }
 
     @PostMapping({"/uploads"})
     public ResponseEntity<String> uploadImages(@RequestParam(value = "uploads",required = true) MultipartFile[] files) {
@@ -35,10 +36,10 @@ public class ImageController {
     }
 
     @PostMapping({"/deleteImg"})
-    public ResponseEntity<String> deleteById(@RequestParam(value = "publicId",required = true) String publicId, @RequestParam(value = "uuid",required = true) String uuidString) {
+    public ResponseEntity<String> deleteById(@RequestParam(value = "publicId",required = true) String publicId, @RequestParam(value = "id",required = true) String idString) {
         try {
-            UUID uuid = UUID.fromString(uuidString);
-            return this.imageService.deleteImage(publicId, uuid);
+            Long id = Long.parseLong(idString,16);
+            return this.imageService.deleteImage(publicId, id);
         } catch (IllegalArgumentException var4) {
             var4.printStackTrace();
             return ResponseEntity.badRequest().body("Invalid UUID format");
@@ -49,7 +50,7 @@ public class ImageController {
     }
 
     @GetMapping({"/getImages"})
-    public ResponseEntity<List<Map<String, Object>>> getAll() {
+    public List<ImagenArticulo> getAll() {
         try {
             return this.imageService.getAllImages();
         } catch (Exception var2) {
