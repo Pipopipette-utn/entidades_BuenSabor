@@ -35,7 +35,6 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
             List<ImagenArticulo> entities = imagenArticuloRepository.findAll();
             List<ImagenArticuloDto> imageDtos = new ArrayList<>();
 
-
             // Mapea las entidades a DTOs
             List<ImagenArticuloDto> dtos = entities.stream()
                     .map(imagenArticuloMapper::toDTO)
