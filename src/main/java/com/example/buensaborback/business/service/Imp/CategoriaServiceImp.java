@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,25 +37,27 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
 
     @Override
     public Categoria create(Categoria categoria) {
-        System.out.println("entre");
         mapearSubcategorias(categoria);
-        System.out.println(categoria.getSucursales());
+        Set<Sucursal> sucursalesNuevas = new HashSet<>();
+
         if (categoria.getSucursales() != null && !categoria.getSucursales().isEmpty()) {
-            Set<Sucursal> sucursales = categoria.getSucursales();
-            System.out.println("buscando sucursales");
-            for (Sucursal sucursal : sucursales) {
-                System.out.println(sucursal);
-                Sucursal sucursalBD = sucursalService.getById(sucursal.getId());
-                if (sucursalBD == null) {
+            for (Sucursal sucursal : categoria.getSucursales()) {
+                Sucursal sucursalBd = sucursalService.getById(sucursal.getId());
+                if (sucursalBd == null) {
                     throw new RuntimeException("La sucursal con el id " + sucursal.getId() + " no existe.");
                 }
-                sucursal.getCategorias().add(categoria);
-                sucursalService.update(sucursal, sucursal.getId());
+                sucursalesNuevas.add(sucursalBd);
             }
         }
+
+        // Establecer la nueva colección de sucursales en la categoría
+        categoria.setSucursales(sucursalesNuevas);
+
+        // Mapear subcategorías y guardar la categoría
         mapearSubcategorias(categoria);
         return categoriaRepository.save(categoria);
     }
+
 
     private void mapearSubcategorias(Categoria categoria){
         if (!categoria.getSubCategorias().isEmpty()){
