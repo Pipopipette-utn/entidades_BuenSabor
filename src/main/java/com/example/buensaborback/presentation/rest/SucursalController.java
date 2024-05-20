@@ -3,7 +3,7 @@ package com.example.buensaborback.presentation.rest;
 
 import com.example.buensaborback.business.facade.Imp.SucursalFacadeImp;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
-import com.example.buensaborback.domain.dto.SucursalDto;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalDto;
 import com.example.buensaborback.domain.entities.Sucursal;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
 import org.slf4j.Logger;

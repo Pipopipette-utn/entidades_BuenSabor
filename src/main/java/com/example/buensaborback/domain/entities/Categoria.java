@@ -20,8 +20,7 @@ public class Categoria extends Base{
     private String denominacion;
     private boolean esInsumo;
 
-
-    @ManyToMany(mappedBy = "categorias")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "categorias")
     @Builder.Default
     private Set<Sucursal> sucursales = new HashSet<>();
 
