@@ -62,7 +62,7 @@ public abstract class BaseFacadeImp<E extends Base,D extends BaseDto, GD extends
 
     public List<GD> getAllByBajaFalse(){
         // trae una lista de entidades
-        var entities = baseService.getAll();
+        var entities = baseService.getAllByBajaFalse();
         //  devuelve una lista de DTO
         return entities
                 .stream()
