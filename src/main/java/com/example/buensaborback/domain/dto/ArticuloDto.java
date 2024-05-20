@@ -1,5 +1,7 @@
 package com.example.buensaborback.domain.dto;
 
+import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaDto;
+import com.example.buensaborback.domain.entities.Categoria;
 import lombok.*;
 
 import java.util.HashSet;
@@ -14,5 +16,5 @@ public class ArticuloDto extends BaseDto {
     protected Double precioVenta;
     protected Set<ImagenArticuloDto> imagenes = new HashSet<>();
     protected UnidadMedidaDto unidadMedida;
-    protected Long categoriaId;
+    protected CategoriaDto categoria;
 }

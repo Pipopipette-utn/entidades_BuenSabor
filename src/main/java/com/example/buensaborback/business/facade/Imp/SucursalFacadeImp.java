@@ -6,7 +6,7 @@ import com.example.buensaborback.business.mapper.BaseMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.SucursalService;
-import com.example.buensaborback.domain.dto.SucursalDto;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalDto;
 import com.example.buensaborback.domain.entities.Sucursal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
