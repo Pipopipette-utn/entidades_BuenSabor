@@ -1,110 +1,96 @@
 package com.example.buensaborback.business.service.Imp;
 
-import com.example.buensaborback.business.service.Base.BaseServiceImp;
+import com.example.buensaborback.business.mapper.ImagenArticuloMapper;
 import com.example.buensaborback.business.service.CloudinaryService;
 import com.example.buensaborback.business.service.ImagenArticuloService;
 import com.example.buensaborback.domain.dto.ImagenArticuloDto;
 import com.example.buensaborback.domain.entities.ImagenArticulo;
 import com.example.buensaborback.repositories.ImagenArticuloRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class ImagenArticuloServiceImpl extends BaseServiceImp<ImagenArticulo, Long> implements ImagenArticuloService {
-    @Autowired
-    private CloudinaryService cloudinaryService; // Servicio para interactuar con Cloudinary
-    @Autowired
-    private ImagenArticuloRepository imageRepository; // Repositorio para interactuar con la base de datos de imágenes
+public class ImagenArticuloServiceImpl implements ImagenArticuloService {
 
-    // Método para obtener todas las imágenes almacenadas
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private ImagenArticuloRepository imagenArticuloRepository;
+
+    @Autowired
+    private ImagenArticuloMapper imagenArticuloMapper;
+
     @Override
-    public List<ImagenArticuloDto> getAllImages() {
+    public ResponseEntity<List<ImagenArticuloDto>> getAllImages() {
         try {
-            // Consultar todas las imágenes desde la base de datos
-            List<ImagenArticulo> images = imageRepository.findAll();
-            List<ImagenArticuloDto> imageList = new ArrayList<>();
+            //List<ImagenArticulo> images = imagenArticuloRepository.findAll(); //Eliminar?
+            List<ImagenArticulo> entities = imagenArticuloRepository.findAll();
+            List<ImagenArticuloDto> imageDtos = new ArrayList<>();
 
-            // Mapear las entidades a DTOs
+
+            // Mapea las entidades a DTOs
+            List<ImagenArticuloDto> dtos = entities.stream()
+                    .map(imagenArticuloMapper::toDTO)
+                    .collect(Collectors.toList());
+            //ELIMINAR COMENTANDO?
+            /*
             for (ImagenArticulo image : images) {
-                ImagenArticuloDto dto = new ImagenArticuloDto();
-                dto.setId(image.getId());
-                dto.setName(image.getName());
-                dto.setUrl(image.getUrl());
-                imageList.add(dto);
+                imageDtos.add(imagenArticuloMapper.toDto(image));
             }
-
-            // Devolver la lista de DTOs
-            return imageList;
+*/
+            return new ResponseEntity<>(imageDtos, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            // En caso de error, devolver una lista vacía
-            return Collections.emptyList();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
-    // Método para subir imágenes a Cloudinary y guardar los detalles en la base de datos
     @Override
-    public String uploadImages(MultipartFile[] files) {
+    public ResponseEntity<String> uploadImages(MultipartFile[] files) {
         List<String> urls = new ArrayList<>();
 
         try {
-            // Iterar sobre cada archivo recibido
             for (MultipartFile file : files) {
-                // Verificar si el archivo está vacío
                 if (file.isEmpty()) {
-                    return "{\"status\":\"ERROR\", \"message\":\"Empty file detected\"}";
+                    return ResponseEntity.badRequest().body("File is empty");
                 }
 
-                // Crear una entidad Image y establecer su nombre y URL (subida a Cloudinary)
                 ImagenArticulo image = new ImagenArticulo();
-                image.setName(file.getOriginalFilename()); // Establecer el nombre del archivo original
-                image.setUrl(cloudinaryService.uploadFile(file)); // Subir el archivo a Cloudinary y obtener la URL
+                image.setName(file.getOriginalFilename());
+                image.setUrl(cloudinaryService.uploadFile(file));
 
-                // Verificar si la URL de la imagen es nula (indicativo de fallo en la subida)
                 if (image.getUrl() == null) {
-                    return "{\"status\":\"ERROR\", \"message\":\"Failed to upload image\"}";
+                    return ResponseEntity.badRequest().body("Failed to upload file");
                 }
 
-                // Guardar la entidad Image en la base de datos
-                imageRepository.save(image);
-
-                // Agregar la URL de la imagen a la lista de URLs subidas
+                imagenArticuloRepository.save(image);
                 urls.add(image.getUrl());
             }
 
-            // Convertir la lista de URLs a un objeto JSON y devolver como String
-            return "{\"status\":\"OK\", \"urls\":" + urls + "}";
-
+            return new ResponseEntity<>("Uploaded successfully: " + String.join(", ", urls), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            // Devolver un error en caso de excepción durante el proceso de subida
-            return "{\"status\":\"ERROR\", \"message\":\"" + e.getMessage() + "\"}";
+            return new ResponseEntity<>("An error occurred: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Método para eliminar una imagen por su identificador en la base de datos y en Cloudinary
     @Override
-    public String deleteImage(String publicId, Long idBd) {
+    public ResponseEntity<String> deleteImage(String publicId, Long id) {
         try {
-            // Eliminar la imagen de la base de datos usando su identificador
-            imageRepository.deleteById(idBd);
-
-            // Llamar al servicio de Cloudinary para eliminar la imagen por su publicId
-            boolean result = cloudinaryService.deleteImage(publicId, idBd).hasBody();   //Agregado .hasBody para evitar cambios mayores, si falla cambiar
-
-            if (result) {
-                return "{\"status\":\"OK\", \"message\":\"Image deleted successfully\"}";
-            } else {
-                return "{\"status\":\"ERROR\", \"message\":\"Failed to delete image from Cloudinary\"}";
-            }
+            imagenArticuloRepository.deleteById(id);
+            cloudinaryService.deleteImage(publicId, id);
+            return new ResponseEntity<>("Image deleted successfully", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            // Devolver un error en caso de excepción durante la eliminación
-            return "{\"status\":\"ERROR\", \"message\":\"" + e.getMessage() + "\"}";
+            return new ResponseEntity<>("An error occurred: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

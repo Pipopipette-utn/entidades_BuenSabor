@@ -1,10 +1,12 @@
 package com.example.buensaborback.business.facade;
 
-import com.example.buensaborback.business.facade.Base.BaseFacade;
-import com.example.buensaborback.business.service.ImagenArticuloService;
-import com.example.buensaborback.domain.dto.EmpresaDto;
 import com.example.buensaborback.domain.dto.ImagenArticuloDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
-public interface ImagenArticuloFacade extends BaseFacade<ImagenArticuloDto,ImagenArticuloDto, Long> {
+import java.util.List;
+
+public interface ImagenArticuloFacade {
+    List<ImagenArticuloDto> getAllImages();
+    String uploadImages(MultipartFile[] files);
+    String deleteImage(String publicId, Long id);
 }
