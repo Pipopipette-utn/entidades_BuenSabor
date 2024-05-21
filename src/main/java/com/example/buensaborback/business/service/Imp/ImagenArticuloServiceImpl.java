@@ -45,7 +45,7 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
                 imageDtos.add(imagenArticuloMapper.toDto(image));
             }
 */
-            return new ResponseEntity<>(imageDtos, HttpStatus.OK);
+            return new ResponseEntity<>(dtos, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
