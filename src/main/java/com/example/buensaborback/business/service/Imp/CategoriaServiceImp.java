@@ -46,9 +46,11 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                 if (sucursalBd == null) {
                     throw new RuntimeException("La sucursal con el id " + sucursal.getId() + " no existe.");
                 }
+                sucursalBd.getCategorias().add(categoria);
                 sucursalesNuevas.add(sucursalBd);
             }
         }
+
 
         // Establecer la nueva colección de sucursales en la categoría
         categoria.setSucursales(sucursalesNuevas);

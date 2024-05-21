@@ -2,6 +2,7 @@ package com.example.buensaborback.domain.dto.CategoriaDtos;
 
 import com.example.buensaborback.domain.dto.ArticuloDto;
 import com.example.buensaborback.domain.dto.BaseDto;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.Articulo;
 import com.example.buensaborback.domain.entities.Categoria;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.Set;
 public class CategoriaGetDto extends BaseDto {
     private String denominacion;
     private boolean esInsumo;
-    private Set<Long> sucursalIds;
+    private Set<SucursalShortDto> sucursales;
     private List<CategoriaDto> subCategorias;
     private CategoriaDto categoriaPadre;
     private Set<ArticuloDto> articulos = new HashSet<>();
