@@ -56,7 +56,9 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         categoria.setSucursales(sucursalesNuevas);
 
         // Mapear subcategorías y guardar la categoría
-        mapearSubcategorias(categoria);
+        if (categoria.getSubCategorias() != null) {
+            mapearSubcategorias(categoria);
+        }
         return categoriaRepository.save(categoria);
     }
 
