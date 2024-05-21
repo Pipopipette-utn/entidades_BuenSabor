@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -37,7 +38,10 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
 
     @Override
     public Categoria create(Categoria categoria) {
-        mapearSubcategorias(categoria);
+        // Mapear subcategorías y guardar la categoría
+        if (categoria.getSubCategorias() != null) {
+            mapearSubcategorias(categoria);
+        }
         Set<Sucursal> sucursalesNuevas = new HashSet<>();
 
         if (categoria.getSucursales() != null && !categoria.getSucursales().isEmpty()) {
@@ -46,6 +50,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                 if (sucursalBd == null) {
                     throw new RuntimeException("La sucursal con el id " + sucursal.getId() + " no existe.");
                 }
+                sucursalBd.getCategorias().add(categoria);
                 sucursalesNuevas.add(sucursalBd);
             }
         }
@@ -53,9 +58,43 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         // Establecer la nueva colección de sucursales en la categoría
         categoria.setSucursales(sucursalesNuevas);
 
-        // Mapear subcategorías y guardar la categoría
-        mapearSubcategorias(categoria);
         return categoriaRepository.save(categoria);
+    }
+
+    @Override
+    public Categoria update(Categoria newCategoria, Long id) {
+        // Obtener la categoría existente por su ID
+        Categoria categoriaExistente = categoriaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("La categoría con el ID " + id + " no existe."));
+
+        // Actualizar los campos relevantes de la categoría existente
+        categoriaExistente.setDenominacion(newCategoria.getDenominacion());
+        categoriaExistente.setEsInsumo(newCategoria.isEsInsumo());
+
+        // Actualizar las subcategorías (si es necesario)
+        if (newCategoria.getSubCategorias() != null && !newCategoria.getSubCategorias().isEmpty()) {
+            mapearSubcategorias(newCategoria);
+        }
+
+        categoriaExistente.setSubCategorias(newCategoria.getSubCategorias());
+
+        // Actualizar las sucursales (si es necesario)
+        Set<Sucursal> sucursalesNuevas = new HashSet<>();
+        if (newCategoria.getSucursales() != null && !newCategoria.getSucursales().isEmpty()) {
+            for (Sucursal sucursal : newCategoria.getSucursales()) {
+                Sucursal sucursalBd = sucursalService.getById(sucursal.getId());
+                if (sucursalBd == null) {
+                    throw new RuntimeException("La sucursal con el ID " + sucursal.getId() + " no existe.");
+                }
+                sucursalBd.getCategorias().add(categoriaExistente);
+                sucursalesNuevas.add(sucursalBd);
+            }
+        }
+
+        categoriaExistente.setSucursales(newCategoria.getSucursales());
+
+        // Guardar la categoría actualizada
+        return categoriaRepository.save(categoriaExistente);
     }
 
 
