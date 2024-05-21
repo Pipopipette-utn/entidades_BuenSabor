@@ -78,8 +78,19 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
 
         categoriaExistente.setSubCategorias(newCategoria.getSubCategorias());
 
+        // Obtener las sucursales eliminadas
+        Set<Sucursal> sucursalesEliminadas = new HashSet<>(categoriaExistente.getSucursales());
+        sucursalesEliminadas.removeAll(newCategoria.getSucursales());
+
+        // Eliminar la relación entre las sucursales eliminadas y la categoría existente
+        for (Sucursal sucursalEliminada : sucursalesEliminadas) {
+            sucursalEliminada.getCategorias().remove(categoriaExistente);
+        }
+
+        // Actualizar la colección de sucursales de la categoría existente
+        categoriaExistente.setSucursales(newCategoria.getSucursales());
+
         // Actualizar las sucursales (si es necesario)
-        Set<Sucursal> sucursalesNuevas = new HashSet<>();
         if (newCategoria.getSucursales() != null && !newCategoria.getSucursales().isEmpty()) {
             for (Sucursal sucursal : newCategoria.getSucursales()) {
                 Sucursal sucursalBd = sucursalService.getById(sucursal.getId());
@@ -87,10 +98,8 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                     throw new RuntimeException("La sucursal con el ID " + sucursal.getId() + " no existe.");
                 }
                 sucursalBd.getCategorias().add(categoriaExistente);
-                sucursalesNuevas.add(sucursalBd);
             }
         }
-
         categoriaExistente.setSucursales(newCategoria.getSucursales());
 
         // Guardar la categoría actualizada
