@@ -39,6 +39,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         return categoriaRepository.findByEsInsumoFalse(pageable);
     }
 
+
     @Override
     public Categoria create(Categoria categoria) {
         Set<Sucursal> sucursales = new HashSet<>();
@@ -52,6 +53,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                 sucursales.add(sucursalBd);
             }
         }
+        System.out.println(categoria.isEsInsumo());
 
         // Establecer la nueva colección de sucursales en la categoría
         categoria.setSucursales(sucursales);
@@ -95,26 +97,6 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
 
         eliminarSubcategorias(categoriaExistente, newCategoria, newSucursales);
 
-
-/*
-        // Obtener las sucursales eliminadas
-        Set<Sucursal> sucursalesEliminadas = new HashSet<>(categoriaExistente.getSucursales());
-        sucursalesEliminadas.removeAll(newCategoria.getSucursales());
-
-
-        // Eliminar la relación entre las sucursales eliminadas y las categorias eliminadas
-        for (Sucursal sucursalEliminada: sucursalesEliminadas){
-            sucursalEliminada.getCategorias().removeAll(subcategoriasEliminadas);
-        }
-        for (Categoria categoriaEliminada : subcategoriasEliminadas) {
-            categoriaEliminada.getSucursales().removeAll(sucursalesEliminadas);
-            categoriaRepository.save(categoriaExistente);
-        }
-
-        // Actualizar las subcategorías (si es necesario)
-
-        categoriaExistente.setSubCategorias(newCategoria.getSubCategorias());
-*/
         if (!newCategoria.getSubCategorias().isEmpty()) {
             mapearSubcategorias(newCategoria, newSucursales);
         }
@@ -128,7 +110,16 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
             for(Categoria subcategoria: categoria.getSubCategorias()){
                 subcategoria.setCategoriaPadre(categoria);
                 subcategoria.setSucursales(sucursales);
-                sucursales.forEach(sucursal -> sucursal.getCategorias().add(subcategoria));
+                sucursales.forEach(sucursal -> {
+                    boolean categoriaExists = false;
+                    if (categoria.getId() != null){
+                        categoriaExists = sucursal.getCategorias().stream()
+                                .anyMatch(cat -> cat.getId().equals(subcategoria.getId()));
+                    }
+                    if (!categoriaExists) {
+                        sucursal.getCategorias().add(subcategoria);
+                    }
+                });
                 mapearSubcategorias(subcategoria, sucursales);
             }
         }
@@ -160,4 +151,5 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
             }
         }
     }
+
 }
