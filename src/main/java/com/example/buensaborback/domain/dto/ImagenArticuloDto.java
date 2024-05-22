@@ -10,5 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ImagenArticuloDto extends BaseDto {
+    private String name;
     private String url;
 }
