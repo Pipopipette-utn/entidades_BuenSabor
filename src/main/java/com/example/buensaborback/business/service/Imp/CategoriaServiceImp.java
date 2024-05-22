@@ -1,8 +1,11 @@
 package com.example.buensaborback.business.service.Imp;
 
+import com.example.buensaborback.business.mapper.SucursalMapper;
+import com.example.buensaborback.business.mapper.SucursalMapperImpl;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.CategoriaService;
 import com.example.buensaborback.business.service.DomicilioService;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.Categoria;
 import com.example.buensaborback.domain.entities.Domicilio;
 import com.example.buensaborback.domain.entities.Sucursal;
@@ -12,13 +15,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implements CategoriaService {
+
+    @Autowired
+    SucursalMapperImpl mapper;
 
     @Autowired
     CategoriaRepository categoriaRepository;
@@ -38,12 +41,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
 
     @Override
     public Categoria create(Categoria categoria) {
-        // Mapear subcategorías y guardar la categoría
-        if (categoria.getSubCategorias() != null) {
-            mapearSubcategorias(categoria);
-        }
-        Set<Sucursal> sucursalesNuevas = new HashSet<>();
-
+        Set<Sucursal> sucursales = new HashSet<>();
         if (categoria.getSucursales() != null && !categoria.getSucursales().isEmpty()) {
             for (Sucursal sucursal : categoria.getSucursales()) {
                 Sucursal sucursalBd = sucursalService.getById(sucursal.getId());
@@ -51,14 +49,32 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                     throw new RuntimeException("La sucursal con el id " + sucursal.getId() + " no existe.");
                 }
                 sucursalBd.getCategorias().add(categoria);
-                sucursalesNuevas.add(sucursalBd);
+                sucursales.add(sucursalBd);
             }
         }
 
         // Establecer la nueva colección de sucursales en la categoría
-        categoria.setSucursales(sucursalesNuevas);
+        categoria.setSucursales(sucursales);
+
+        // Mapear subcategorías y guardar la categoría
+        if (!categoria.getSubCategorias().isEmpty()) {
+            mapearSubcategorias(categoria, sucursales);
+        }
 
         return categoriaRepository.save(categoria);
+    }
+
+    public void deleteInSucursales(Long id, SucursalShortDto sucursalShort) {
+        Categoria categoriaExistente = categoriaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("La categoría con el ID " + id + " no existe."));
+
+        Sucursal sucursal = sucursalService.getById(sucursalShort.getId());
+
+        // Eliminar la relación entre la sucursal y la categoría existente
+        sucursal.getCategorias().remove(categoriaExistente);
+        categoriaExistente.getSucursales().remove(sucursal);
+
+        categoriaRepository.save(categoriaExistente);
     }
 
     @Override
@@ -71,49 +87,77 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         categoriaExistente.setDenominacion(newCategoria.getDenominacion());
         categoriaExistente.setEsInsumo(newCategoria.isEsInsumo());
 
-        // Actualizar las subcategorías (si es necesario)
-        if (newCategoria.getSubCategorias() != null && !newCategoria.getSubCategorias().isEmpty()) {
-            mapearSubcategorias(newCategoria);
+        Set<Sucursal> newSucursales = new HashSet<>();
+        for(Sucursal sucursal: newCategoria.getSucursales()){
+            Sucursal sucursalBD = sucursalService.getById(sucursal.getId());
+            newSucursales.add(sucursalBD);
         }
 
-        categoriaExistente.setSubCategorias(newCategoria.getSubCategorias());
+        eliminarSubcategorias(categoriaExistente, newCategoria, newSucursales);
 
+
+/*
         // Obtener las sucursales eliminadas
         Set<Sucursal> sucursalesEliminadas = new HashSet<>(categoriaExistente.getSucursales());
         sucursalesEliminadas.removeAll(newCategoria.getSucursales());
 
-        // Eliminar la relación entre las sucursales eliminadas y la categoría existente
-        for (Sucursal sucursalEliminada : sucursalesEliminadas) {
-            sucursalEliminada.getCategorias().remove(categoriaExistente);
+
+        // Eliminar la relación entre las sucursales eliminadas y las categorias eliminadas
+        for (Sucursal sucursalEliminada: sucursalesEliminadas){
+            sucursalEliminada.getCategorias().removeAll(subcategoriasEliminadas);
+        }
+        for (Categoria categoriaEliminada : subcategoriasEliminadas) {
+            categoriaEliminada.getSucursales().removeAll(sucursalesEliminadas);
+            categoriaRepository.save(categoriaExistente);
         }
 
-        // Actualizar la colección de sucursales de la categoría existente
-        categoriaExistente.setSucursales(newCategoria.getSucursales());
+        // Actualizar las subcategorías (si es necesario)
 
-        // Actualizar las sucursales (si es necesario)
-        if (newCategoria.getSucursales() != null && !newCategoria.getSucursales().isEmpty()) {
-            for (Sucursal sucursal : newCategoria.getSucursales()) {
-                Sucursal sucursalBd = sucursalService.getById(sucursal.getId());
-                if (sucursalBd == null) {
-                    throw new RuntimeException("La sucursal con el ID " + sucursal.getId() + " no existe.");
-                }
-                sucursalBd.getCategorias().add(categoriaExistente);
-            }
+        categoriaExistente.setSubCategorias(newCategoria.getSubCategorias());
+*/
+        if (!newCategoria.getSubCategorias().isEmpty()) {
+            mapearSubcategorias(newCategoria, newSucursales);
         }
-        categoriaExistente.setSucursales(newCategoria.getSucursales());
 
         // Guardar la categoría actualizada
         return categoriaRepository.save(categoriaExistente);
     }
 
-
-    private void mapearSubcategorias(Categoria categoria){
+    private void mapearSubcategorias(Categoria categoria, Set<Sucursal> sucursales){
         if (!categoria.getSubCategorias().isEmpty()){
             for(Categoria subcategoria: categoria.getSubCategorias()){
                 subcategoria.setCategoriaPadre(categoria);
-                mapearSubcategorias(subcategoria);
+                subcategoria.setSucursales(sucursales);
+                sucursales.forEach(sucursal -> sucursal.getCategorias().add(subcategoria));
+                mapearSubcategorias(subcategoria, sucursales);
             }
         }
     }
 
+    private void eliminarSubcategorias(Categoria categoria, Categoria newCategoria, Set<Sucursal> sucursales) {
+        // Obtener las subcategorías eliminadas
+        Set<Categoria> subcategoriasEliminadas = new HashSet<>(categoria.getSubCategorias());
+        for (Categoria subcategoria : categoria.getSubCategorias()) {
+            boolean existeEnNewCategoria = newCategoria.getSubCategorias().stream()
+                    .anyMatch(s -> Objects.equals(subcategoria.getId(), s.getId()));
+
+            if (!existeEnNewCategoria) {
+                // Eliminar la relación entre sucursales y subcategorías no coincidentes
+                for (Sucursal sucursal : sucursales) {
+                    sucursal.getCategorias().remove(subcategoria);
+                }
+                subcategoriasEliminadas.remove(subcategoria);
+            }
+        }
+        categoria.setSubCategorias(subcategoriasEliminadas);
+
+        //Hago lo mismo en las subcategorias
+        for (Categoria subcategoria : newCategoria.getSubCategorias()) {
+            if (subcategoria.getId() != null) {
+                Categoria categoriaExistente = categoriaRepository.findById(subcategoria.getId())
+                        .orElseThrow(() -> new RuntimeException("La categoría con el ID " + subcategoria.getId() + " no existe."));
+                eliminarSubcategorias(subcategoria, categoriaExistente, sucursales);
+            }
+        }
+    }
 }
