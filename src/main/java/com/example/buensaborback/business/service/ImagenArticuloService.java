@@ -10,7 +10,7 @@ public interface ImagenArticuloService {
 
     ResponseEntity<List<ImagenArticuloDto>> getAllImages();
 
-    ResponseEntity<String> uploadImages(MultipartFile[] files);
+    ResponseEntity<String> uploadImages(MultipartFile[] files, Long idArticulo);
 
     ResponseEntity<String> deleteImage(String publicId, Long id);
 }

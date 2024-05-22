@@ -21,8 +21,8 @@ public class ImagenArticuloFacadeImp implements ImagenArticuloFacade {
     }
 
     @Override
-    public String uploadImages(MultipartFile[] files) {
-        return imagenArticuloService.uploadImages(files).getBody();
+    public String uploadImages(MultipartFile[] files, Long idArticulo) {
+        return imagenArticuloService.uploadImages(files, idArticulo).getBody();
     }
 
     @Override
