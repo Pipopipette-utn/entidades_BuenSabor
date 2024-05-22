@@ -2,6 +2,7 @@ package com.example.buensaborback.business.service.Imp;
 
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.SucursalService;
+import com.example.buensaborback.domain.entities.Categoria;
 import com.example.buensaborback.domain.entities.Sucursal;
 import com.example.buensaborback.repositories.DomicilioRepository;
 import com.example.buensaborback.repositories.EmpresaRepository;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implements SucursalService {
@@ -56,6 +58,16 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
         sucursal.setDomicilio(domicilio.get());
         sucursal.setEmpresa(empresa.get());
         return sucursalRepository.save(sucursal);
+    }
+
+    @Override
+    public List<Categoria> findCategoriasBySucursalId(Long sucursalId) {
+        var sucursalExiste = sucursalRepository.findById(sucursalId);
+        if(sucursalExiste.isEmpty()){
+            throw new RuntimeException("Sucursal no encontrada: { id: " + sucursalId + " }");
+        }
+
+        return sucursalRepository.findCategoriasBySucursalId(sucursalId);
     }
 
 
