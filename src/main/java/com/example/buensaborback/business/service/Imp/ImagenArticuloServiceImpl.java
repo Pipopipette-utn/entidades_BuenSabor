@@ -4,7 +4,9 @@ import com.example.buensaborback.business.mapper.ImagenArticuloMapper;
 import com.example.buensaborback.business.service.CloudinaryService;
 import com.example.buensaborback.business.service.ImagenArticuloService;
 import com.example.buensaborback.domain.dto.ImagenArticuloDto;
+import com.example.buensaborback.domain.entities.Articulo;
 import com.example.buensaborback.domain.entities.ImagenArticulo;
+import com.example.buensaborback.repositories.ArticuloRepository;
 import com.example.buensaborback.repositories.ImagenArticuloRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +31,9 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
 
     @Autowired
     private ImagenArticuloMapper imagenArticuloMapper;
+
+    @Autowired
+    private ArticuloRepository articuloRepository;
 
     @Override
     public ResponseEntity<List<ImagenArticuloDto>> getAllImages() {
@@ -53,13 +60,18 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
     }
 
     @Override
-    public ResponseEntity<String> uploadImages(MultipartFile[] files) {
+    public ResponseEntity<String> uploadImages(MultipartFile[] files, Long idArticulo) {
         List<String> urls = new ArrayList<>();
-
         try {
+            Articulo articulo = articuloRepository.getById(idArticulo);
+            Set<ImagenArticulo> imagenes = new HashSet<>();
+            if (articulo == null) {
+                throw new RuntimeException("El articulo con id " + idArticulo + " no se ha encontrado");
+            }
+
             for (MultipartFile file : files) {
                 if (file.isEmpty()) {
-                    return ResponseEntity.badRequest().body("File is empty");
+                    return ResponseEntity.badRequest().body("El archivo está vacío.");
                 }
 
                 ImagenArticulo image = new ImagenArticulo();
@@ -67,17 +79,20 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
                 image.setUrl(cloudinaryService.uploadFile(file));
 
                 if (image.getUrl() == null) {
-                    return ResponseEntity.badRequest().body("Failed to upload file");
+                    return ResponseEntity.badRequest().body("No se pudo cargar el archivo");
                 }
 
-                imagenArticuloRepository.save(image);
+                ImagenArticulo imagenGuardada= imagenArticuloRepository.save(image);
+                imagenes.add(imagenGuardada);
                 urls.add(image.getUrl());
             }
 
-            return new ResponseEntity<>("Uploaded successfully: " + String.join(", ", urls), HttpStatus.OK);
+            articulo.setImagenes(imagenes);
+
+            return new ResponseEntity<>("Subido exitosamente: " + String.join(", ", urls), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("An error occurred: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ocurrió un error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
