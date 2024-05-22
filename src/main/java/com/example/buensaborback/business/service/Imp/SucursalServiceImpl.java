@@ -14,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implements SucursalService {
@@ -63,12 +66,30 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
     @Override
     public List<Categoria> findCategoriasBySucursalId(Long sucursalId) {
         var sucursalExiste = sucursalRepository.findById(sucursalId);
+
         if(sucursalExiste.isEmpty()){
             throw new RuntimeException("Sucursal no encontrada: { id: " + sucursalId + " }");
         }
 
-        return sucursalRepository.findCategoriasBySucursalId(sucursalId);
+        List<Categoria> categorias = sucursalRepository.findCategoriasBySucursalId(sucursalId);
+        Set<Categoria> filteredCategorias = new HashSet<>();
+        filterSubcategorias(filteredCategorias, categorias);
+
+        return new ArrayList<>(filteredCategorias);
     }
 
+    public void filterSubcategorias(Set<Categoria> categorias, List<Categoria> categoriasBySucursal){
+        for (Categoria categoria : categoriasBySucursal) {
+            if (categoria.getCategoriaPadre() == null) {
+                categorias.add(categoria);
+                categoria.setSubCategorias(new HashSet<>());
+            } else {
+                Categoria categoriaPadre = categoria.getCategoriaPadre();
+                if (categorias.contains(categoriaPadre) && categoriasBySucursal.contains(categoria)) {
+                    categoriaPadre.getSubCategorias().add(categoria);
+                }
+            }
+        }
+    }
 
 }
