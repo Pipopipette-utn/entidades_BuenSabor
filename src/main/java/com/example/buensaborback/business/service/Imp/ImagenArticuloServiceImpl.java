@@ -88,6 +88,7 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
             }
 
             articulo.setImagenes(imagenes);
+            articuloRepository.save(articulo);
 
             return new ResponseEntity<>("Subido exitosamente: " + String.join(", ", urls), HttpStatus.OK);
         } catch (Exception e) {

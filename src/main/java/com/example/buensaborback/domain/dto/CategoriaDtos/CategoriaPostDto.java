@@ -2,7 +2,6 @@ package com.example.buensaborback.domain.dto.CategoriaDtos;
 
 import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
-import com.example.buensaborback.domain.entities.Sucursal;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +18,6 @@ public class CategoriaPostDto extends BaseDto {
     private String denominacion;
     private boolean esInsumo;
     private Set<SucursalShortDto> sucursales;
-    private List<CategoriaDto> subCategorias;
+    private List<CategoriaPostDto> subCategorias;
 
 }

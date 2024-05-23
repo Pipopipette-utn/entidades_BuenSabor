@@ -22,7 +22,7 @@ public class CategoriaGetDto extends BaseDto {
     private String denominacion;
     private boolean esInsumo;
     private Set<SucursalShortDto> sucursales;
-    private List<CategoriaDto> subCategorias;
+    private List<CategoriaGetDto> subCategorias;
     private CategoriaDto categoriaPadre;
     private Set<ArticuloDto> articulos = new HashSet<>();
 }
