@@ -53,7 +53,6 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                 sucursales.add(sucursalBd);
             }
         }
-        System.out.println(categoria.isEsInsumo());
 
         // Establecer la nueva colección de sucursales en la categoría
         categoria.setSucursales(sucursales);
