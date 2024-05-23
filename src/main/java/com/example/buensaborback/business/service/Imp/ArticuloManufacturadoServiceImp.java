@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,22 +34,6 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
     @Override
     @Transactional
     public ArticuloManufacturado create(ArticuloManufacturado request) {
-        Set<ImagenArticulo> imagenes = request.getImagenes();
-        Set<ImagenArticulo> imagenesPersistidas = new HashSet<>();
-
-        if (!imagenes.isEmpty()) {
-            for (ImagenArticulo imagen : imagenes) {
-                if (imagen.getId() != null) {
-                    Optional<ImagenArticulo> imagenBd = imagenArticuloRepository.findById(imagen.getId());
-                    imagenBd.ifPresent(imagenesPersistidas::add);
-                } else {
-                    imagen.setBaja(false);
-                    ImagenArticulo savedImagen = imagenArticuloRepository.save(imagen);
-                    imagenesPersistidas.add(savedImagen);
-                }
-            }
-            request.setImagenes(imagenesPersistidas);
-        }
 
         Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
         Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
@@ -89,31 +74,14 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
         ArticuloManufacturado articulo = articuloManufacturadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El articulo manufacturado con id " + id + " no se ha encontrado"));
 
-        Set<ImagenArticulo> imagenes = request.getImagenes();
-        Set<ImagenArticulo> imagenesPersistidas = new HashSet<>();
-
-        if (imagenes != null && !imagenes.isEmpty()) {
-            for (ImagenArticulo imagen : imagenes) {
-                if (imagen.getId() != null) {
-                    ImagenArticulo imagenBd = imagenArticuloRepository.findById(imagen.getId())
-                            .orElseThrow(() -> new RuntimeException("La imagen con id " + imagen.getId() + " no se ha encontrado"));
-                    imagenesPersistidas.add(imagenBd);
-                } else {
-                    ImagenArticulo savedImagen = imagenArticuloRepository.save(imagen);
-                    imagenesPersistidas.add(savedImagen);
-                }
-            }
-            articulo.setImagenes(imagenesPersistidas);
-        }
-
-        if (!imagenesPersistidas.isEmpty()) {
-            request.setImagenes(imagenesPersistidas);
-        }
-
         Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
         Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
 
-        if (detalles != null && !detalles.isEmpty()) {
+        Set<ArticuloManufacturadoDetalle> detallesEliminados = articulo.getArticuloManufacturadoDetalles();
+        detallesEliminados.removeAll(detalles);
+        articuloManufacturadoDetalleRepository.deleteAll(detallesEliminados);
+
+        if (!detalles.isEmpty()) {
             for (ArticuloManufacturadoDetalle detalle : detalles) {
                 ArticuloInsumo insumo = detalle.getArticuloInsumo();
                 if (insumo == null || insumo.getId() == null) {
@@ -121,8 +89,8 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
                 }
                  insumo = articuloInsumoRepository.findById(detalle.getArticuloInsumo().getId())
                         .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticuloInsumo().getId() + " no se ha encontrado"));
-                ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
-                detallesPersistidos.add(savedDetalle);
+                 ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
+                 detallesPersistidos.add(savedDetalle);
             }
             articulo.setArticuloManufacturadoDetalles(detallesPersistidos);
         }
