@@ -24,5 +24,4 @@ public class CategoriaGetDto extends BaseDto {
     private Set<SucursalShortDto> sucursales;
     private List<CategoriaGetDto> subCategorias;
     private CategoriaDto categoriaPadre;
-    private Set<ArticuloDto> articulos = new HashSet<>();
 }
