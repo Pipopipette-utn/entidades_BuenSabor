@@ -73,22 +73,33 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
 
         List<Categoria> categorias = sucursalRepository.findCategoriasBySucursalId(sucursalId);
         Set<Categoria> filteredCategorias = new HashSet<>();
+        for (Categoria categoria: categorias){
+            if (categoria.getCategoriaPadre() == null) {
+                filteredCategorias.add(categoria);
+            }
+        }
         filterSubcategorias(filteredCategorias, categorias);
 
         return new ArrayList<>(filteredCategorias);
     }
 
-    public void filterSubcategorias(Set<Categoria> categorias, List<Categoria> categoriasBySucursal){
-        for (Categoria categoria : categoriasBySucursal) {
-            if (categoria.getCategoriaPadre() == null) {
-                categorias.add(categoria);
-                categoria.setSubCategorias(new HashSet<>());
-            } else {
-                Categoria categoriaPadre = categoria.getCategoriaPadre();
-                if (categorias.contains(categoriaPadre) && categoriasBySucursal.contains(categoria)) {
-                    categoriaPadre.getSubCategorias().add(categoria);
+    public void filterSubcategorias(Set<Categoria> categorias, List<Categoria> categoriasBySucursal) {
+        for (Categoria categoria : categorias) {
+            System.out.println(categoria.getDenominacion());
+            Set<Categoria> subcategorias = categoria.getSubCategorias();
+            if (!subcategorias.isEmpty()) {
+                Set<Categoria> filteredSubcategorias = new HashSet<>();
+                for (Categoria subcategoria: subcategorias){
+                    System.out.println(subcategoria.getDenominacion());
+                    if (categoriasBySucursal.contains(subcategoria)) {
+                        System.out.println("está en sucursal");
+                        filteredSubcategorias.add(subcategoria);
+                    }
                 }
+                categoria.setSubCategorias(filteredSubcategorias);
+                filterSubcategorias(filteredSubcategorias, categoriasBySucursal);
             }
+
         }
     }
 
