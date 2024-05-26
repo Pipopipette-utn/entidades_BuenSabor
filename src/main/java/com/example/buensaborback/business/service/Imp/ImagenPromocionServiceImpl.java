@@ -94,7 +94,8 @@ public class ImagenPromocionServiceImpl implements ImagenPromocionService {
     @Override
     public ResponseEntity<String> deleteImage(String publicId, Long id) {
         try {
-            imagenPromocionRepository.deleteById(id);
+            ImagenPromocion imagenPromocion = imagenPromocionRepository.getById(id);
+            imagenPromocionRepository.delete(imagenPromocion);
             cloudinaryService.deleteImage(publicId, id);
             return new ResponseEntity<>("Image deleted successfully", HttpStatus.OK);
         } catch (Exception e) {
