@@ -113,4 +113,13 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
         return articuloManufacturadoRepository.save(request);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        ArticuloManufacturado producto = articuloManufacturadoRepository.getById(id);
+        if (producto == null) {
+            throw new RuntimeException("Producto no encontrado: { id: " + id + " }");
+        }
+        articuloManufacturadoRepository.delete(producto);
+    }
 }

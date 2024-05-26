@@ -125,7 +125,7 @@ public class ArticuloImsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
         if (!insumoEsUtilizado.isEmpty()) {
             throw new RuntimeException("No se puede eliminar el articulo porque está presente en un detalle");
         }
-        articuloInsumoRepository.deleteById(id);
+        articuloInsumoRepository.delete(insumo);
     }
 
     @Override

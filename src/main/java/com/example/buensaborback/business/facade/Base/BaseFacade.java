@@ -14,4 +14,6 @@ public interface BaseFacade <D extends BaseDto, GD extends BaseDto, ID extends S
     public Page<GD> getAllPaged(Pageable pageable);
     public void deleteById(Long id);
     public GD update(D request, Long id);
+
+    public void alta( Long id);
 }

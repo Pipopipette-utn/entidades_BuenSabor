@@ -92,4 +92,8 @@ public abstract class BaseFacadeImp<E extends Base,D extends BaseDto, GD extends
         return baseMapper.toDTO(entityUpdated);
     }
 
+    public void alta(ID id){
+        baseService.alta(id);
+    }
+
 }
