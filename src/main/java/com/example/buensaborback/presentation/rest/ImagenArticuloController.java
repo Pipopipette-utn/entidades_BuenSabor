@@ -2,11 +2,13 @@ package com.example.buensaborback.presentation.rest;
 
 import com.example.buensaborback.business.facade.ImagenArticuloFacade;
 import com.example.buensaborback.domain.dto.ImagenArticuloDto;
+import com.example.buensaborback.domain.entities.ImagenArticulo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/images")
@@ -22,7 +24,7 @@ public class ImagenArticuloController {
     }
 
     @PostMapping("/uploads/{idArticulo}")
-    public String uploadImages(@RequestParam("uploads") MultipartFile[] files, @PathVariable Long idArticulo) {
+    public Set<ImagenArticulo> uploadImages(@RequestParam("uploads") MultipartFile[] files, @PathVariable Long idArticulo) {
         return imagenArticuloFacade.uploadImages(files, idArticulo);
     }
 
