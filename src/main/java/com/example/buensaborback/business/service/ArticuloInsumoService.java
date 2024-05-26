@@ -11,6 +11,5 @@ import java.util.List;
 public interface ArticuloInsumoService extends BaseService<ArticuloInsumo,Long> {
     Page<ArticuloInsumo> findByEsParaElaborarTrue(Pageable pageable);
     Page<ArticuloInsumo> findByEsParaElaborarFalse(Pageable pageable);
-    ArticuloInsumo update(ArticuloInsumoDto request, Long id);
 
 }

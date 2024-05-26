@@ -6,6 +6,7 @@ import com.example.buensaborback.domain.entities.*;
 import com.example.buensaborback.repositories.ArticuloRepository;
 import com.example.buensaborback.repositories.PromocionDetalleRepository;
 import com.example.buensaborback.repositories.PromocionRepository;
+import com.example.buensaborback.utils.PublicIdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,12 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
 
     @Autowired
     PromocionRepository promocionRepository;
+
+    @Autowired
+    ImagenPromocionServiceImpl imagenPromocionService;
+
+    @Autowired
+    PublicIdService publicIdService;
 
     @Override
     public Promocion create(Promocion request) {
@@ -51,6 +58,14 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
     public Promocion update(Promocion request, Long id) {
         Promocion promocion = promocionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("La promoción con id " + id + " no se ha encontrado"));
+
+        Set<ImagenPromocion> imagenes = request.getImagenes();
+
+        Set<ImagenPromocion> imagenesEliminadas = promocion.getImagenes();
+        imagenesEliminadas.removeAll(imagenes);
+        for (ImagenPromocion imagen: imagenesEliminadas) {
+            imagenPromocionService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
+        }
 
         Set<PromocionDetalle> detalles = request.getPromocionDetalles();
         Set<PromocionDetalle> detallesPersistidos = new HashSet<>();
