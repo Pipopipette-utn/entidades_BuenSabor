@@ -86,15 +86,14 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
     }
 
     @Override
-    public ArticuloInsumo update(ArticuloInsumoDto request, Long id) {
-        ArticuloInsumo insumo = articuloInsumoMapper.toEntity(request);
+    public ArticuloInsumo update(ArticuloInsumo request, Long id) {
 
         ArticuloInsumo insumoExistente = articuloInsumoRepository.getById(id);
         if (insumoExistente == null) {
             throw new RuntimeException("Insumo no encontrado: { id: " + id + " }");
         }
 
-        Set<ImagenArticulo> imagenes = insumo.getImagenes();
+        Set<ImagenArticulo> imagenes = request.getImagenes();
 
         Set<ImagenArticulo> imagenesEliminadas = insumoExistente.getImagenes();
         imagenesEliminadas.removeAll(imagenes);
@@ -102,23 +101,23 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
             imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
         }
 
-        if (insumo.getCategoria() != null) {
-            Categoria categoria = categoriaRepository.getById(insumo.getCategoria().getId());
+        if (request.getCategoria() != null) {
+            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
             if (categoria == null ) {
-                throw new RuntimeException("La categoría con id: " + insumo.getCategoria().getId() + " no existe");
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
             }
             if (!categoria.isEsInsumo()) {
-                throw new RuntimeException("La categoría con id: " + insumo.getCategoria().getId() + " no pertenece a una categoría de insumos");
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
             }
 
-            insumo.setCategoria(categoria);
+            request.setCategoria(categoria);
         }
 
         /*if (request.getArchivos() != null) {
             imagenArticuloService.uploadImages(request.getArchivos(), id);
         }*/
 
-        return articuloInsumoRepository.save(insumo);
+        return articuloInsumoRepository.save(request);
     }
 
     @Override

@@ -27,9 +27,4 @@ public class ArticuloManufacturadoFacadeImp extends BaseFacadeImp<ArticuloManufa
         super(baseService, baseMapper);
     }
 
-    @Override
-    public ArticuloManufacturadoDto update(ArticuloManufacturadoDto request, Long id) {
-        var entityUpdated = articuloManufacturadoService.update(request, id);
-        return articuloManufacturadoMapper.toDTO(entityUpdated);
-    }
 }

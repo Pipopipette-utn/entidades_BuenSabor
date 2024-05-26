@@ -80,21 +80,20 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
     @Override
     @Transactional
-    public ArticuloManufacturado update(ArticuloManufacturadoDto request, Long id) {
-        ArticuloManufacturado articuloEntidad = articuloManufacturadoMapper.toEntity(request);
+    public ArticuloManufacturado update(ArticuloManufacturado request, Long id) {
 
         ArticuloManufacturado articulo = articuloManufacturadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El articulo manufacturado con id " + id + " no se ha encontrado"));
 
-        Set<ImagenArticulo> imagenes = articuloEntidad.getImagenes();
+        Set<ImagenArticulo> imagenes = request.getImagenes();
 
-        Set<ImagenArticulo> imagenesEliminadas = articuloEntidad.getImagenes();
+        Set<ImagenArticulo> imagenesEliminadas = request.getImagenes();
         imagenesEliminadas.removeAll(imagenes);
         for (ImagenArticulo imagen: imagenesEliminadas) {
             imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
         }
 
-        Set<ArticuloManufacturadoDetalle> detalles = articuloEntidad.getArticuloManufacturadoDetalles();
+        Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
         Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
 
         Set<ArticuloManufacturadoDetalle> detallesEliminados = articulo.getArticuloManufacturadoDetalles();
@@ -116,25 +115,25 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
         }
 
         if (!detallesPersistidos.isEmpty()) {
-            articuloEntidad.setArticuloManufacturadoDetalles(detallesPersistidos);
+            request.setArticuloManufacturadoDetalles(detallesPersistidos);
         }
 
-        if (articuloEntidad.getCategoria() != null) {
-            Categoria categoria = categoriaRepository.getById(articuloEntidad.getCategoria().getId());
+        if (request.getCategoria() != null) {
+            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
             if (categoria == null ) {
-                throw new RuntimeException("La categoría con id: " + articuloEntidad.getCategoria().getId() + " no existe");
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
             }
             if (categoria.isEsInsumo()) {
-                throw new RuntimeException("La categoría con id: " + articuloEntidad.getCategoria().getId() + " no pertenece a una categoría de insumos manufacturados");
+                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos manufacturados");
             }
 
-            articuloEntidad.setCategoria(categoria);
+            request.setCategoria(categoria);
         }
 
         /*if (request.getArchivos() != null) {
             imagenArticuloService.uploadImages(request.getArchivos(), id);
         }*/
 
-        return articuloManufacturadoRepository.save(articuloEntidad);
+        return articuloManufacturadoRepository.save(request);
     }
 }
