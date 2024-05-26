@@ -1,10 +1,8 @@
 package com.example.buensaborback.business.service;
 
 import com.example.buensaborback.business.service.Base.BaseService;
-import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.ArticuloManufacturado;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,8 +12,4 @@ public interface ArticuloInsumoService extends BaseService<ArticuloInsumo,Long> 
     Page<ArticuloInsumo> findByEsParaElaborarTrue(Pageable pageable);
 
     Page<ArticuloInsumo> findByEsParaElaborarFalse(Pageable pageable);
-
-    ArticuloInsumo create(ArticuloInsumoDto request);
-
-    ArticuloInsumo update(ArticuloInsumoDto request, Long aLong);
 }

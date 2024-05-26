@@ -55,18 +55,4 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
         return new PageImpl<>(dtos, pageable, entities.getTotalElements());
     }
 
-    @Override
-    public ArticuloInsumoDto createNew(ArticuloInsumoDto request) {
-        // Graba una entidad
-        var entityCreated = articuloInsumoService.create(request);
-        // convierte a Dto para devolver
-        return baseMapper.toDTO(entityCreated);
-    }
-
-    @Override
-    public ArticuloInsumoDto update(ArticuloInsumoDto request, Long id) {
-        // Graba una entidad
-        var entityUpdated = articuloInsumoService.update(request, id);
-        return baseMapper.toDTO(entityUpdated);
-    }
 }
