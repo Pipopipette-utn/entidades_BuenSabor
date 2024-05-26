@@ -60,47 +60,44 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
     }
 
     @Override
-    public ResponseEntity<String> uploadImages(MultipartFile[] files, Long idArticulo) {
+    public Set<ImagenArticulo> uploadImages(MultipartFile[] files, Long idArticulo) {
         List<String> urls = new ArrayList<>();
-        try {
-            Articulo articulo = articuloRepository.getById(idArticulo);
-            Set<ImagenArticulo> imagenes = new HashSet<>();
-            if (articulo == null) {
-                throw new RuntimeException("El articulo con id " + idArticulo + " no se ha encontrado");
-            }
-
-            for (MultipartFile file : files) {
-                if (file.isEmpty()) {
-                    return ResponseEntity.badRequest().body("El archivo está vacío.");
-                }
-
-                ImagenArticulo image = new ImagenArticulo();
-                image.setName(file.getOriginalFilename());
-                image.setUrl(cloudinaryService.uploadFile(file));
-
-                if (image.getUrl() == null) {
-                    return ResponseEntity.badRequest().body("No se pudo cargar el archivo");
-                }
-
-                ImagenArticulo imagenGuardada= imagenArticuloRepository.save(image);
-                imagenes.add(imagenGuardada);
-                urls.add(image.getUrl());
-            }
-
-            articulo.setImagenes(imagenes);
-            articuloRepository.save(articulo);
-
-            return new ResponseEntity<>("Subido exitosamente: " + String.join(", ", urls), HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Ocurrió un error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        Articulo articulo = articuloRepository.getById(idArticulo);
+        Set<ImagenArticulo> imagenes = new HashSet<>();
+        if (articulo == null) {
+            throw new RuntimeException("El articulo con id " + idArticulo + " no se ha encontrado");
         }
+
+        for (MultipartFile file : files) {
+            if (file.isEmpty()) {
+                throw new RuntimeException("El archivo está vacío.");
+            }
+
+            ImagenArticulo image = new ImagenArticulo();
+            image.setName(file.getOriginalFilename());
+            image.setUrl(cloudinaryService.uploadFile(file));
+
+            if (image.getUrl() == null) {
+                throw new RuntimeException("No se pudo cargar el archivo");
+            }
+
+            ImagenArticulo imagenGuardada= imagenArticuloRepository.save(image);
+            imagenes.add(imagenGuardada);
+            urls.add(image.getUrl());
+        }
+
+        articulo.setImagenes(imagenes);
+        articuloRepository.save(articulo);
+
+        return imagenes;
+
     }
 
     @Override
     public ResponseEntity<String> deleteImage(String publicId, Long id) {
         try {
-            imagenArticuloRepository.deleteById(id);
+            ImagenArticulo imagenArticulo = imagenArticuloRepository.getById(id);
+            imagenArticuloRepository.delete(imagenArticulo);
             cloudinaryService.deleteImage(publicId, id);
             return new ResponseEntity<>("Image deleted successfully", HttpStatus.OK);
         } catch (Exception e) {
