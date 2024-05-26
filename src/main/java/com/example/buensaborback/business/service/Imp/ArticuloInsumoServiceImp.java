@@ -1,7 +1,9 @@
 package com.example.buensaborback.business.service.Imp;
 
+import com.example.buensaborback.business.mapper.ArticuloInsumoMapper;
 import com.example.buensaborback.business.service.ArticuloInsumoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.ArticuloManufacturadoDetalle;
 import com.example.buensaborback.domain.entities.Categoria;
@@ -10,6 +12,7 @@ import com.example.buensaborback.repositories.ArticuloInsumoRepository;
 import com.example.buensaborback.repositories.ArticuloManufacturadoDetalleRepository;
 import com.example.buensaborback.repositories.CategoriaRepository;
 import com.example.buensaborback.repositories.ImagenArticuloRepository;
+import com.example.buensaborback.utils.PublicIdService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class ArticuloImsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long> implements ArticuloInsumoService {
+public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long> implements ArticuloInsumoService {
     @Autowired
     ArticuloInsumoRepository articuloInsumoRepository;
 
@@ -30,10 +33,19 @@ public class ArticuloImsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
     ImagenArticuloRepository imagenArticuloRepository;
 
     @Autowired
+    ImagenArticuloServiceImpl imagenArticuloService;
+
+    @Autowired
     ArticuloManufacturadoDetalleRepository articuloManufacturadoDetalleRepository;
 
     @Autowired
     CategoriaRepository categoriaRepository;
+
+    @Autowired
+    ArticuloInsumoMapper articuloInsumoMapper;
+
+    @Autowired
+    PublicIdService publicIdService;
 
     @Override
     @Transactional
@@ -74,45 +86,39 @@ public class ArticuloImsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
     }
 
     @Override
-    public ArticuloInsumo update(ArticuloInsumo request, Long id) {
-        ArticuloInsumo articulo = articuloInsumoRepository.getById(id);
-        if (articulo == null) {
+    public ArticuloInsumo update(ArticuloInsumoDto request, Long id) {
+        ArticuloInsumo insumo = articuloInsumoMapper.toEntity(request);
+
+        ArticuloInsumo insumoExistente = articuloInsumoRepository.getById(id);
+        if (insumoExistente == null) {
             throw new RuntimeException("Insumo no encontrado: { id: " + id + " }");
         }
 
-        Set<ImagenArticulo> imagenes = request.getImagenes();
-        Set<ImagenArticulo> imagenesPersistidas = new HashSet<>();
+        Set<ImagenArticulo> imagenes = insumo.getImagenes();
 
-        if (imagenes != null && !imagenes.isEmpty()) {
-            for (ImagenArticulo imagen : imagenes) {
-                if (imagen.getId() != null) {
-                    ImagenArticulo imagenBd = imagenArticuloRepository.getById(imagen.getId());
-                    imagenesPersistidas.add(imagenBd);
-                } else {
-                    ImagenArticulo savedImagen = imagenArticuloRepository.save(imagen);
-                    imagenesPersistidas.add(savedImagen);
-                }
-            }
-            articulo.setImagenes(imagenesPersistidas);
+        Set<ImagenArticulo> imagenesEliminadas = insumoExistente.getImagenes();
+        imagenesEliminadas.removeAll(imagenes);
+        for (ImagenArticulo imagen: imagenesEliminadas) {
+            imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
         }
 
-        if (!imagenesPersistidas.isEmpty()) {
-            request.setImagenes(imagenesPersistidas);
-        }
-
-        if (request.getCategoria() != null) {
-            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
+        if (insumo.getCategoria() != null) {
+            Categoria categoria = categoriaRepository.getById(insumo.getCategoria().getId());
             if (categoria == null ) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
+                throw new RuntimeException("La categoría con id: " + insumo.getCategoria().getId() + " no existe");
             }
             if (!categoria.isEsInsumo()) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
+                throw new RuntimeException("La categoría con id: " + insumo.getCategoria().getId() + " no pertenece a una categoría de insumos");
             }
 
-            request.setCategoria(categoria);
+            insumo.setCategoria(categoria);
         }
 
-        return articuloInsumoRepository.save(request);
+        /*if (request.getArchivos() != null) {
+            imagenArticuloService.uploadImages(request.getArchivos(), id);
+        }*/
+
+        return articuloInsumoRepository.save(insumo);
     }
 
     @Override

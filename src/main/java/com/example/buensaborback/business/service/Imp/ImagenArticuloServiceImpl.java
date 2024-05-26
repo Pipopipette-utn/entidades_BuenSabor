@@ -100,7 +100,11 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
     @Override
     public ResponseEntity<String> deleteImage(String publicId, Long id) {
         try {
-            imagenArticuloRepository.deleteById(id);
+            ImagenArticulo imagenArticulo = imagenArticuloRepository.getById(id);
+            if (imagenArticulo == null) {
+                throw new RuntimeException("La imagen con id " + id + " no se ha encontrado");
+            }
+            imagenArticuloRepository.delete(imagenArticulo);
             cloudinaryService.deleteImage(publicId, id);
             return new ResponseEntity<>("Image deleted successfully", HttpStatus.OK);
         } catch (Exception e) {
