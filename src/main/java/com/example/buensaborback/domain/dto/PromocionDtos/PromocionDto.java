@@ -2,6 +2,7 @@ package com.example.buensaborback.domain.dto.PromocionDtos;
 
 import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalDto;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.enums.TipoPromocion;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -34,5 +35,5 @@ public class PromocionDto extends BaseDto {
     private TipoPromocion tipoPromocion;
     private Set<PromocionDetalleDto> promocionDetalles = new HashSet<>();
     private Set<ImagenPromocionDto> imagenes = new HashSet<>();
-    private Set<SucursalDto> sucursales = new HashSet<>();
+    private Set<SucursalShortDto> sucursales = new HashSet<>();
 }

@@ -1,6 +1,9 @@
-package com.example.buensaborback.domain.dto;
+package com.example.buensaborback.domain.dto.Articulo;
 
+import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaDto;
+import com.example.buensaborback.domain.dto.ImagenArticuloDto;
+import com.example.buensaborback.domain.dto.UnidadMedidaDto;
 import com.example.buensaborback.domain.entities.Categoria;
 import lombok.*;
 
