@@ -78,4 +78,26 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
     public LocalTime calcularHoraEstimadaFinalizacion() {
         return LocalTime.parse("23:45:00");
     }
+
+    @Override
+    public Pedido update(Pedido request, Long id) {
+        if (id != null || request != null) {
+            throw new RuntimeException("El pedido no se puede editar, si desea realizar un cambio, elimine el pedido y vuelva a crearlo");
+        }
+        return pedidoRepository.save(request);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        Pedido pedido = pedidoRepository.getById(id);
+        if (pedido == null) {
+            throw new RuntimeException("El pedido con id " + id + " no se ha encontrado");
+        }
+
+        if (pedido.getEstado() != Estado.PENDIENTE) {
+            throw new RuntimeException("El pedido no se puede eliminar porque su estado es distinto a pendiente");
+        }
+
+        pedidoRepository.delete(pedido);
+    }
 }
