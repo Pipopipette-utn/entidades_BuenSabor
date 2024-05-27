@@ -62,14 +62,14 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
 
         // Verificar y asociar sucursales existentes
         if (sucursales != null && !sucursales.isEmpty()) {
-            for (Sucursal sucursal :sucursales) {
+            for (Sucursal sucursal : sucursales) {
                 Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
-                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));;
+                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
                 sucursalBd.getPromociones().add(request);
-                sucursales.add(sucursalBd);
+                sucursalesPersistidas.add(sucursalBd);
             }
-        // Establecer la nueva colección de sucursales en la categoría
-        request.setSucursales(sucursales);
+            // Establecer la nueva colección de sucursales en la promoción
+            request.setSucursales(sucursalesPersistidas);
         }
 
 
