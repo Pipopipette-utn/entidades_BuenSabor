@@ -91,6 +91,10 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
         Set<PromocionDetalle> detalles = request.getPromocionDetalles();
         Set<PromocionDetalle> detallesPersistidos = new HashSet<>();
 
+        Set<PromocionDetalle> detallesEliminados = promocion.getPromocionDetalles();
+        detallesEliminados.removeAll(detalles);
+        promocionDetalleRepository.deleteAll(detallesEliminados);
+
         if (detalles != null && !detalles.isEmpty()) {
             for (PromocionDetalle detalle : detalles) {
                 Articulo articulo = detalle.getArticulo();
