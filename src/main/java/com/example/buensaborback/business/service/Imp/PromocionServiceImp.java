@@ -68,7 +68,6 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
                 sucursalBd.getPromociones().add(request);
                 sucursalesPersistidas.add(sucursalBd);
             }
-            // Establecer la nueva colección de sucursales en la promoción
             request.setSucursales(sucursalesPersistidas);
         }
 
@@ -92,10 +91,6 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
         Set<PromocionDetalle> detalles = request.getPromocionDetalles();
         Set<PromocionDetalle> detallesPersistidos = new HashSet<>();
 
-        Set<PromocionDetalle> detallesEliminados = promocion.getPromocionDetalles();
-        detallesEliminados.removeAll(detalles);
-        promocionDetalleRepository.deleteAll(detallesEliminados);
-
         if (detalles != null && !detalles.isEmpty()) {
             for (PromocionDetalle detalle : detalles) {
                 Articulo articulo = detalle.getArticulo();
@@ -113,6 +108,19 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
 
         if (!detallesPersistidos.isEmpty()) {
             request.setPromocionDetalles(detallesPersistidos);
+        }
+
+        Set<Sucursal> sucursales = request.getSucursales();
+        Set<Sucursal> sucursalesPersistidas = new HashSet<>();
+
+        if (sucursales != null && !sucursales.isEmpty()) {
+            for (Sucursal sucursal : sucursales) {
+                Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+                sucursalBd.getPromociones().add(promocion);
+                sucursalesPersistidas.add(sucursalBd);
+            }
+            promocion.setSucursales(sucursalesPersistidas);
         }
 
         return super.update(request, id);
