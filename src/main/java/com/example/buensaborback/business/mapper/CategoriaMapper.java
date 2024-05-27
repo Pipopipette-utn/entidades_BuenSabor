@@ -4,6 +4,7 @@ import com.example.buensaborback.business.service.SucursalService;
 import com.example.buensaborback.domain.dto.ArticuloDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
+import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaHomeDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaPostDto;
 import com.example.buensaborback.domain.entities.Articulo;
 import com.example.buensaborback.domain.entities.Categoria;
@@ -19,6 +20,8 @@ public interface CategoriaMapper extends BaseMapper<Categoria, CategoriaPostDto,
 
     @Override
     Categoria toEntity(CategoriaPostDto source);
+
+    CategoriaHomeDto toHomeDTO(Categoria source);
 
 
 }
