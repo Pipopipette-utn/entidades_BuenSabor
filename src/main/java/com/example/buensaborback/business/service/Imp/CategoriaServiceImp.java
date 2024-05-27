@@ -39,6 +39,38 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         return categoriaRepository.findByEsInsumoFalse(pageable);
     }
 
+    @Override
+    public List<Categoria> getAllByBajaFalse() {
+        List<Categoria> categorias = categoriaRepository.findAll();
+        Set<Categoria> filteredCategorias = new HashSet<>();
+        for (Categoria categoria: categorias){
+            if (categoria.getCategoriaPadre() == null) {
+                filteredCategorias.add(categoria);
+            }
+        }
+        filterSubcategorias(filteredCategorias, categorias);
+
+        return new ArrayList<>(filteredCategorias);
+    }
+
+    public void filterSubcategorias(Set<Categoria> categorias, List<Categoria> categoriasBySucursal) {
+        for (Categoria categoria : categorias) {
+            Set<Categoria> subcategorias = categoria.getSubCategorias();
+            if (!subcategorias.isEmpty()) {
+                Set<Categoria> filteredSubcategorias = new HashSet<>();
+                for (Categoria subcategoria: subcategorias){
+                    if (categoriasBySucursal.contains(subcategoria)) {
+                        System.out.println("está en sucursal");
+                        filteredSubcategorias.add(subcategoria);
+                    }
+                }
+                categoria.setSubCategorias(filteredSubcategorias);
+                filterSubcategorias(filteredSubcategorias, categoriasBySucursal);
+            }
+
+        }
+    }
+
 
     @Override
     public Categoria create(Categoria categoria) {
