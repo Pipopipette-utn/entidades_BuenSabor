@@ -75,7 +75,7 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
             if (categoria == null ) {
                 throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
             }
-            if (!categoria.isEsInsumo()) {
+            if (!categoria.isEsInsumo() && request.getEsParaElaborar()) {
                 throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
             }
 
@@ -106,7 +106,7 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
             if (categoria == null ) {
                 throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
             }
-            if (!categoria.isEsInsumo()) {
+            if (!categoria.isEsInsumo() && request.getEsParaElaborar()) {
                 throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
             }
 

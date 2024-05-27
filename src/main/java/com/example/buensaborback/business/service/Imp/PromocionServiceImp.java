@@ -6,6 +6,7 @@ import com.example.buensaborback.domain.entities.*;
 import com.example.buensaborback.repositories.ArticuloRepository;
 import com.example.buensaborback.repositories.PromocionDetalleRepository;
 import com.example.buensaborback.repositories.PromocionRepository;
+import com.example.buensaborback.repositories.SucursalRepository;
 import com.example.buensaborback.utils.PublicIdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
     PromocionRepository promocionRepository;
 
     @Autowired
+    SucursalRepository sucursalRepository;
+
+    @Autowired
     ImagenPromocionServiceImpl imagenPromocionService;
 
     @Autowired
@@ -36,8 +40,13 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
         Set<PromocionDetalle> detalles = request.getPromocionDetalles();
         Set<PromocionDetalle> detallesPersistidos = new HashSet<>();
 
+        Set<Sucursal> sucursales = request.getSucursales();
+        Set<Sucursal> sucursalesPersistidas = new HashSet<>();
+
         if (detalles != null && !detalles.isEmpty()) {
             for (PromocionDetalle detalle : detalles) {
+                System.out.println(detalle.getCantidad());
+                System.out.println(detalle.getArticulo().getDenominacion());
                 Articulo articulo = detalle.getArticulo();
                 if (articulo == null || articulo.getId() == null) {
                     throw new RuntimeException("El articulo del detalle no puede ser nulo");
@@ -50,6 +59,18 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
             }
             request.setPromocionDetalles(detallesPersistidos);
         }
+
+        // Verificar y asociar sucursales existentes
+        if (sucursales != null && !sucursales.isEmpty()) {
+            for (Sucursal sucursal : sucursales) {
+                Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+                sucursalBd.getPromociones().add(request);
+                sucursalesPersistidas.add(sucursalBd);
+            }
+            request.setSucursales(sucursalesPersistidas);
+        }
+
 
         return promocionRepository.save(request);
     }
@@ -91,6 +112,19 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
 
         if (!detallesPersistidos.isEmpty()) {
             request.setPromocionDetalles(detallesPersistidos);
+        }
+
+        Set<Sucursal> sucursales = request.getSucursales();
+        Set<Sucursal> sucursalesPersistidas = new HashSet<>();
+
+        if (sucursales != null && !sucursales.isEmpty()) {
+            for (Sucursal sucursal : sucursales) {
+                Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+                sucursalBd.getPromociones().add(promocion);
+                sucursalesPersistidas.add(sucursalBd);
+            }
+            promocion.setSucursales(sucursalesPersistidas);
         }
 
         return super.update(request, id);
