@@ -2,7 +2,6 @@ package com.example.buensaborback.domain.dto.PedidoDtos;
 
 import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.dto.DomicilioDto;
-import com.example.buensaborback.domain.dto.EmpleadoDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.enums.Estado;
 import com.example.buensaborback.domain.enums.FormaPago;
@@ -22,15 +21,17 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PedidoDto extends BaseDto {
+public class PedidoGetDto extends BaseDto {
+    @Schema(type = "string", format = "time", pattern = "HH:mm:ss")
+    private LocalTime horaEstimadaFinalizacion;
     private Double total;
     private Double totalCosto;
+    private Estado estado;
     private TipoEnvio tipoEnvio;
     private FormaPago formaPago;
     @Schema(type = "string", format = "date", pattern = "yyyy-MM-dd")
     private LocalDate fechaPedido;
-
-    // private DomicilioDto domicilio;
+    private DomicilioDto domicilio;
     private SucursalShortDto sucursal;
     // Factura, cliente
     private Set<PedidoDetalleDto> detallePedidos = new HashSet<>();

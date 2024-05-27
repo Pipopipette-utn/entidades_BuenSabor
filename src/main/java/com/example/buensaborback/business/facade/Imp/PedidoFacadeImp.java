@@ -5,13 +5,14 @@ import com.example.buensaborback.business.facade.PedidoFacade;
 import com.example.buensaborback.business.mapper.BaseMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.domain.dto.PedidoDtos.PedidoDto;
+import com.example.buensaborback.domain.dto.PedidoDtos.PedidoGetDto;
 import com.example.buensaborback.domain.entities.Pedido;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto,PedidoDto, Long> implements PedidoFacade {
+public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetDto, Long> implements PedidoFacade {
 
-    public PedidoFacadeImp(BaseService<Pedido, Long> baseService, BaseMapper<Pedido, PedidoDto, PedidoDto> baseMapper) {
+    public PedidoFacadeImp(BaseService<Pedido, Long> baseService, BaseMapper<Pedido, PedidoDto, PedidoGetDto> baseMapper) {
         super(baseService, baseMapper);
     }
 }
