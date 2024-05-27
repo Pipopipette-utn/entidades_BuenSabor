@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ArticuloManufacturadoDetalleDto extends BaseDto {
-    private Integer cantidad;
+    private Double cantidad;
 
     private ArticuloInsumoDto articuloInsumo;
 }
