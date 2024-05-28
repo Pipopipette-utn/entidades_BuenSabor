@@ -55,4 +55,5 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
         return new PageImpl<>(dtos, pageable, entities.getTotalElements());
     }
 
+
 }

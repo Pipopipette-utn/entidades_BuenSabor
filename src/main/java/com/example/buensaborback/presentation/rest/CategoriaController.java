@@ -2,6 +2,7 @@ package com.example.buensaborback.presentation.rest;
 
 import com.example.buensaborback.business.facade.Imp.CategoriaFacadeImp;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
+import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaHomeDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaPostDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/categorias")
@@ -32,6 +35,12 @@ public class CategoriaController extends BaseControllerImp<Categoria, CategoriaP
     public ResponseEntity<Page<CategoriaGetDto>> getCategoriaManufacturados(Pageable pageable) {
         //logger.info("INICIO GET ALL categoria articulos manufacturados");
         return ResponseEntity.ok(facade.getCategoriaManufacturados(pageable));
+    }
+
+    @GetMapping("/parents")
+    public ResponseEntity<List<CategoriaHomeDto>> getAllParents() {
+        //logger.info("INICIO GET ALL categoria articulos manufacturados");
+        return ResponseEntity.ok(facade.getAllParents());
     }
 
     @DeleteMapping("/baja/{id}")

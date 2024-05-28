@@ -1,10 +1,12 @@
 package com.example.buensaborback.business.service.Imp;
 
+import com.example.buensaborback.business.mapper.CategoriaMapperImpl;
 import com.example.buensaborback.business.mapper.SucursalMapper;
 import com.example.buensaborback.business.mapper.SucursalMapperImpl;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.CategoriaService;
 import com.example.buensaborback.business.service.DomicilioService;
+import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.Categoria;
 import com.example.buensaborback.domain.entities.Domicilio;
@@ -19,9 +21,6 @@ import java.util.*;
 
 @Service
 public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implements CategoriaService {
-
-    @Autowired
-    SucursalMapperImpl mapper;
 
     @Autowired
     CategoriaRepository categoriaRepository;
@@ -39,6 +38,22 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         return categoriaRepository.findByEsInsumoFalse(pageable);
     }
 
+    @Override
+    public List<Categoria> getAllParents() {
+        List<Categoria> categorias = categoriaRepository.findAll();
+        Set<Categoria> filteredCategorias = new HashSet<>();
+        for (Categoria categoria: categorias){
+            if (categoria.getCategoriaPadre() == null && !categoria.isEsInsumo()) {
+                boolean exists = filteredCategorias.stream()
+                        .anyMatch(existingCategoria -> existingCategoria.getDenominacion().equals(categoria.getDenominacion()));
+                if (!exists) {
+                    filteredCategorias.add(categoria);
+                }
+            }
+        }
+
+        return new ArrayList<>(filteredCategorias);
+    }
 
     @Override
     public Categoria create(Categoria categoria) {

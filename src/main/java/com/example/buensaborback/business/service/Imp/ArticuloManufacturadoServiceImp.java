@@ -1,9 +1,13 @@
 package com.example.buensaborback.business.service.Imp;
 
+import com.example.buensaborback.business.mapper.ArticuloManufacturadoMapper;
 import com.example.buensaborback.business.service.ArticuloManufacturadoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
+import com.example.buensaborback.business.service.ImagenArticuloService;
+import com.example.buensaborback.domain.dto.ArticuloManufacturadoDto;
 import com.example.buensaborback.domain.entities.*;
 import com.example.buensaborback.repositories.*;
+import com.example.buensaborback.utils.PublicIdService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +24,10 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
     ArticuloManufacturadoRepository articuloManufacturadoRepository;
 
     @Autowired
-    ImagenArticuloRepository imagenArticuloRepository;
+    ImagenArticuloServiceImpl imagenArticuloService;
+
+    @Autowired
+    ArticuloManufacturadoMapper articuloManufacturadoMapper;
 
     @Autowired
     ArticuloManufacturadoDetalleRepository articuloManufacturadoDetalleRepository;
@@ -30,6 +37,9 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
     @Autowired
     CategoriaRepository categoriaRepository;
+
+    @Autowired
+    PublicIdService publicIdService;
 
     @Override
     @Transactional
@@ -71,8 +81,17 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
     @Override
     @Transactional
     public ArticuloManufacturado update(ArticuloManufacturado request, Long id) {
+
         ArticuloManufacturado articulo = articuloManufacturadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El articulo manufacturado con id " + id + " no se ha encontrado"));
+
+        Set<ImagenArticulo> imagenes = request.getImagenes();
+
+        Set<ImagenArticulo> imagenesEliminadas = request.getImagenes();
+        imagenesEliminadas.removeAll(imagenes);
+        for (ImagenArticulo imagen: imagenesEliminadas) {
+            imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
+        }
 
         Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
         Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
@@ -87,10 +106,10 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
                 if (insumo == null || insumo.getId() == null) {
                     throw new RuntimeException("El insumo del detalle no puede ser nulo");
                 }
-                 insumo = articuloInsumoRepository.findById(detalle.getArticuloInsumo().getId())
+                insumo = articuloInsumoRepository.findById(detalle.getArticuloInsumo().getId())
                         .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticuloInsumo().getId() + " no se ha encontrado"));
-                 ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
-                 detallesPersistidos.add(savedDetalle);
+                ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
+                detallesPersistidos.add(savedDetalle);
             }
             articulo.setArticuloManufacturadoDetalles(detallesPersistidos);
         }
@@ -110,6 +129,10 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
             request.setCategoria(categoria);
         }
+
+        /*if (request.getArchivos() != null) {
+            imagenArticuloService.uploadImages(request.getArchivos(), id);
+        }*/
 
         return articuloManufacturadoRepository.save(request);
     }

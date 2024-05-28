@@ -1,13 +1,14 @@
 package com.example.buensaborback.business.service.Imp;
 
-import com.example.buensaborback.business.mapper.ImagenArticuloMapper;
+import com.example.buensaborback.business.mapper.ImagenPromocionMapper;
 import com.example.buensaborback.business.service.CloudinaryService;
-import com.example.buensaborback.business.service.ImagenArticuloService;
-import com.example.buensaborback.domain.dto.ImagenArticuloDto;
-import com.example.buensaborback.domain.entities.Articulo;
+import com.example.buensaborback.business.service.ImagenPromocionService;
+import com.example.buensaborback.domain.dto.PromocionDtos.ImagenPromocionDto;
 import com.example.buensaborback.domain.entities.ImagenArticulo;
-import com.example.buensaborback.repositories.ArticuloRepository;
-import com.example.buensaborback.repositories.ImagenArticuloRepository;
+import com.example.buensaborback.domain.entities.ImagenPromocion;
+import com.example.buensaborback.domain.entities.Promocion;
+import com.example.buensaborback.repositories.ImagenPromocionRepository;
+import com.example.buensaborback.repositories.PromocionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,37 +22,30 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class ImagenArticuloServiceImpl implements ImagenArticuloService {
-
+public class ImagenPromocionServiceImpl implements ImagenPromocionService {
     @Autowired
     private CloudinaryService cloudinaryService;
 
     @Autowired
-    private ImagenArticuloRepository imagenArticuloRepository;
+    private ImagenPromocionRepository imagenPromocionRepository;
 
     @Autowired
-    private ImagenArticuloMapper imagenArticuloMapper;
+    private ImagenPromocionMapper imagenPromocionMapper;
 
     @Autowired
-    private ArticuloRepository articuloRepository;
+    private PromocionRepository promocionRepository;
 
     @Override
-    public ResponseEntity<List<ImagenArticuloDto>> getAllImages() {
+    public ResponseEntity<List<ImagenPromocionDto>> getAllImages() {
         try {
-            //List<ImagenArticulo> images = imagenArticuloRepository.findAll(); //Eliminar?
-            List<ImagenArticulo> entities = imagenArticuloRepository.findAll();
-            List<ImagenArticuloDto> imageDtos = new ArrayList<>();
+            List<ImagenPromocion> entities = imagenPromocionRepository.findAll();
+            List<ImagenPromocionDto> imageDtos = new ArrayList<>();
 
             // Mapea las entidades a DTOs
-            List<ImagenArticuloDto> dtos = entities.stream()
-                    .map(imagenArticuloMapper::toDTO)
+            List<ImagenPromocionDto> dtos = entities.stream()
+                    .map(imagenPromocionMapper::toDTO)
                     .collect(Collectors.toList());
-            //ELIMINAR COMENTANDO?
-            /*
-            for (ImagenArticulo image : images) {
-                imageDtos.add(imagenArticuloMapper.toDto(image));
-            }
-*/
+
             return new ResponseEntity<>(dtos, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,13 +54,13 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
     }
 
     @Override
-    public ResponseEntity<String> uploadImages(MultipartFile[] files, Long idArticulo) {
+    public ResponseEntity<String> uploadImages(MultipartFile[] files, Long idPromocion) {
         List<String> urls = new ArrayList<>();
         try {
-            Articulo articulo = articuloRepository.getById(idArticulo);
-            Set<ImagenArticulo> imagenes = new HashSet<>();
-            if (articulo == null) {
-                throw new RuntimeException("El articulo con id " + idArticulo + " no se ha encontrado");
+            Promocion promocion = promocionRepository.getById(idPromocion);
+            Set<ImagenPromocion> imagenes = new HashSet<>();
+            if (promocion == null) {
+                throw new RuntimeException("La promoción con id " + idPromocion + " no se ha encontrado");
             }
 
             for (MultipartFile file : files) {
@@ -74,7 +68,7 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
                     return ResponseEntity.badRequest().body("El archivo está vacío.");
                 }
 
-                ImagenArticulo image = new ImagenArticulo();
+                ImagenPromocion image = new ImagenPromocion();
                 image.setName(file.getOriginalFilename());
                 image.setUrl(cloudinaryService.uploadFile(file));
 
@@ -82,13 +76,13 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
                     return ResponseEntity.badRequest().body("No se pudo cargar el archivo");
                 }
 
-                ImagenArticulo imagenGuardada= imagenArticuloRepository.save(image);
+                ImagenPromocion imagenGuardada = imagenPromocionRepository.save(image);
                 imagenes.add(imagenGuardada);
                 urls.add(image.getUrl());
             }
 
-            articulo.setImagenes(imagenes);
-            articuloRepository.save(articulo);
+            promocion.setImagenes(imagenes);
+            promocionRepository.save(promocion);
 
             return new ResponseEntity<>("Subido exitosamente: " + String.join(", ", urls), HttpStatus.OK);
         } catch (Exception e) {
@@ -100,11 +94,8 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
     @Override
     public ResponseEntity<String> deleteImage(String publicId, Long id) {
         try {
-            ImagenArticulo imagenArticulo = imagenArticuloRepository.getById(id);
-            if (imagenArticulo == null) {
-                throw new RuntimeException("La imagen con id " + id + " no se ha encontrado");
-            }
-            imagenArticuloRepository.delete(imagenArticulo);
+            ImagenPromocion imagenPromocion = imagenPromocionRepository.getById(id);
+            imagenPromocionRepository.delete(imagenPromocion);
             cloudinaryService.deleteImage(publicId, id);
             return new ResponseEntity<>("Image deleted successfully", HttpStatus.OK);
         } catch (Exception e) {

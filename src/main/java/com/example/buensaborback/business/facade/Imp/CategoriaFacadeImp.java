@@ -8,6 +8,7 @@ import com.example.buensaborback.business.mapper.SucursalMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.business.service.CategoriaService;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
+import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaHomeDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaPostDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
@@ -65,6 +66,15 @@ public class CategoriaFacadeImp extends BaseFacadeImp<Categoria, CategoriaPostDt
 
     public void deleteInSucursales (Long id, SucursalShortDto shortSucursal) {
         categoriaService.deleteInSucursales(id, shortSucursal);
+    }
+
+    public List<CategoriaHomeDto> getAllParents(){
+        var entities = categoriaService.getAllParents();
+        //  devuelve una lista de DTO
+        return entities
+                .stream()
+                .map(categoriaMapper::toHomeDTO)
+                .collect(Collectors.toList());
     }
 
 }
