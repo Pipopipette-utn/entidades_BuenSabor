@@ -65,6 +65,13 @@ public abstract class BaseControllerImp <E extends Base,D extends BaseDto, GD ex
         return ResponseEntity.ok(facade.update(entity, id));
     }
 
+    @PutMapping("/alta/{id}")
+    public ResponseEntity<?> alta(@PathVariable ID id){
+        //logger.info("INICIO EDIT {}",entity.getClass());
+        facade.alta(id);
+        return ResponseEntity.ok(null);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable ID id){
         //logger.info("INICIO DELETE BY ID");
