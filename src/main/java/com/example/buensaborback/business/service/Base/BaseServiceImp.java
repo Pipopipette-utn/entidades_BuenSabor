@@ -80,4 +80,16 @@ public abstract class BaseServiceImp<E extends Base,ID extends Serializable> imp
         //logger.info("Actualizada entidad {}",newEntity);
         return newEntity;
     }
+
+    @Override
+    public void alta(ID id){
+        var optionalEntity = baseRepository.findById(id);
+        if (optionalEntity.isEmpty()){
+            //logger.error("No se encontro una entidad con el id " + request.getId());
+            throw new RuntimeException("No se encontro una entidad con el id " + id);
+        }
+        E entity = optionalEntity.get();
+        entity.setBaja(false);
+        baseRepository.save(entity);
+    }
 }
