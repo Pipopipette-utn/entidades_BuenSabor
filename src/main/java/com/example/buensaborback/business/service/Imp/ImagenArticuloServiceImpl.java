@@ -87,7 +87,7 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
                 urls.add(image.getUrl());
             }
 
-            articulo.setImagenes(imagenes);
+            articulo.getImagenes().addAll(imagenes);
             articuloRepository.save(articulo);
 
             return new ResponseEntity<>("Subido exitosamente: " + String.join(", ", urls), HttpStatus.OK);

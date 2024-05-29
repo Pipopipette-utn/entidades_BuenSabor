@@ -12,10 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManufacturado,Long> implements ArticuloManufacturadoService {
@@ -50,13 +47,13 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
         if (detalles != null && !detalles.isEmpty()) {
             for (ArticuloManufacturadoDetalle detalle : detalles) {
-                ArticuloInsumo insumo = detalle.getArticuloInsumo();
+                ArticuloInsumo insumo = detalle.getArticulo();
                 if (insumo == null || insumo.getId() == null) {
                     throw new RuntimeException("El insumo del detalle no puede ser nulo");
                 }
-                 insumo = articuloInsumoRepository.findById(detalle.getArticuloInsumo().getId())
-                        .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticuloInsumo().getId() + " no se ha encontrado"));
-                detalle.setArticuloInsumo(insumo);
+                 insumo = articuloInsumoRepository.findById(detalle.getArticulo().getId())
+                        .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
+                detalle.setArticulo(insumo);
                 ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
                 detallesPersistidos.add(savedDetalle);
             }
@@ -86,12 +83,22 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
                 .orElseThrow(() -> new RuntimeException("El articulo manufacturado con id " + id + " no se ha encontrado"));
 
         Set<ImagenArticulo> imagenes = request.getImagenes();
+        Set<ImagenArticulo> imagenesEliminadas = articulo.getImagenes();
+        Iterator<ImagenArticulo> iterator = imagenesEliminadas.iterator();
+        while (iterator.hasNext()) {
+            ImagenArticulo imagenEliminada = iterator.next();
+            for (ImagenArticulo imagen : imagenes) {
+                if (imagen.getId().equals(imagenEliminada.getId())) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
 
-        Set<ImagenArticulo> imagenesEliminadas = request.getImagenes();
-        imagenesEliminadas.removeAll(imagenes);
         for (ImagenArticulo imagen: imagenesEliminadas) {
             imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
         }
+        request.getImagenes().removeAll(imagenesEliminadas);
 
         Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
         Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
@@ -102,12 +109,12 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
         if (!detalles.isEmpty()) {
             for (ArticuloManufacturadoDetalle detalle : detalles) {
-                ArticuloInsumo insumo = detalle.getArticuloInsumo();
+                ArticuloInsumo insumo = detalle.getArticulo();
                 if (insumo == null || insumo.getId() == null) {
                     throw new RuntimeException("El insumo del detalle no puede ser nulo");
                 }
-                insumo = articuloInsumoRepository.findById(detalle.getArticuloInsumo().getId())
-                        .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticuloInsumo().getId() + " no se ha encontrado"));
+                insumo = articuloInsumoRepository.findById(detalle.getArticulo().getId())
+                        .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
                 ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
                 detallesPersistidos.add(savedDetalle);
             }

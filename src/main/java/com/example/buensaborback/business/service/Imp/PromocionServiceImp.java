@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @Service
@@ -46,8 +47,6 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
 
         if (detalles != null && !detalles.isEmpty()) {
             for (PromocionDetalle detalle : detalles) {
-                System.out.println(detalle.getCantidad());
-                System.out.println(detalle.getArticulo().getDenominacion());
                 Articulo articulo = detalle.getArticulo();
                 if (articulo == null || articulo.getId() == null) {
                     throw new RuntimeException("El articulo del detalle no puede ser nulo");
@@ -82,12 +81,22 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
                 .orElseThrow(() -> new RuntimeException("La promoción con id " + id + " no se ha encontrado"));
 
         Set<ImagenPromocion> imagenes = request.getImagenes();
-
         Set<ImagenPromocion> imagenesEliminadas = promocion.getImagenes();
-        imagenesEliminadas.removeAll(imagenes);
+        Iterator<ImagenPromocion> iterator = imagenesEliminadas.iterator();
+        while (iterator.hasNext()) {
+            ImagenPromocion imagenEliminada = iterator.next();
+            for (ImagenPromocion imagen : imagenes) {
+                if (imagen.getId().equals(imagenEliminada.getId())) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+
         for (ImagenPromocion imagen: imagenesEliminadas) {
             imagenPromocionService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
         }
+        request.getImagenes().removeAll(imagenesEliminadas);
 
         Set<PromocionDetalle> detalles = request.getPromocionDetalles();
         Set<PromocionDetalle> detallesPersistidos = new HashSet<>();

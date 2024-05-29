@@ -126,7 +126,7 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
         if (insumo == null) {
             throw new RuntimeException("Insumo no encontrado: { id: " + id + " }");
         }
-        List<ArticuloManufacturadoDetalle> insumoEsUtilizado = articuloManufacturadoDetalleRepository.getByArticuloInsumo(insumo);
+        List<ArticuloManufacturadoDetalle> insumoEsUtilizado = articuloManufacturadoDetalleRepository.getByArticulo(insumo);
         if (!insumoEsUtilizado.isEmpty()) {
             throw new RuntimeException("No se puede eliminar el articulo porque está presente en un detalle");
         }
