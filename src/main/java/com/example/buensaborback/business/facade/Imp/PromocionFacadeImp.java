@@ -5,16 +5,26 @@ import com.example.buensaborback.business.facade.EmpleadoFacade;
 import com.example.buensaborback.business.facade.PromocionFacade;
 import com.example.buensaborback.business.mapper.BaseMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
+import com.example.buensaborback.business.service.PromocionService;
 import com.example.buensaborback.domain.dto.EmpleadoDto;
 import com.example.buensaborback.domain.dto.PromocionDtos.PromocionDto;
 import com.example.buensaborback.domain.entities.Empleado;
 import com.example.buensaborback.domain.entities.Promocion;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PromocionFacadeImp extends BaseFacadeImp<Promocion, PromocionDto,PromocionDto, Long> implements PromocionFacade {
 
+    @Autowired
+    private PromocionService promocionService;
+
     public PromocionFacadeImp(BaseService<Promocion, Long> baseService, BaseMapper<Promocion, PromocionDto, PromocionDto> baseMapper) {
         super(baseService, baseMapper);
     }
+
+    public void deleteInSucursales(Long id, Long idSucursal){
+        promocionService.deleteInSucursales(id, idSucursal);
+    }
+
 }
