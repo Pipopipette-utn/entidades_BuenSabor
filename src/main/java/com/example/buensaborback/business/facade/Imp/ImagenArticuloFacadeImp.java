@@ -22,7 +22,10 @@ public class ImagenArticuloFacadeImp implements ImagenArticuloFacade {
 
     @Override
     public String uploadImages(MultipartFile[] files, Long idArticulo) {
-        return imagenArticuloService.uploadImages(files, idArticulo).getBody();
+        var respuesta = imagenArticuloService.uploadImages(files, idArticulo);
+        System.out.println(respuesta);
+        System.out.println(respuesta.getBody());
+        return respuesta.getBody();
     }
 
     @Override

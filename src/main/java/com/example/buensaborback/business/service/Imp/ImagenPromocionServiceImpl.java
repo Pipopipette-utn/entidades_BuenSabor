@@ -80,8 +80,7 @@ public class ImagenPromocionServiceImpl implements ImagenPromocionService {
                 imagenes.add(imagenGuardada);
                 urls.add(image.getUrl());
             }
-
-            promocion.setImagenes(imagenes);
+            promocion.getImagenes().addAll(imagenes);
             promocionRepository.save(promocion);
 
             return new ResponseEntity<>("Subido exitosamente: " + String.join(", ", urls), HttpStatus.OK);
