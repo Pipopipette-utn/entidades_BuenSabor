@@ -94,7 +94,8 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         }
     }
 
-    public void deleteInSucursales(Long id, SucursalShortDto sucursalShort) {
+    @Override
+    public void deleteInSucursales(Long id, Sucursal sucursalShort) {
         Categoria categoriaExistente = categoriaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("La categoría con el ID " + id + " no existe."));
 

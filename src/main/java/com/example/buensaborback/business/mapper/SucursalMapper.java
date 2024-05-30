@@ -9,5 +9,5 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {DomicilioMapper.class, EmpresaMapper.class })
 public interface SucursalMapper extends BaseMapper<Sucursal, SucursalDto, SucursalDto>{
-
+    Sucursal toEntityShort(SucursalShortDto source);
 }

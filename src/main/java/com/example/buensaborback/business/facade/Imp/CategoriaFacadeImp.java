@@ -65,7 +65,8 @@ public class CategoriaFacadeImp extends BaseFacadeImp<Categoria, CategoriaPostDt
     }
 
     public void deleteInSucursales (Long id, SucursalShortDto shortSucursal) {
-        categoriaService.deleteInSucursales(id, shortSucursal);
+        Sucursal entity = sucursalMapper.toEntityShort(shortSucursal);
+        categoriaService.deleteInSucursales(id, entity);
     }
 
     public List<CategoriaHomeDto> getAllParents(){
