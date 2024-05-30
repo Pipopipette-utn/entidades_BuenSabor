@@ -4,6 +4,7 @@ package com.example.buensaborback.presentation.rest;
 import com.example.buensaborback.business.facade.Imp.SucursalFacadeImp;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
+import com.example.buensaborback.domain.dto.PromocionDtos.PromocionDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalDto;
 import com.example.buensaborback.domain.entities.Sucursal;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
@@ -40,6 +41,11 @@ public class SucursalController extends BaseControllerImp<Sucursal, SucursalDto,
     @GetMapping("/{id}/categorias")
     public List<CategoriaGetDto> getCategoriasBySucursalId(@PathVariable Long id) {
         return facade.findCategoriasBySucursalId(id);
+    }
+
+    @GetMapping("/{id}/promociones")
+    public List<PromocionDto> findPromocionBySucursalId(@PathVariable Long id) {
+        return facade.findPromocionBySucursalId(id);
     }
 
 }

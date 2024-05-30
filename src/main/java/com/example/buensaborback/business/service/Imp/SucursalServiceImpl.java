@@ -3,6 +3,7 @@ package com.example.buensaborback.business.service.Imp;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.SucursalService;
 import com.example.buensaborback.domain.entities.Categoria;
+import com.example.buensaborback.domain.entities.Promocion;
 import com.example.buensaborback.domain.entities.Sucursal;
 import com.example.buensaborback.repositories.DomicilioRepository;
 import com.example.buensaborback.repositories.EmpresaRepository;
@@ -81,6 +82,17 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
         filterSubcategorias(filteredCategorias, categorias);
 
         return new ArrayList<>(filteredCategorias);
+    }
+
+    @Override
+    public List<Promocion> findPromocionBySucursalId(Long sucursalId) {
+        var sucursalExiste = sucursalRepository.findById(sucursalId);
+
+        if(sucursalExiste.isEmpty()){
+            throw new RuntimeException("La sucursal con el id " + sucursalId + " no se ha encontrado");
+        }
+
+        return sucursalRepository.findPromocionBySucursalId(sucursalId);
     }
 
     public void filterSubcategorias(Set<Categoria> categorias, List<Categoria> categoriasBySucursal) {
