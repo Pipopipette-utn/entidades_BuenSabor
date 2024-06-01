@@ -1,5 +1,6 @@
 package com.example.buensaborback.domain.dto;
 
+import com.example.buensaborback.domain.dto.Articulo.ArticuloDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

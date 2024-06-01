@@ -1,5 +1,6 @@
 package com.example.buensaborback.domain.dto;
 
+import com.example.buensaborback.domain.dto.Articulo.ArticuloDto;
 import lombok.*;
 
 import java.util.HashSet;
