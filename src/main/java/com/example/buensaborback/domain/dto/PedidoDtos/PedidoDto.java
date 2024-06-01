@@ -24,11 +24,8 @@ import java.util.Set;
 @Setter
 public class PedidoDto extends BaseDto {
     private Double total;
-    private Double totalCosto;
     private TipoEnvio tipoEnvio;
     private FormaPago formaPago;
-    @Schema(type = "string", format = "date", pattern = "yyyy-MM-dd")
-    private LocalDate fechaPedido;
 
     // private DomicilioDto domicilio;
     private SucursalShortDto sucursal;

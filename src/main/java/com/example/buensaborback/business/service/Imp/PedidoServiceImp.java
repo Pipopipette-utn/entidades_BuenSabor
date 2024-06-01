@@ -4,13 +4,11 @@ import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.PedidoService;
 import com.example.buensaborback.domain.entities.*;
 import com.example.buensaborback.domain.enums.Estado;
-import com.example.buensaborback.repositories.ArticuloRepository;
-import com.example.buensaborback.repositories.DetallePedidoRepository;
-import com.example.buensaborback.repositories.PedidoRepository;
-import com.example.buensaborback.repositories.SucursalRepository;
+import com.example.buensaborback.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,54 +27,84 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
     @Autowired
     SucursalRepository sucursalRepository;
 
+    @Autowired
+    ArticuloInsumoRepository articuloInsumoRepository;
+
+    @Autowired
+    ArticuloManufacturadoRepository articuloManufacturadoRepository;
+
     @Override
     public Pedido create(Pedido request) {
-        // Asignar detalles al pedido
-        Set<DetallePedido> detalles = request.getDetallePedidos();
-        Set<DetallePedido> detallesPersistidos = new HashSet<>();
+        Set<DetallePedido> detalles = request.getDetallePedidos(); // Guardar los detalles del body en un set
+        Set<DetallePedido> detallesPersistidos = new HashSet<>(); // Inicializar un set que contendrá los detalles que pasen las validaciones
 
         if (detalles != null && !detalles.isEmpty()) {
+            double costoTotal = 0;
+            //Iterar los detalles
             for (DetallePedido detalle : detalles) {
-                // Obtener el articulo presente en el detalle
-                Articulo articulo = detalle.getArticulo();
+                Articulo articulo = detalle.getArticulo(); // Obtener el artículo presente en el detalle
                 if (articulo == null || articulo.getId() == null) {
-                    throw new RuntimeException("El articulo del detalle no puede ser nulo");
+                    throw new RuntimeException("El artículo del detalle no puede ser nulo");
                 }
                 // Validar que el articulo exista
                 articulo = articuloRepository.findById(detalle.getArticulo().getId())
-                        .orElseThrow(() -> new RuntimeException("El articulo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
+                        .orElseThrow(() -> new RuntimeException("El artículo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
                 detalle.setArticulo(articulo);
-                // Guardar los detalles en la bd
-                DetallePedido savedDetalle = detallePedidoRepository.save(detalle);
+                DetallePedido savedDetalle = detallePedidoRepository.save(detalle); // Guardar los detalles en la bd
+                costoTotal += calcularTotalCosto(articulo.getId(), detalle.getCantidad()); // Calcular costo total por cada iteración de detalle
+
                 detallesPersistidos.add(savedDetalle);
             }
-            // Añadir el detalle al pedido
-            request.setDetallePedidos(detallesPersistidos);
+            request.setTotalCosto(costoTotal);
+            request.setDetallePedidos(detallesPersistidos); // Después de la iteración, asignarle todos los detalles al pedido
+        } else {
+            throw new IllegalArgumentException("El pedido debe contener al menos un detalle");
         }
 
         // Validar que se haya pasado una sucursal en el body
         if (request.getSucursal() == null) {
             throw new RuntimeException("No se ha asignado una sucursal al pedido");
         }
-
         Sucursal sucursal = sucursalRepository.getById(request.getSucursal().getId());
         // Validar que la sucursal existe
         if (sucursal == null) {
             throw new RuntimeException("La sucursal con id " + request.getSucursal().getId() + " no se ha encontrado");
         }
 
-        // Asignar la sucursal al pedido
-        request.setSucursal(sucursal);
+        request.setSucursal(sucursal); // Asignar la sucursal al pedido
 
-        //Asignar el estado inicial
-        request.setEstado(Estado.PENDIENTE);
+        request.setEstado(Estado.PENDIENTE); //Asignar el estado inicial
 
-        // Guardar el nuevo pedido
-        return pedidoRepository.save(request);
+        request.setFechaPedido(LocalDate.now()); //Asignar la fecha
+
+        return pedidoRepository.save(request); // Guardar el nuevo pedido
     }
 
-    public LocalTime calcularHoraEstimadaFinalizacion() {
-        return LocalTime.parse("23:45:00");
+    public Double calcularTotalCosto(Long idArticulo, Integer cantidad) {
+
+        ArticuloInsumo insumo = articuloInsumoRepository.getById(idArticulo);
+        // Si el artículo es un insumo, multiplicar el precio del insumo por la cantidad
+        if (insumo != null) {
+            return insumo.getPrecioCompra() * cantidad;
+        }
+
+        ArticuloManufacturado manufacturado = articuloManufacturadoRepository.getById(idArticulo);
+
+        // Si el artículo es un manufacturado, obtener sus detalles
+        if (manufacturado != null) {
+            Set<ArticuloManufacturadoDetalle> detalles = manufacturado.getArticuloManufacturadoDetalles();
+            if (detalles != null && !detalles.isEmpty()) {
+                double totalCosto = 0;
+                for (ArticuloManufacturadoDetalle detalle : detalles) { // Recorrer los detalles
+                    double precioCompraInsumo = detalle.getArticuloInsumo().getPrecioCompra(); // Obtener el precioCompra del insumo presente en el detalle
+                    double cantidadInsumo = detalle.getCantidad(); // Obtener la cantidad del insumo presente en el detalle
+                    totalCosto += (precioCompraInsumo * cantidadInsumo);
+                }
+                return totalCosto * cantidad; // Multiplicar por la cantidad de artículos manufacturados
+            }
+        }
+
+        return 0.0; // Si no se encuentra el artículo, devuelve 0.0
     }
 
     @Override
