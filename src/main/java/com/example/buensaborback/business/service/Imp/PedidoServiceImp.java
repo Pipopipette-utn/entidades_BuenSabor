@@ -96,7 +96,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
             if (detalles != null && !detalles.isEmpty()) {
                 double totalCosto = 0;
                 for (ArticuloManufacturadoDetalle detalle : detalles) { // Recorrer los detalles
-                    double precioCompraInsumo = detalle.getArticuloInsumo().getPrecioCompra(); // Obtener el precioCompra del insumo presente en el detalle
+                    double precioCompraInsumo = detalle.getArticulo().getPrecioCompra(); // Obtener el precioCompra del insumo presente en el detalle
                     double cantidadInsumo = detalle.getCantidad(); // Obtener la cantidad del insumo presente en el detalle
                     totalCosto += (precioCompraInsumo * cantidadInsumo);
                 }
