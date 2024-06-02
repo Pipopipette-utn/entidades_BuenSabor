@@ -6,6 +6,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToOne;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 @Setter
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
+@Audited
 public class Persona extends Base {
     private String nombre;
     private String apellido;
@@ -25,6 +27,7 @@ public class Persona extends Base {
     private LocalDate fechaNacimiento;
 
     @OneToOne
+    @NotAudited
     private Usuario usuario;
 
     @OneToOne

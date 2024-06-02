@@ -3,6 +3,8 @@ package com.example.buensaborback.domain.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.time.LocalTime;
 import java.util.HashSet;
@@ -14,8 +16,8 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
-//@Audited
 @SuperBuilder
+@Audited
 public class Sucursal extends  Base{
 
     private String nombre;
@@ -25,6 +27,7 @@ public class Sucursal extends  Base{
     private String logo;
 
     @OneToOne
+    @NotAudited
     private Domicilio domicilio;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
@@ -34,6 +37,7 @@ public class Sucursal extends  Base{
             inverseJoinColumns = @JoinColumn(name = "promocion_id"))
     //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
     @Builder.Default
+    @NotAudited
     private Set<Promocion> promociones = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -45,12 +49,15 @@ public class Sucursal extends  Base{
             inverseJoinColumns = @JoinColumn(name = "categoria_id"))
     //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
     @Builder.Default
+    @NotAudited
     private Set<Categoria> categorias = new HashSet<>();
 
     @OneToMany(mappedBy = "sucursal",cascade = CascadeType.REFRESH,fetch = FetchType.LAZY)
     @Builder.Default
+    @NotAudited
     private Set<Empleado> empleados = new HashSet<>();
 
     @ManyToOne
+    @NotAudited
     private Empresa empresa;
 }
