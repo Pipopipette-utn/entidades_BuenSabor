@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -81,18 +82,23 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
     }
 
     public Double calcularTotalCosto(Long idArticulo, Integer cantidad) {
+        // Buscar ArticuloInsumo por ID
+        Optional<ArticuloInsumo> optionalInsumo = articuloInsumoRepository.findById(idArticulo);
 
-        ArticuloInsumo insumo = articuloInsumoRepository.getById(idArticulo);
         // Si el artículo es un insumo, multiplicar el precio del insumo por la cantidad
-        if (insumo != null) {
+        if (optionalInsumo.isPresent()) {
+            ArticuloInsumo insumo = optionalInsumo.get();
             return insumo.getPrecioCompra() * cantidad;
         }
 
-        ArticuloManufacturado manufacturado = articuloManufacturadoRepository.getById(idArticulo);
+        // Buscar ArticuloManufacturado por ID
+        Optional<ArticuloManufacturado> optionalManufacturado = articuloManufacturadoRepository.findById(idArticulo);
 
         // Si el artículo es un manufacturado, obtener sus detalles
-        if (manufacturado != null) {
+        if (optionalManufacturado.isPresent()) {
+            ArticuloManufacturado manufacturado = optionalManufacturado.get();
             Set<ArticuloManufacturadoDetalle> detalles = manufacturado.getArticuloManufacturadoDetalles();
+
             if (detalles != null && !detalles.isEmpty()) {
                 double totalCosto = 0;
                 for (ArticuloManufacturadoDetalle detalle : detalles) { // Recorrer los detalles
@@ -106,6 +112,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
 
         return 0.0; // Si no se encuentra el artículo, devuelve 0.0
     }
+
 
     @Override
     public Pedido update(Pedido request, Long id) {
