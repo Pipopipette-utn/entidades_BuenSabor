@@ -24,7 +24,6 @@ public class Cliente extends Persona {
             joinColumns = @JoinColumn(name = "cliente_id"),
             inverseJoinColumns = @JoinColumn(name = "domicilio_id"))
     @Builder.Default
-    @NotAudited
     private Set<Domicilio> domicilios = new HashSet<>();
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -24,7 +24,6 @@ public class Categoria extends Base{
 
     @ManyToMany(mappedBy = "categorias")
     @Builder.Default
-    @NotAudited
     private Set<Sucursal> sucursales = new HashSet<>();
 
     @OneToMany

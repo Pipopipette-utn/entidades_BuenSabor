@@ -51,7 +51,6 @@ public class Promocion  extends Base{
 
 
     @ManyToMany (mappedBy = "promociones")
-    @NotAudited
     private Set<Sucursal> sucursales = new HashSet<>();
 
 
