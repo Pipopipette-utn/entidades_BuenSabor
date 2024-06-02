@@ -4,6 +4,7 @@ import com.example.buensaborback.domain.enums.TipoPromocion;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import java.time.LocalDate;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Getter
 @ToString
 @SuperBuilder
-//@Audited
+@Audited
 public class Promocion  extends Base{
     private String denominacion;
     private LocalDate fechaDesde;
@@ -36,6 +37,7 @@ public class Promocion  extends Base{
     @JoinColumn(name = "promocion_id")
     //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
     @Builder.Default
+    @NotAudited
     private Set<PromocionDetalle> promocionDetalles = new HashSet<>();
 
     @OneToMany

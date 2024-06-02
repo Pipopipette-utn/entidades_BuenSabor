@@ -6,6 +6,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,12 +15,13 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @ToString
 @Entity
-//@Audited
 @SuperBuilder
+@Audited
 public class ArticuloManufacturadoDetalle extends Base{
     private Double cantidad;
 
     @ManyToOne
     @JoinColumn(name = "articulo_insumo_id")
+    @NotAudited
     private ArticuloInsumo articulo;
 }

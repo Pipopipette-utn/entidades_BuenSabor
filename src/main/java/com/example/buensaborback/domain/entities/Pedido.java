@@ -7,6 +7,8 @@ import com.example.buensaborback.domain.enums.TipoEnvio;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,7 +22,7 @@ import java.util.Set;
 @Getter
 @ToString
 @SuperBuilder
-//@Audited
+@Audited
 public class Pedido extends Base{
 
     private LocalTime horaEstimadaFinalizacion;
@@ -42,6 +44,7 @@ public class Pedido extends Base{
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
+    @NotAudited
     private Cliente cliente;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -50,9 +53,11 @@ public class Pedido extends Base{
     @JoinColumn(name = "pedido_id")
     //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
     @Builder.Default
+    @NotAudited
     private Set<DetallePedido> detallePedidos = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "empleado_id")
+    @NotAudited
     private Empleado empleado;
 }

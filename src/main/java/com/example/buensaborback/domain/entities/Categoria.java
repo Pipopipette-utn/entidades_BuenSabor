@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,8 +16,8 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
-//@Audited
 @SuperBuilder
+@Audited
 public class Categoria extends Base{
     private String denominacion;
     private boolean esInsumo;
@@ -26,16 +28,19 @@ public class Categoria extends Base{
 
     @OneToMany
     @JoinColumn(name = "categoria_id")
+    @NotAudited
     private Set<Articulo> articulos = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "categoriaPadre")
     @JsonIgnoreProperties("categoriaPadre")
     @Builder.Default
+    @NotAudited
     private Set<Categoria> subCategorias = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "categoria_padre_id")
     @JsonIgnoreProperties("subCategorias")
+    @NotAudited
     private Categoria categoriaPadre;
 
 }

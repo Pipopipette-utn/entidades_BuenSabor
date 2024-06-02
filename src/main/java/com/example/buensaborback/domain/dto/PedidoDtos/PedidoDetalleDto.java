@@ -1,6 +1,5 @@
-package com.example.buensaborback.domain.dto.PromocionDtos;
+package com.example.buensaborback.domain.dto.PedidoDtos;
 
-import com.example.buensaborback.domain.dto.Articulo.ArticuloDto;
 import com.example.buensaborback.domain.dto.Articulo.ArticuloShortDto;
 import com.example.buensaborback.domain.dto.BaseDto;
 import lombok.AllArgsConstructor;
@@ -12,8 +11,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PromocionDetalleDto extends BaseDto {
-    private int cantidad;
-    private ArticuloDto articulo;
+public class PedidoDetalleDto extends BaseDto {
+    private Integer cantidad;
+    private Double subTotal;
 
+    private ArticuloShortDto articulo;
 }
