@@ -5,6 +5,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,8 +18,8 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
-//@Audited
 @SuperBuilder
+@Audited
 public class ArticuloManufacturado  extends Articulo{
 
     private String descripcion;
@@ -26,7 +29,7 @@ public class ArticuloManufacturado  extends Articulo{
 
     @OneToMany
     @JoinColumn(name = "articuloManufacturado_id")
-    @Builder.Default
+    @NotAudited
     private Set<ArticuloManufacturadoDetalle> articuloManufacturadoDetalles = new HashSet<>();
 
 

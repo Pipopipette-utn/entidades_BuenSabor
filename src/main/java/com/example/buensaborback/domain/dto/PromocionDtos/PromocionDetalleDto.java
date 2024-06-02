@@ -14,6 +14,6 @@ import lombok.Setter;
 @Setter
 public class PromocionDetalleDto extends BaseDto {
     private int cantidad;
-    private ArticuloShortDto articulo;
+    private ArticuloDto articulo;
 
 }
