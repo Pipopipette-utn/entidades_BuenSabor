@@ -4,14 +4,8 @@ import com.example.buensaborback.business.mapper.ArticuloInsumoMapper;
 import com.example.buensaborback.business.service.ArticuloInsumoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
-import com.example.buensaborback.domain.entities.ArticuloInsumo;
-import com.example.buensaborback.domain.entities.ArticuloManufacturadoDetalle;
-import com.example.buensaborback.domain.entities.Categoria;
-import com.example.buensaborback.domain.entities.ImagenArticulo;
-import com.example.buensaborback.repositories.ArticuloInsumoRepository;
-import com.example.buensaborback.repositories.ArticuloManufacturadoDetalleRepository;
-import com.example.buensaborback.repositories.CategoriaRepository;
-import com.example.buensaborback.repositories.ImagenArticuloRepository;
+import com.example.buensaborback.domain.entities.*;
+import com.example.buensaborback.repositories.*;
 import com.example.buensaborback.utils.PublicIdService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +36,22 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
     CategoriaRepository categoriaRepository;
 
     @Autowired
-    ArticuloInsumoMapper articuloInsumoMapper;
+    SucursalRepository sucursalRepository;
 
     @Autowired
     PublicIdService publicIdService;
+
+    @Autowired
+    ArticuloRepository articuloRepository;
 
     @Override
     @Transactional
     public ArticuloInsumo create(ArticuloInsumo request) {
         Set<ImagenArticulo> imagenes = request.getImagenes();
         Set<ImagenArticulo> imagenesPersistidas = new HashSet<>();
+
+        Set<Sucursal> sucursales = request.getSucursales();
+        Set<Sucursal> sucursalesPersistidas = new HashSet<>();
 
         if (!imagenes.isEmpty()) {
             System.out.println("Entro al if");
@@ -80,6 +80,17 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
             }
 
             request.setCategoria(categoria);
+        }
+
+        // Verificar y asociar sucursales existentes
+        if (sucursales != null && !sucursales.isEmpty()) {
+            for (Sucursal sucursal : sucursales) {
+                Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+                sucursalBd.getArticulos().add(request);
+                sucursalesPersistidas.add(sucursalBd);
+            }
+            request.setSucursales(sucursalesPersistidas);
         }
 
         return articuloInsumoRepository.save(request);
@@ -113,9 +124,18 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
             request.setCategoria(categoria);
         }
 
-        /*if (request.getArchivos() != null) {
-            imagenArticuloService.uploadImages(request.getArchivos(), id);
-        }*/
+        Set<Sucursal> sucursales = request.getSucursales();
+        Set<Sucursal> sucursalesPersistidas = new HashSet<>();
+
+        if (sucursales != null && !sucursales.isEmpty()) {
+            for (Sucursal sucursal : sucursales) {
+                Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+                sucursalBd.getArticulos().add(request);
+                sucursalesPersistidas.add(sucursalBd);
+            }
+            request.setSucursales(sucursalesPersistidas);
+        }
 
         return articuloInsumoRepository.save(request);
     }

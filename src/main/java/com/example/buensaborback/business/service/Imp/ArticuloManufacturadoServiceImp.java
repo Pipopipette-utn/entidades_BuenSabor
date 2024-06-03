@@ -24,9 +24,6 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
     ImagenArticuloServiceImpl imagenArticuloService;
 
     @Autowired
-    ArticuloManufacturadoMapper articuloManufacturadoMapper;
-
-    @Autowired
     ArticuloManufacturadoDetalleRepository articuloManufacturadoDetalleRepository;
 
     @Autowired
@@ -38,12 +35,18 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
     @Autowired
     PublicIdService publicIdService;
 
+    @Autowired
+    SucursalRepository sucursalRepository;
+
     @Override
     @Transactional
     public ArticuloManufacturado create(ArticuloManufacturado request) {
 
         Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
         Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
+
+        Set<Sucursal> sucursales = request.getSucursales();
+        Set<Sucursal> sucursalesPersistidas = new HashSet<>();
 
         if (detalles != null && !detalles.isEmpty()) {
             for (ArticuloManufacturadoDetalle detalle : detalles) {
@@ -70,6 +73,17 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
             }
 
             request.setCategoria(categoria);
+        }
+
+        // Verificar y asociar sucursales existentes
+        if (sucursales != null && !sucursales.isEmpty()) {
+            for (Sucursal sucursal : sucursales) {
+                Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+                sucursalBd.getArticulos().add(request);
+                sucursalesPersistidas.add(sucursalBd);
+            }
+            request.setSucursales(sucursalesPersistidas);
         }
 
         return articuloManufacturadoRepository.save(request);
@@ -137,9 +151,18 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
             request.setCategoria(categoria);
         }
 
-        /*if (request.getArchivos() != null) {
-            imagenArticuloService.uploadImages(request.getArchivos(), id);
-        }*/
+        Set<Sucursal> sucursales = request.getSucursales();
+        Set<Sucursal> sucursalesPersistidas = new HashSet<>();
+
+        if (sucursales != null && !sucursales.isEmpty()) {
+            for (Sucursal sucursal : sucursales) {
+                Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+                sucursalBd.getArticulos().add(request);
+                sucursalesPersistidas.add(sucursalBd);
+            }
+            request.setSucursales(sucursalesPersistidas);
+        }
 
         return articuloManufacturadoRepository.save(request);
     }
