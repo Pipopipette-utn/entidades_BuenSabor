@@ -3,6 +3,7 @@ package com.example.buensaborback.domain.dto.Articulo;
 import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaDto;
 import com.example.buensaborback.domain.dto.ImagenArticuloDto;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.dto.UnidadMedidaDto;
 import com.example.buensaborback.domain.entities.Categoria;
 import lombok.*;
@@ -20,4 +21,5 @@ public class ArticuloDto extends BaseDto {
     protected Set<ImagenArticuloDto> imagenes = new HashSet<>();
     protected UnidadMedidaDto unidadMedida;
     protected CategoriaDto categoria;
+    private Set<SucursalShortDto> sucursales = new HashSet<>();
 }

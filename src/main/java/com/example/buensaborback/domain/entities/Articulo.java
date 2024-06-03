@@ -25,7 +25,6 @@ public class Articulo extends Base {
     protected String denominacion;
     protected Double precioVenta;
 
-
     @OneToMany
     @JoinColumn(name = "articulo_id")
     @Builder.Default
@@ -42,6 +41,9 @@ public class Articulo extends Base {
     @NotAudited
     private Categoria categoria;
 
+    @ManyToMany(mappedBy = "articulos")
+    @Builder.Default
+    private Set<Sucursal> sucursales = new HashSet<>();
 
 }
 
