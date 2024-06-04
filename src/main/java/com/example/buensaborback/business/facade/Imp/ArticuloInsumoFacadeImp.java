@@ -103,4 +103,14 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
         // Devuelve una página de DTOs
         return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
     }
+
+    public Page<ArticuloInsumoDto> findBySucursal(Long sucursalId, Pageable pageable) {
+        Page<ArticuloInsumo> articulosFiltrados = articuloInsumoService.findBySucursal(sucursalId, pageable);
+        // Mapea las entidades a DTOs
+        List<ArticuloInsumoDto> dtos = articulosFiltrados.getContent().stream()
+                .map(articuloInsumoMapper::toDTO)
+                .collect(Collectors.toList());
+        // Devuelve una página de DTOs
+        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+    }
 }

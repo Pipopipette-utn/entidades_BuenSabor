@@ -15,5 +15,5 @@ public interface ArticuloManufacturadoService extends BaseService<ArticuloManufa
     Page<ArticuloManufacturado> buscarPorCategoriaYNombre(Pageable pageable, Long idSucursal, Long categoriaId, String nombre);
     Page<ArticuloManufacturado> getArticulosByCategoria(Pageable pageable, Long idSucursal, Long categoriaId);
     Page<ArticuloManufacturado> getArticulosByNombre(Pageable pageable, Long idSucursal, String nombre);
-
+    Page<ArticuloManufacturado> findBySucursal(Long sucursalId, Pageable pageable);
 }
