@@ -87,5 +87,13 @@ public class ArticuloManufacturadoFacadeImp extends BaseFacadeImp<ArticuloManufa
         return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
     }
 
-
+    public Page<ArticuloManufacturadoDto> findBySucursal(Long sucursalId, Pageable pageable) {
+        Page<ArticuloManufacturado> articulosFiltrados = articuloManufacturadoService.findBySucursal(sucursalId, pageable);
+        // Mapea las entidades a DTOs
+        List<ArticuloManufacturadoDto> dtos = articulosFiltrados.getContent().stream()
+                .map(articuloManufacturadoMapper::toDTO)
+                .collect(Collectors.toList());
+        // Devuelve una página de DTOs
+        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+    }
 }
