@@ -36,4 +36,24 @@ public class ArticuloInsumoController extends BaseControllerImp<ArticuloInsumo, 
     public ResponseEntity<List<ArticuloInsumoDto>> create(@RequestBody ArticuloInsumoPostDto entity) {
         return ResponseEntity.ok(facade.createConSucursales(entity));
     }
+
+    @GetMapping("/filtrar/{idSucursal}")
+    public ResponseEntity<Page<ArticuloInsumoDto>> filtrarArticulos(
+            Pageable pageable,
+            @PathVariable Long idSucursal,
+            @RequestParam(required = false) Long categoriaId,
+            @RequestParam(required = false) String nombre) {
+        if (categoriaId != null && nombre != null && !nombre.isEmpty()) {
+            return ResponseEntity.ok(facade.buscarPorCategoriaYNombre(pageable, idSucursal, categoriaId, nombre));
+        } else {
+            if (categoriaId != null) {
+                return ResponseEntity.ok(facade.getArticulosByCategoria(pageable, idSucursal, categoriaId));
+            }
+            if (nombre != null && !nombre.isEmpty()) {
+                return ResponseEntity.ok(facade.getArticulosByNombre(pageable, idSucursal, nombre));
+            } else {
+                return ResponseEntity.ok(facade.getAllPaged(pageable));
+            }
+        }
+    }
 }
