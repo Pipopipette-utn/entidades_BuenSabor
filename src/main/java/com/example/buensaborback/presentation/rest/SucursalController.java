@@ -48,4 +48,9 @@ public class SucursalController extends BaseControllerImp<Sucursal, SucursalDto,
         return facade.findPromocionBySucursalId(id);
     }
 
+    @GetMapping("/empresa/{id}")
+    public List<SucursalDto> findByEmpresas(@PathVariable Long id) {
+        return facade.findByEmpresa(id);
+    }
+
 }
