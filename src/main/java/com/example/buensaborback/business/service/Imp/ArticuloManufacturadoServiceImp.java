@@ -37,39 +37,58 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
     @Override
     @Transactional
-    public ArticuloManufacturado create(ArticuloManufacturado request) {
+    public List<ArticuloManufacturado> create(ArticuloManufacturado request, Set<Sucursal> sucursales) {
+        List<ArticuloManufacturado> articulosCreados = new ArrayList<>();
 
-        Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
-        Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
+        for (Sucursal sucursal: sucursales) {
+            ArticuloManufacturado nuevoArticulo = new ArticuloManufacturado();
+            nuevoArticulo.setDenominacion(request.getDenominacion());
+            nuevoArticulo.setPrecioVenta(request.getPrecioVenta());
+            nuevoArticulo.setUnidadMedida(request.getUnidadMedida());
+            nuevoArticulo.setTiempoEstimadoMinutos(request.getTiempoEstimadoMinutos());
+            nuevoArticulo.setPreparacion(request.getPreparacion());
 
-        if (detalles != null && !detalles.isEmpty()) {
-            for (ArticuloManufacturadoDetalle detalle : detalles) {
-                ArticuloInsumo insumo = detalle.getArticulo();
-                if (insumo == null || insumo.getId() == null) {
-                    throw new RuntimeException("El insumo del detalle no puede ser nulo");
+
+            Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
+            Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
+
+            if (detalles != null && !detalles.isEmpty()) {
+                for (ArticuloManufacturadoDetalle detalle : detalles) {
+                    ArticuloInsumo insumo = detalle.getArticulo();
+                    if (insumo == null || insumo.getId() == null) {
+                        throw new RuntimeException("El insumo del detalle no puede ser nulo");
+                    }
+                    insumo = articuloInsumoRepository.findById(detalle.getArticulo().getId())
+                            .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
+                    detalle.setArticulo(insumo);
+                    ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
+                    detallesPersistidos.add(savedDetalle);
                 }
-                 insumo = articuloInsumoRepository.findById(detalle.getArticulo().getId())
-                        .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
-                detalle.setArticulo(insumo);
-                ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
-                detallesPersistidos.add(savedDetalle);
+                nuevoArticulo.setArticuloManufacturadoDetalles(detallesPersistidos);
             }
-            request.setArticuloManufacturadoDetalles(detallesPersistidos);
+
+            if (request.getCategoria() != null) {
+                Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
+                if (categoria == null) {
+                    throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
+                }
+                if (categoria.isEsInsumo()) {
+                    throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos manufacturados");
+                }
+
+                nuevoArticulo.setCategoria(categoria);
+            }
+
+            Sucursal sucursalBd = sucursalRepository.getById(sucursal.getId());
+            if (sucursalBd == null) {
+                throw new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado");
+            }
+            nuevoArticulo.setSucursal(sucursalBd);
+            // Guardar el artículo en la base de datos
+            ArticuloManufacturado articuloGuardado = articuloManufacturadoRepository.save(nuevoArticulo);
+            articulosCreados.add(articuloGuardado);
         }
-
-        if (request.getCategoria() != null) {
-            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
-            if (categoria == null ) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
-            }
-            if (categoria.isEsInsumo()) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos manufacturados");
-            }
-
-            request.setCategoria(categoria);
-        }
-
-        return articuloManufacturadoRepository.save(request);
+        return articulosCreados;
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.example.buensaborback.business.service.ArticuloInsumoService;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.domain.dto.Articulo.ArticuloPostDto;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoPostDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.ArticuloManufacturado;
@@ -62,7 +63,7 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
         return new PageImpl<>(dtos, pageable, entities.getTotalElements());
     }
 
-    public List<ArticuloInsumoDto> createConSucursales(ArticuloPostDto request) {
+    public List<ArticuloInsumoDto> createConSucursales(ArticuloInsumoPostDto request) {
         Set<SucursalShortDto> sucursalesDto = request.getSucursales();
         Set<Sucursal> sucursales = sucursalMapper.toEntitiesShort(sucursalesDto);
         ArticuloInsumo entityToCreate = articuloInsumoMapper.toEntityArticuloInsumo(request);

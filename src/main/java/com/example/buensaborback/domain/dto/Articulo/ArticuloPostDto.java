@@ -20,7 +20,6 @@ import java.util.Set;
 public class ArticuloPostDto extends BaseDto {
     protected String denominacion;
     protected Double precioVenta;
-    protected Set<ImagenArticuloDto> imagenes = new HashSet<>();
     protected UnidadMedidaDto unidadMedida;
     protected CategoriaDto categoria;
     private Set<SucursalShortDto> sucursales = new HashSet<>();
