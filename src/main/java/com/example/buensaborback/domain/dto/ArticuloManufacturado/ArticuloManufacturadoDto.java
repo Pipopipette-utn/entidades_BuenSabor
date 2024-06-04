@@ -1,6 +1,7 @@
-package com.example.buensaborback.domain.dto;
+package com.example.buensaborback.domain.dto.ArticuloManufacturado;
 
 import com.example.buensaborback.domain.dto.Articulo.ArticuloDto;
+import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoDetalleDto;
 import lombok.*;
 
 import java.util.HashSet;

@@ -5,8 +5,10 @@ import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaDto;
 import com.example.buensaborback.domain.dto.ImagenArticuloDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.dto.UnidadMedidaDto;
-import com.example.buensaborback.domain.entities.Categoria;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,11 +17,10 @@ import java.util.Set;
 @NoArgsConstructor
 @Setter
 @Getter
-public class ArticuloDto extends BaseDto {
+public class ArticuloPostDto extends BaseDto {
     protected String denominacion;
     protected Double precioVenta;
-    protected Set<ImagenArticuloDto> imagenes = new HashSet<>();
     protected UnidadMedidaDto unidadMedida;
     protected CategoriaDto categoria;
-    private SucursalShortDto sucursal;
+    private Set<SucursalShortDto> sucursales = new HashSet<>();
 }

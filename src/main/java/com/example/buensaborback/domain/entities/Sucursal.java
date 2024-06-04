@@ -59,11 +59,8 @@ public class Sucursal extends  Base{
     @NotAudited
     private Empresa empresa;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @JoinTable(name = "sucursal_articulo",
-            joinColumns = @JoinColumn(name = "sucursal_id"),
-            inverseJoinColumns = @JoinColumn(name = "articulo_id"))
-    @Builder.Default
+    @OneToMany
+    @JoinColumn(name = "sucursal_id")
+    @NotAudited
     private Set<Articulo> articulos = new HashSet<>();
 }
