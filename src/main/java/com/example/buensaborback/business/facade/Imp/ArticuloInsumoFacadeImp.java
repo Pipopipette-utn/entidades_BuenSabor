@@ -11,6 +11,7 @@ import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.domain.dto.Articulo.ArticuloPostDto;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoPostDto;
+import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.ArticuloManufacturado;
@@ -71,5 +72,35 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
         var entityCreated = articuloInsumoService.create(entityToCreate, sucursales);
         // convierte a Dto para devolver
         return articuloInsumoMapper.toPostDtoList(entityCreated);
+    }
+
+    public Page<ArticuloInsumoDto> buscarPorCategoriaYNombre(Pageable pageable, Long idSucursal, Long categoriaId, String nombre) {
+        Page<ArticuloInsumo> articulosFiltrados = articuloInsumoService.buscarPorCategoriaYNombre(pageable, idSucursal, categoriaId, nombre);
+        // Mapea las entidades a DTOs
+        List<ArticuloInsumoDto> dtos = articulosFiltrados.getContent().stream()
+                .map(articuloInsumoMapper::toDTO)
+                .collect(Collectors.toList());
+        // Devuelve una página de DTOs
+        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+    }
+
+    public Page<ArticuloInsumoDto> getArticulosByCategoria(Pageable pageable, Long idSucursal,Long categoriaId) {
+        Page<ArticuloInsumo> articulosFiltrados = articuloInsumoService.getArticulosByCategoria(pageable, idSucursal, categoriaId);
+        // Mapea las entidades a DTOs
+        List<ArticuloInsumoDto> dtos = articulosFiltrados.getContent().stream()
+                .map(articuloInsumoMapper::toDTO)
+                .collect(Collectors.toList());
+        // Devuelve una página de DTOs
+        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+    }
+
+    public Page<ArticuloInsumoDto> getArticulosByNombre(Pageable pageable, Long idSucursal, String nombre) {
+        Page<ArticuloInsumo> articulosFiltrados = articuloInsumoService.getArticulosByNombre(pageable, idSucursal, nombre);
+        // Mapea las entidades a DTOs
+        List<ArticuloInsumoDto> dtos = articulosFiltrados.getContent().stream()
+                .map(articuloInsumoMapper::toDTO)
+                .collect(Collectors.toList());
+        // Devuelve una página de DTOs
+        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
     }
 }

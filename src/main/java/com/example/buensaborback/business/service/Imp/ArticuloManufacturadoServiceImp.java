@@ -7,6 +7,8 @@ import com.example.buensaborback.repositories.*;
 import com.example.buensaborback.utils.PublicIdService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -163,5 +165,20 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
             throw new RuntimeException("Producto no encontrado: { id: " + id + " }");
         }
         articuloManufacturadoRepository.delete(producto);
+    }
+
+    @Override
+    public Page<ArticuloManufacturado> buscarPorCategoriaYNombre(Pageable pageable, Long idSucursal, Long categoriaId, String nombre) {
+        return articuloManufacturadoRepository.findBySucursal_IdAndCategoria_IdAndDenominacionContainingIgnoreCase(idSucursal, categoriaId, nombre, pageable);
+    }
+
+    @Override
+    public Page<ArticuloManufacturado> getArticulosByCategoria(Pageable pageable, Long idSucursal, Long categoriaId) {
+        return articuloManufacturadoRepository.findBySucursal_IdAndCategoria_Id(idSucursal, categoriaId, pageable);
+    }
+
+    @Override
+    public Page<ArticuloManufacturado> getArticulosByNombre(Pageable pageable, Long idSucursal, String nombre) {
+        return articuloManufacturadoRepository.findBySucursal_IdAndDenominacionContainingIgnoreCase(idSucursal, nombre, pageable);
     }
 }
