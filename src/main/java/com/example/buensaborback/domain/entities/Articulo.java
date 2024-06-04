@@ -25,7 +25,6 @@ public class Articulo extends Base {
     protected String denominacion;
     protected Double precioVenta;
 
-
     @OneToMany
     @JoinColumn(name = "articulo_id")
     @Builder.Default
@@ -42,6 +41,11 @@ public class Articulo extends Base {
     @NotAudited
     private Categoria categoria;
 
+    @ManyToOne
+    @JoinColumn(name = "sucursal_id")
+    @JsonIgnoreProperties("articulos")
+    @NotAudited
+    private Sucursal sucursal;
 
 }
 

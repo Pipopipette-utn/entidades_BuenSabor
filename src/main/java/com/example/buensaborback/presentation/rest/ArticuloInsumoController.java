@@ -1,16 +1,14 @@
 package com.example.buensaborback.presentation.rest;
 
 import com.example.buensaborback.business.facade.Imp.ArticuloInsumoFacadeImp;
-import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoPostDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,5 +31,9 @@ public class ArticuloInsumoController extends BaseControllerImp<ArticuloInsumo, 
     public ResponseEntity<Page<ArticuloInsumoDto>> findByEsParaElaborarFalse(Pageable pageable) {
         //logger.info("INICIO GET ALL insumos (gaseosas)");
         return ResponseEntity.ok(facade.findByEsParaElaborarFalse(pageable));
+    }
+    @PostMapping("/create")
+    public ResponseEntity<List<ArticuloInsumoDto>> create(@RequestBody ArticuloInsumoPostDto entity) {
+        return ResponseEntity.ok(facade.createConSucursales(entity));
     }
 }

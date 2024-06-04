@@ -1,13 +1,10 @@
 package com.example.buensaborback.business.facade.Imp;
 
-import com.example.buensaborback.business.facade.ArticuloManufacturadoFacade;
 import com.example.buensaborback.business.facade.Base.BaseFacadeImp;
 import com.example.buensaborback.business.facade.UnidadMedidaFacade;
 import com.example.buensaborback.business.mapper.BaseMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
-import com.example.buensaborback.domain.dto.ArticuloManufacturadoDto;
 import com.example.buensaborback.domain.dto.UnidadMedidaDto;
-import com.example.buensaborback.domain.entities.ArticuloManufacturado;
 import com.example.buensaborback.domain.entities.UnidadMedida;
 import org.springframework.stereotype.Service;
 

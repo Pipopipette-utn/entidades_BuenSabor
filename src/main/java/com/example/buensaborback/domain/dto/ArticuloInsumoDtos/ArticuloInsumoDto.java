@@ -1,4 +1,4 @@
-package com.example.buensaborback.domain.dto;
+package com.example.buensaborback.domain.dto.ArticuloInsumoDtos;
 
 import com.example.buensaborback.domain.dto.Articulo.ArticuloDto;
 import lombok.AllArgsConstructor;

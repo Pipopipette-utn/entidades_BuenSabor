@@ -7,7 +7,6 @@ import com.example.buensaborback.business.mapper.CategoriaMapper;
 import com.example.buensaborback.business.mapper.SucursalMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.business.service.CategoriaService;
-import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaHomeDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaPostDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;

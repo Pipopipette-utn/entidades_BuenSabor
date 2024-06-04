@@ -58,4 +58,9 @@ public class Sucursal extends  Base{
     @ManyToOne
     @NotAudited
     private Empresa empresa;
+
+    @OneToMany
+    @JoinColumn(name = "sucursal_id")
+    @NotAudited
+    private Set<Articulo> articulos = new HashSet<>();
 }

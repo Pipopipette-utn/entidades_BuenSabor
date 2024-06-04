@@ -1,17 +1,9 @@
 package com.example.buensaborback.business.service.Imp;
 
-import com.example.buensaborback.business.mapper.ArticuloInsumoMapper;
 import com.example.buensaborback.business.service.ArticuloInsumoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
-import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
-import com.example.buensaborback.domain.entities.ArticuloInsumo;
-import com.example.buensaborback.domain.entities.ArticuloManufacturadoDetalle;
-import com.example.buensaborback.domain.entities.Categoria;
-import com.example.buensaborback.domain.entities.ImagenArticulo;
-import com.example.buensaborback.repositories.ArticuloInsumoRepository;
-import com.example.buensaborback.repositories.ArticuloManufacturadoDetalleRepository;
-import com.example.buensaborback.repositories.CategoriaRepository;
-import com.example.buensaborback.repositories.ImagenArticuloRepository;
+import com.example.buensaborback.domain.entities.*;
+import com.example.buensaborback.repositories.*;
 import com.example.buensaborback.utils.PublicIdService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long> implements ArticuloInsumoService {
@@ -42,47 +31,50 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
     CategoriaRepository categoriaRepository;
 
     @Autowired
-    ArticuloInsumoMapper articuloInsumoMapper;
+    SucursalRepository sucursalRepository;
 
     @Autowired
     PublicIdService publicIdService;
 
-    @Override
+
     @Transactional
-    public ArticuloInsumo create(ArticuloInsumo request) {
-        Set<ImagenArticulo> imagenes = request.getImagenes();
-        Set<ImagenArticulo> imagenesPersistidas = new HashSet<>();
+    public List<ArticuloInsumo> create(ArticuloInsumo request, Set<Sucursal> sucursales) {
+        List<ArticuloInsumo> articulosCreados = new ArrayList<>();
 
-        if (!imagenes.isEmpty()) {
-            System.out.println("Entro al if");
-            for (ImagenArticulo imagen : imagenes) {
-                System.out.println("imagen: " + imagen);
-                if (imagen.getId() != null) {
-                    Optional<ImagenArticulo> imagenBd = imagenArticuloRepository.findById(imagen.getId());
-                    imagenBd.ifPresent(imagenesPersistidas::add);
-                } else {
-                    System.out.println("no tiene id: " + imagen);
-                    imagen.setBaja(false);
-                    ImagenArticulo savedImagen = imagenArticuloRepository.save(imagen);
-                    imagenesPersistidas.add(savedImagen);
+        for (Sucursal sucursal: sucursales) {
+            // Crear un nuevo objeto ArticuloInsumo para cada sucursal
+            ArticuloInsumo nuevoArticulo = new ArticuloInsumo();
+            nuevoArticulo.setDenominacion(request.getDenominacion());
+            nuevoArticulo.setPrecioVenta(request.getPrecioVenta());
+            nuevoArticulo.setUnidadMedida(request.getUnidadMedida());
+            nuevoArticulo.setPrecioCompra(request.getPrecioCompra());
+            nuevoArticulo.setEsParaElaborar(request.getEsParaElaborar());
+            nuevoArticulo.setStockActual(request.getStockActual());
+            nuevoArticulo.setStockMaximo(request.getStockMaximo());
+            nuevoArticulo.setStockMinimo(request.getStockMinimo());
+
+            if (request.getCategoria() != null) {
+                Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
+                if (categoria == null ) {
+                    throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
                 }
+                if (!categoria.isEsInsumo() && request.getEsParaElaborar()) {
+                    throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
+                }
+
+                nuevoArticulo.setCategoria(categoria);
             }
-            request.setImagenes(imagenesPersistidas);
+
+            Sucursal sucursalBd = sucursalRepository.getById(sucursal.getId());
+            if (sucursalBd == null) {
+                throw new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado");
+            }
+            nuevoArticulo.setSucursal(sucursalBd);
+            // Guardar el artículo en la base de datos
+            ArticuloInsumo articuloGuardado = articuloInsumoRepository.save(nuevoArticulo);
+            articulosCreados.add(articuloGuardado);
         }
-
-        if (request.getCategoria() != null) {
-            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
-            if (categoria == null ) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
-            }
-            if (!categoria.isEsInsumo() && request.getEsParaElaborar()) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
-            }
-
-            request.setCategoria(categoria);
-        }
-
-        return articuloInsumoRepository.save(request);
+        return articulosCreados;
     }
 
     @Override
@@ -112,10 +104,6 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
 
             request.setCategoria(categoria);
         }
-
-        /*if (request.getArchivos() != null) {
-            imagenArticuloService.uploadImages(request.getArchivos(), id);
-        }*/
 
         return articuloInsumoRepository.save(request);
     }
