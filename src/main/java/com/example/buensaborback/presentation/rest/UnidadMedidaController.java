@@ -1,10 +1,7 @@
 package com.example.buensaborback.presentation.rest;
 
-import com.example.buensaborback.business.facade.Imp.ArticuloManufacturadoFacadeImp;
 import com.example.buensaborback.business.facade.Imp.UnidadMedidaFacadeImp;
-import com.example.buensaborback.domain.dto.ArticuloManufacturadoDto;
 import com.example.buensaborback.domain.dto.UnidadMedidaDto;
-import com.example.buensaborback.domain.entities.ArticuloManufacturado;
 import com.example.buensaborback.domain.entities.UnidadMedida;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
 import org.springframework.web.bind.annotation.CrossOrigin;

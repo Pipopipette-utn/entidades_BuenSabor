@@ -5,12 +5,15 @@ import com.example.buensaborback.business.facade.ArticuloManufacturadoFacade;
 import com.example.buensaborback.business.facade.Base.BaseFacadeImp;
 import com.example.buensaborback.business.mapper.ArticuloInsumoMapper;
 import com.example.buensaborback.business.mapper.BaseMapper;
+import com.example.buensaborback.business.mapper.SucursalMapper;
 import com.example.buensaborback.business.service.ArticuloInsumoService;
 import com.example.buensaborback.business.service.Base.BaseService;
-import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
-import com.example.buensaborback.domain.dto.ArticuloManufacturadoDto;
+import com.example.buensaborback.domain.dto.Articulo.ArticuloPostDto;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.ArticuloManufacturado;
+import com.example.buensaborback.domain.entities.Sucursal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +32,9 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
 
     @Autowired
     ArticuloInsumoMapper articuloInsumoMapper;
+
+    @Autowired
+    SucursalMapper sucursalMapper;
 
     public ArticuloInsumoFacadeImp(BaseService<ArticuloInsumo, Long> baseService, BaseMapper<ArticuloInsumo, ArticuloInsumoDto, ArticuloInsumoDto> baseMapper) {
         super(baseService, baseMapper);
@@ -55,5 +62,13 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
         return new PageImpl<>(dtos, pageable, entities.getTotalElements());
     }
 
-
+    public List<ArticuloInsumoDto> createConSucursales(ArticuloPostDto request) {
+        Set<SucursalShortDto> sucursalesDto = request.getSucursales();
+        Set<Sucursal> sucursales = sucursalMapper.toEntitiesShort(sucursalesDto);
+        ArticuloInsumo entityToCreate = articuloInsumoMapper.toEntityArticuloInsumo(request);
+        // Graba una entidad
+        var entityCreated = articuloInsumoService.create(entityToCreate, sucursales);
+        // convierte a Dto para devolver
+        return articuloInsumoMapper.toPostDtoList(entityCreated);
+    }
 }

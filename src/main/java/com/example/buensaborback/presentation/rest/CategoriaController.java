@@ -1,13 +1,11 @@
 package com.example.buensaborback.presentation.rest;
 
 import com.example.buensaborback.business.facade.Imp.CategoriaFacadeImp;
-import com.example.buensaborback.domain.dto.ArticuloInsumoDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaHomeDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaPostDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.Categoria;
-import com.example.buensaborback.domain.entities.Sucursal;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

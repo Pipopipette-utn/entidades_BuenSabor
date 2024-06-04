@@ -1,10 +1,7 @@
 package com.example.buensaborback.business.service.Imp;
 
-import com.example.buensaborback.business.mapper.ArticuloManufacturadoMapper;
 import com.example.buensaborback.business.service.ArticuloManufacturadoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
-import com.example.buensaborback.business.service.ImagenArticuloService;
-import com.example.buensaborback.domain.dto.ArticuloManufacturadoDto;
 import com.example.buensaborback.domain.entities.*;
 import com.example.buensaborback.repositories.*;
 import com.example.buensaborback.utils.PublicIdService;
@@ -45,9 +42,6 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
         Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
         Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
 
-        Set<Sucursal> sucursales = request.getSucursales();
-        Set<Sucursal> sucursalesPersistidas = new HashSet<>();
-
         if (detalles != null && !detalles.isEmpty()) {
             for (ArticuloManufacturadoDetalle detalle : detalles) {
                 ArticuloInsumo insumo = detalle.getArticulo();
@@ -73,17 +67,6 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
             }
 
             request.setCategoria(categoria);
-        }
-
-        // Verificar y asociar sucursales existentes
-        if (sucursales != null && !sucursales.isEmpty()) {
-            for (Sucursal sucursal : sucursales) {
-                Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
-                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
-                sucursalBd.getArticulos().add(request);
-                sucursalesPersistidas.add(sucursalBd);
-            }
-            request.setSucursales(sucursalesPersistidas);
         }
 
         return articuloManufacturadoRepository.save(request);
@@ -149,19 +132,6 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
             }
 
             request.setCategoria(categoria);
-        }
-
-        Set<Sucursal> sucursales = request.getSucursales();
-        Set<Sucursal> sucursalesPersistidas = new HashSet<>();
-
-        if (sucursales != null && !sucursales.isEmpty()) {
-            for (Sucursal sucursal : sucursales) {
-                Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
-                        .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
-                sucursalBd.getArticulos().add(request);
-                sucursalesPersistidas.add(sucursalBd);
-            }
-            request.setSucursales(sucursalesPersistidas);
         }
 
         return articuloManufacturadoRepository.save(request);

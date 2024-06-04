@@ -41,9 +41,11 @@ public class Articulo extends Base {
     @NotAudited
     private Categoria categoria;
 
-    @ManyToMany(mappedBy = "articulos")
-    @Builder.Default
-    private Set<Sucursal> sucursales = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "sucursal_id")
+    @JsonIgnoreProperties("articulos")
+    @NotAudited
+    private Sucursal sucursal;
 
 }
 
