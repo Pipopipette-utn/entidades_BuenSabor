@@ -12,6 +12,8 @@ public interface SucursalService  extends BaseService<Sucursal, Long> {
     Sucursal actualizarSucursal(Long id,Sucursal sucursal);
     List<Categoria> findCategoriasBySucursalId(Long sucursalId);
     List<Promocion> findPromocionBySucursalId(Long sucursalId);
+    List<Sucursal> findAllActiveByEmpresa(Long empresaId);
+
 }
 
 

@@ -73,4 +73,15 @@ public class SucursalFacadeImp extends BaseFacadeImp<Sucursal, SucursalDto, Sucu
                 .collect(Collectors.toList());
     }
 
+    public List<SucursalDto> findByEmpresa(Long empresaId) {
+        // Busca una entidad por id
+        var entities = sucursalService.findAllActiveByEmpresa(empresaId);
+
+        // convierte la entidad a DTO
+        return entities
+                .stream()
+                .map(baseMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
 }

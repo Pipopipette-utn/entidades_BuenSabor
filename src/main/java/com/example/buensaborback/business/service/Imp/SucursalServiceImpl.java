@@ -115,4 +115,8 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
         }
     }
 
+    @Override
+    public List<Sucursal> findAllActiveByEmpresa(Long empresaId) {
+        return sucursalRepository.findByEmpresa_Id(empresaId);
+    }
 }
