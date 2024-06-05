@@ -185,4 +185,9 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
     public Page<ArticuloManufacturado> findBySucursal(Long sucursalId, Pageable pageable) {
         return articuloManufacturadoRepository.findBySucursal_Id(sucursalId, pageable);
     }
+
+    @Override
+    public Page<ArticuloManufacturado> findBySucursalAlta(Long sucursalId, Pageable pageable) {
+        return articuloManufacturadoRepository.findBySucursal_IdAndBajaFalse(sucursalId, pageable);
+    }
 }

@@ -14,4 +14,5 @@ public interface ArticuloManufacturadoRepository extends BaseRepository<Articulo
     Page<ArticuloManufacturado> findBySucursal_IdAndCategoria_Id(Long sucursalId, Long categoriaId, Pageable pageable);
     Page<ArticuloManufacturado> findBySucursal_IdAndDenominacionContainingIgnoreCase(Long sucursalId, String denominacion, Pageable pageable);
     Page<ArticuloManufacturado> findBySucursal_Id(Long sucursalId, Pageable pageable);
+    Page<ArticuloManufacturado> findBySucursal_IdAndBajaFalse(Long sucursalId, Pageable pageable);
 }
