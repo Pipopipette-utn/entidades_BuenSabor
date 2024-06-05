@@ -20,4 +20,7 @@ public interface ArticuloInsumoService extends BaseService<ArticuloInsumo,Long> 
     Page<ArticuloInsumo> getArticulosByNombre(Pageable pageable, Long idSucursal, String nombre);
     Page<ArticuloInsumo> findBySucursal(Long sucursalId, Pageable pageable);
 
+    // Método que trae los insumos que no son para elaborar y dados de alta por sucursal
+    Page<ArticuloInsumo> findBySucursalAltaAndElaborarFalse(Long sucursalId, Pageable pageable);
+
 }

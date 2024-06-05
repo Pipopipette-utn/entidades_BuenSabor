@@ -61,4 +61,9 @@ public class ArticuloInsumoController extends BaseControllerImp<ArticuloInsumo, 
     public ResponseEntity<Page<ArticuloInsumoDto>> findAllBySucursalId(@PathVariable Long sucursalId, Pageable pageable) {
         return  ResponseEntity.ok(facade.findBySucursal(sucursalId, pageable));
     }
+
+    @GetMapping("/insumoDirecto/{sucursalId}")
+    public ResponseEntity<Page<ArticuloInsumoDto>> findBySucursalAltaAndElaborarFalse(@PathVariable Long sucursalId, Pageable pageable) {
+        return  ResponseEntity.ok(facade.findBySucursalAltaAndElaborarFalse(sucursalId, pageable));
+    }
 }
