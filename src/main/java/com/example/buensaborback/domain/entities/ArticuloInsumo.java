@@ -15,7 +15,7 @@ import org.hibernate.envers.Audited;
 @Audited
 public class ArticuloInsumo extends Articulo {
     private Double precioCompra;
-    private Integer stockActual;
+    private Double stockActual;
     private Integer stockMinimo;
     private Integer stockMaximo;
     private Boolean esParaElaborar;

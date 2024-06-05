@@ -5,6 +5,7 @@ import com.example.buensaborback.business.service.PedidoService;
 import com.example.buensaborback.domain.entities.*;
 import com.example.buensaborback.domain.enums.Estado;
 import com.example.buensaborback.repositories.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,10 +54,11 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
                 detalle.setArticulo(articulo);
                 DetallePedido savedDetalle = detallePedidoRepository.save(detalle); // Guardar los detalles en la bd
                 costoTotal += calcularTotalCosto(articulo.getId(), detalle.getCantidad()); // Calcular costo total por cada iteración de detalle
+                descontarStock(articulo.getId(), detalle.getCantidad()); // Descontar el stock por cada iteración de detalle
 
                 detallesPersistidos.add(savedDetalle);
             }
-            request.setTotalCosto(costoTotal);
+            request.setTotalCosto(costoTotal); // Asignarle el total costo al pedido
             request.setDetallePedidos(detallesPersistidos); // Después de la iteración, asignarle todos los detalles al pedido
         } else {
             throw new IllegalArgumentException("El pedido debe contener al menos un detalle");
@@ -79,6 +81,52 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
         request.setFechaPedido(LocalDate.now()); //Asignar la fecha
 
         return pedidoRepository.save(request); // Guardar el nuevo pedido
+    }
+
+    @Transactional
+    public void descontarStock(Long idArticulo, int cantidad) {
+        // Buscar ArticuloInsumo por ID
+        Optional<ArticuloInsumo> optionalInsumo = articuloInsumoRepository.findById(idArticulo);
+
+        System.out.println("Cantidad: " + cantidad);
+        // Si el articulo es un insumo
+        if (optionalInsumo.isPresent()) {
+            ArticuloInsumo insumo = optionalInsumo.get();
+            System.out.println("Stock antes de descontar: " + insumo.getStockActual());
+            Double stockDescontado = insumo.getStockActual() - cantidad; // Descontar cantidad a stock actual
+            System.out.println("Stock después de restarle la cantidad: " + stockDescontado);
+            // Validar que el stock actual no supere el mínimo
+            if (stockDescontado <= insumo.getStockMinimo()) {
+                throw new RuntimeException("El insumo con id " + insumo.getId() + " alcanzó el stock mínimo");
+            }
+            insumo.setStockActual(stockDescontado); // Asignarle al insumo, el stock descontado
+            articuloInsumoRepository.save(insumo); // Guardar cambios
+        } else {
+            // Si no es insumo, es manufacturado
+            Optional<ArticuloManufacturado> optionalManufacturado = articuloManufacturadoRepository.findById(idArticulo);
+
+            if (optionalManufacturado.isPresent()) {
+                ArticuloManufacturado manufacturado = optionalManufacturado.get();
+                // Obtener los detalles del manufacturado
+                Set<ArticuloManufacturadoDetalle> detalles = manufacturado.getArticuloManufacturadoDetalles();
+
+                if (detalles != null && !detalles.isEmpty()) {
+                    for (ArticuloManufacturadoDetalle detalle : detalles) { // Recorrer los detalles
+                        ArticuloInsumo insumo = detalle.getArticulo();
+                        Double cantidadInsumo = detalle.getCantidad() * cantidad; // Multiplicar la cantidad necesaria de insumo por la cantidad de manufacturados del pedido
+                        double stockDescontado = insumo.getStockActual() - cantidadInsumo; // Descontar el stock actual
+                        if (stockDescontado <= insumo.getStockMinimo()) {
+                            throw new RuntimeException("El insumo con id " + insumo.getId() + " presente en el artículo "
+                                    + manufacturado.getDenominacion() + " (id " + manufacturado.getId() + ") alcanzó el stock mínimo");
+                        }
+                        insumo.setStockActual(stockDescontado); // Asignarle al insumo, el stock descontado
+                        articuloInsumoRepository.save(insumo); // Guardar cambios
+                    }
+                }
+            } else { // Por si no encuentra el artículo
+                throw new RuntimeException("Artículo con id " + idArticulo + " no encontrado");
+            }
+        }
     }
 
     public Double calcularTotalCosto(Long idArticulo, Integer cantidad) {
