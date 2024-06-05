@@ -88,13 +88,10 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
         // Buscar ArticuloInsumo por ID
         Optional<ArticuloInsumo> optionalInsumo = articuloInsumoRepository.findById(idArticulo);
 
-        System.out.println("Cantidad: " + cantidad);
         // Si el articulo es un insumo
         if (optionalInsumo.isPresent()) {
             ArticuloInsumo insumo = optionalInsumo.get();
-            System.out.println("Stock antes de descontar: " + insumo.getStockActual());
             Double stockDescontado = insumo.getStockActual() - cantidad; // Descontar cantidad a stock actual
-            System.out.println("Stock después de restarle la cantidad: " + stockDescontado);
             // Validar que el stock actual no supere el mínimo
             if (stockDescontado <= insumo.getStockMinimo()) {
                 throw new RuntimeException("El insumo con id " + insumo.getId() + " alcanzó el stock mínimo");
