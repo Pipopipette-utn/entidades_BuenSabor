@@ -19,5 +19,6 @@ public interface ArticuloInsumoService extends BaseService<ArticuloInsumo,Long> 
     Page<ArticuloInsumo> getArticulosByCategoria(Pageable pageable, Long idSucursal, Long categoriaId);
     Page<ArticuloInsumo> getArticulosByNombre(Pageable pageable, Long idSucursal, String nombre);
     Page<ArticuloInsumo> findBySucursal(Long sucursalId, Pageable pageable);
+    List<ArticuloInsumo> findBySucursal(Long sucursalId);
 
 }

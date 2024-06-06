@@ -14,10 +14,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-public class CategoriaGetDto extends BaseDto {
-    private String denominacion;
-    private boolean esInsumo;
-    private Set<SucursalShortDto> sucursales;
-    private List<SubcategoriaDto> subCategorias;
-    private CategoriaDto categoriaPadre;
+public class SubcategoriaDto extends BaseDto {
+        private String denominacion;
+        private boolean esInsumo;
+        private List<SubcategoriaDto> subCategorias;
+        private Set<SucursalShortDto> sucursales;
 }

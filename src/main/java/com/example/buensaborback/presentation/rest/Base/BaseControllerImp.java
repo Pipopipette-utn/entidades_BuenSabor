@@ -1,6 +1,8 @@
 package com.example.buensaborback.presentation.rest.Base;
 
 import com.example.buensaborback.business.facade.Base.BaseFacadeImp;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoPostDto;
 import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.entities.Base;
 import org.slf4j.Logger;
