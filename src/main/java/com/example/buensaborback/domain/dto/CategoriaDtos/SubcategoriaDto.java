@@ -17,6 +17,8 @@ import java.util.Set;
 public class SubcategoriaDto extends BaseDto {
         private String denominacion;
         private boolean esInsumo;
+        private boolean esParaVender;
+
         private List<SubcategoriaDto> subCategorias;
         private Set<SucursalShortDto> sucursales;
 }

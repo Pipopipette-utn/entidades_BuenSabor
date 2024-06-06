@@ -59,7 +59,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         List<Categoria> categorias = categoriaRepository.findAll();
         Set<Categoria> filteredCategorias = new HashSet<>();
         for (Categoria categoria: categorias){
-            if (categoria.getCategoriaPadre() == null && !categoria.isEsInsumo()) {
+            if (categoria.getCategoriaPadre() == null && categoria.isEsParaVender()) {
                 boolean exists = filteredCategorias.stream()
                         .anyMatch(existingCategoria -> existingCategoria.getDenominacion().equals(categoria.getDenominacion()));
                 if (!exists) {

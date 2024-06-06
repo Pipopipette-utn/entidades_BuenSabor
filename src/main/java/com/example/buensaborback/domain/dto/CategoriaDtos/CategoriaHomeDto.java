@@ -12,5 +12,7 @@ import lombok.Setter;
 @Setter
 public class CategoriaHomeDto extends BaseDto {
     private String denominacion;
+    private boolean esParaVender;
+
     private boolean esInsumo;
 }

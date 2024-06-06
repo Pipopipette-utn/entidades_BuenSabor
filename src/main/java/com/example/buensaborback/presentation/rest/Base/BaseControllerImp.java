@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -56,9 +57,13 @@ public abstract class BaseControllerImp <E extends Base,D extends BaseDto, GD ex
     }
 
     @PostMapping()
-    public ResponseEntity<GD> create(@RequestBody D entity){
-        //logger.info("INICIO CREATE {}",entity.getClass());
-        return ResponseEntity.ok(facade.createNew(entity));
+    public ResponseEntity<?> create(@RequestBody D entity){
+        try{
+            //logger.info("INICIO CREATE {}",entity.getClass());
+            return ResponseEntity.ok(facade.createNew(entity));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")

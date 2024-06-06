@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long> implements ArticuloInsumoService {
@@ -46,6 +47,7 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
             ArticuloInsumo nuevoArticulo = new ArticuloInsumo();
             nuevoArticulo.setDenominacion(request.getDenominacion());
             nuevoArticulo.setPrecioVenta(request.getPrecioVenta());
+            nuevoArticulo.setPrecioVenta(request.getPrecioVenta());
             nuevoArticulo.setUnidadMedida(request.getUnidadMedida());
             nuevoArticulo.setPrecioCompra(request.getPrecioCompra());
             nuevoArticulo.setEsParaElaborar(request.getEsParaElaborar());
@@ -53,8 +55,21 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
             nuevoArticulo.setStockMaximo(request.getStockMaximo());
             nuevoArticulo.setStockMinimo(request.getStockMinimo());
 
+            Sucursal sucursalBd = sucursalRepository.getById(sucursal.getId());
+            if (sucursalBd == null) {
+                throw new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado");
+            }
+
             if (request.getCategoria() != null) {
                 Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
+                // Verificar si la sucursal contiene la categoría por ID
+                boolean categoriaExisteEnSucursal = sucursalBd.getCategorias().stream()
+                        .anyMatch(cat -> cat.getId().equals(categoria.getId()));
+
+               if (!categoriaExisteEnSucursal) {
+                    throw new RuntimeException("La categoría " + categoria.getDenominacion() + " no existe en la sucursal " + sucursal.getNombre());
+                }
+
                 if (categoria == null ) {
                     throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
                 }
@@ -65,14 +80,11 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
                 nuevoArticulo.setCategoria(categoria);
             }
 
-            Sucursal sucursalBd = sucursalRepository.getById(sucursal.getId());
-            if (sucursalBd == null) {
-                throw new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado");
-            }
             nuevoArticulo.setSucursal(sucursalBd);
             // Guardar el artículo en la base de datos
             ArticuloInsumo articuloGuardado = articuloInsumoRepository.save(nuevoArticulo);
             articulosCreados.add(articuloGuardado);
+            System.out.println(articuloGuardado.getDenominacion());
         }
         return articulosCreados;
     }

@@ -14,7 +14,7 @@ public interface BaseController <D extends BaseDto, GD, ID extends Serializable>
     ResponseEntity<List<GD>> getAll();
     ResponseEntity<Page<GD>> getAllPaged(Pageable pageable);
 
-    ResponseEntity<GD> create(D entity);
+    ResponseEntity<?> create(D entity);
 
     ResponseEntity<GD> edit(D entity, ID id);
 

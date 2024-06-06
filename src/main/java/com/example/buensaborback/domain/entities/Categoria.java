@@ -21,6 +21,7 @@ import java.util.Set;
 public class Categoria extends Base{
     private String denominacion;
     private boolean esInsumo;
+    private boolean esParaVender;
 
     @ManyToMany(mappedBy = "categorias")
     @Builder.Default
