@@ -130,4 +130,24 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
     public Page<ArticuloInsumo> findByEsParaElaborarFalse(Pageable pageable) {
         return articuloInsumoRepository.findByEsParaElaborarFalse(pageable);
     }
+
+    @Override
+    public Page<ArticuloInsumo> buscarPorCategoriaYNombre(Pageable pageable, Long idSucursal, Long categoriaId, String nombre) {
+        return articuloInsumoRepository.findBySucursal_IdAndCategoria_IdAndDenominacionContainingIgnoreCase(idSucursal, categoriaId, nombre, pageable);
+    }
+
+    @Override
+    public Page<ArticuloInsumo> getArticulosByCategoria(Pageable pageable, Long idSucursal, Long categoriaId) {
+        return articuloInsumoRepository.findBySucursal_IdAndCategoria_Id(idSucursal, categoriaId, pageable);
+    }
+
+    @Override
+    public Page<ArticuloInsumo> findBySucursal(Long sucursalId, Pageable pageable) {
+        return articuloInsumoRepository.findBySucursal_Id(sucursalId, pageable);
+    }
+
+    @Override
+    public Page<ArticuloInsumo> getArticulosByNombre(Pageable pageable, Long idSucursal, String nombre) {
+        return articuloInsumoRepository.findBySucursal_IdAndDenominacionContainingIgnoreCase(idSucursal, nombre, pageable);
+    }
 }
