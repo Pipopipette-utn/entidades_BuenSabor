@@ -27,6 +27,24 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
     SucursalServiceImpl sucursalService;
 
     @Override
+    public void deleteById(Long id) {
+        Categoria categoriaExistente = categoriaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("La categoría con el ID " + id + " no existe."));
+
+        eliminarSubcategorias(categoriaExistente);
+
+        categoriaRepository.save(categoriaExistente);
+    }
+
+    private void eliminarSubcategorias(Categoria categoria){
+        baseRepository.delete(categoria);
+        if (!categoria.getSubCategorias().isEmpty()){
+            for (Categoria subcategoria: categoria.getSubCategorias())
+                eliminarSubcategorias(subcategoria);
+        }
+    }
+
+    @Override
     public Page<Categoria> findByEsInsumoTrue(Pageable pageable) {
         return categoriaRepository.findByEsInsumoTrue(pageable);
     }

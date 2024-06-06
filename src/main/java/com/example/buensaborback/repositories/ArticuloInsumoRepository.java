@@ -19,5 +19,6 @@ public interface ArticuloInsumoRepository extends BaseRepository<ArticuloInsumo,
     Page<ArticuloInsumo> findBySucursal_IdAndCategoria_Id(Long sucursalId, Long categoriaId, Pageable pageable);
     Page<ArticuloInsumo> findBySucursal_IdAndDenominacionContainingIgnoreCase(Long sucursalId, String denominacion, Pageable pageable);
     Page<ArticuloInsumo> findBySucursal_Id(Long sucursalId, Pageable pageable);
+    List<ArticuloInsumo> findBySucursal_IdAndBajaFalse(Long sucursalId);
 
 }

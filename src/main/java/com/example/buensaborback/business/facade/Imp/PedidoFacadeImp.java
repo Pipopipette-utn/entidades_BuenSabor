@@ -6,12 +6,20 @@ import com.example.buensaborback.business.mapper.BaseMapper;
 import com.example.buensaborback.business.mapper.PedidoMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.business.service.PedidoService;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
 import com.example.buensaborback.domain.dto.PedidoDtos.PedidoDto;
 import com.example.buensaborback.domain.dto.PedidoDtos.PedidoEstadoDto;
 import com.example.buensaborback.domain.dto.PedidoDtos.PedidoGetDto;
+import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.Pedido;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetDto, Long> implements PedidoFacade {
@@ -29,5 +37,15 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
         var pedidoEntidad = pedidoMapper.toEntityEstado(request);
         var pedidoUpdate = pedidoService.cambiarEstado(pedidoEntidad, id);
         return pedidoMapper.toDtoEstado(pedidoUpdate);
+    }
+
+    public Page<PedidoGetDto> findBySucursal(Long sucursalId, Pageable pageable) {
+        Page<Pedido> articulosFiltrados = pedidoService.findBySucursal(sucursalId, pageable);
+        // Mapea las entidades a DTOs
+        List<PedidoGetDto> dtos = articulosFiltrados.getContent().stream()
+                .map(pedidoMapper::toDTO)
+                .collect(Collectors.toList());
+        // Devuelve una página de DTOs
+        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
     }
 }

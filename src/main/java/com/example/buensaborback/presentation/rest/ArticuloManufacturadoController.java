@@ -52,4 +52,9 @@ public class ArticuloManufacturadoController extends BaseControllerImp<ArticuloM
     public ResponseEntity<Page<ArticuloManufacturadoDto>> findAllBySucursalId(@PathVariable Long sucursalId, Pageable pageable) {
         return  ResponseEntity.ok(facade.findBySucursal(sucursalId, pageable));
     }
+
+    @GetMapping("/activos/porSucursal/{sucursalId}")
+    public ResponseEntity<List<ArticuloManufacturadoDto>> findAllBySucursalId(@PathVariable Long sucursalId) {
+        return ResponseEntity.ok(facade.findBySucursal(sucursalId));
+    }
 }
