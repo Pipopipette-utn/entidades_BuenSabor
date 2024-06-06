@@ -208,15 +208,28 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
 
     @Override
     public void deleteById(Long id) {
+        // Busca el pedido por is
         Pedido pedido = pedidoRepository.getById(id);
+        // Si el pedido no existe
         if (pedido == null) {
             throw new RuntimeException("El pedido con id " + id + " no se ha encontrado");
         }
 
+        // Si el pedido está en preparación o un estado superior
         if (pedido.getEstado() != Estado.PENDIENTE) {
-            throw new RuntimeException("El pedido no se puede eliminar porque su estado es distinto a pendiente");
+            throw new RuntimeException("El pedido no se puede eliminar porque está en proceso");
         }
 
+        pedido.setEstado(Estado.CANCELADO);
         pedidoRepository.delete(pedido);
+    }
+
+    @Override
+    public Pedido cambiarEstado(Pedido request, Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("El pedido con id " + id + " no se ha encontrado"));
+
+        pedido.setEstado(request.getEstado());
+        return pedidoRepository.save(request);
     }
 }
