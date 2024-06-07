@@ -9,7 +9,6 @@ import org.hibernate.envers.NotAudited;
 
 import java.util.HashSet;
 import java.util.Set;
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +17,7 @@ import java.util.Set;
 @ToString
 @SuperBuilder
 @Audited
-public class Categoria extends Base{
+public class Categoria extends Base {
     private String denominacion;
     private boolean esInsumo;
     private boolean esParaVender;
@@ -44,5 +43,5 @@ public class Categoria extends Base{
     @JsonIgnoreProperties("subCategorias")
     @NotAudited
     private Categoria categoriaPadre;
-
 }
+

@@ -132,6 +132,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         // Actualizar los detalles básicos de la categoría
         categoriaExistente.setDenominacion(newCategoria.getDenominacion());
         categoriaExistente.setEsInsumo(newCategoria.isEsInsumo());
+        categoriaExistente.setEsParaVender(newCategoria.isEsParaVender());
 
         // Actualizar las sucursales asociadas
         Set<Sucursal> newSucursales = new HashSet<>();
@@ -162,7 +163,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
     }
 
     private void actualizarSubcategorias(Categoria categoriaExistente, Categoria newCategoria, Set<Sucursal> sucursales){
-        if (!newCategoria.getSubCategorias().isEmpty()){
+        if (newCategoria.getSubCategorias() != null && !newCategoria.getSubCategorias().isEmpty()){
             for(Categoria subcategoriaNueva: newCategoria.getSubCategorias()){
                 Optional<Categoria> subcategoriaExistenteOpt = categoriaExistente.getSubCategorias().stream()
                         .filter(sc -> sc.getId().equals(subcategoriaNueva.getId()))
@@ -172,6 +173,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                     Categoria subcategoriaExistente = subcategoriaExistenteOpt.get();
                     subcategoriaExistente.setDenominacion(subcategoriaNueva.getDenominacion());
                     subcategoriaExistente.setEsInsumo(subcategoriaNueva.isEsInsumo());
+                    subcategoriaExistente.setEsParaVender(subcategoriaNueva.isEsParaVender());
                     subcategoriaExistente.setSucursales(sucursales);
                     for (Sucursal sucursal : sucursales) {
                         boolean categoriaExists = sucursal.getCategorias().stream()
@@ -187,15 +189,18 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                     subcategoriaNueva.setSucursales(sucursales);
                     categoriaExistente.getSubCategorias().add(subcategoriaNueva);
 
-                    for (Sucursal sucursal : sucursales) {
-                        sucursal.getCategorias().add(subcategoriaNueva);
-                    }
-                    actualizarSubcategorias(subcategoriaNueva, subcategoriaNueva, sucursales);
+                    // Guardar la nueva subcategoría antes de agregarla a las sucursales
+                    Categoria savedSubcategoriaNueva = categoriaRepository.save(subcategoriaNueva);
 
+                    for (Sucursal sucursal : sucursales) {
+                        sucursal.getCategorias().add(savedSubcategoriaNueva);
+                    }
+                    actualizarSubcategorias(savedSubcategoriaNueva, subcategoriaNueva, sucursales);
                 }
             }
         }
     }
+
 
     /*
     private void actualizarSubcategorias(Categoria categoriaExistente, Categoria newCategoria, Set<Sucursal> sucursales) {

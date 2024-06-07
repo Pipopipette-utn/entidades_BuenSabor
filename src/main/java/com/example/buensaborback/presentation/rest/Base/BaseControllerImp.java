@@ -67,22 +67,35 @@ public abstract class BaseControllerImp <E extends Base,D extends BaseDto, GD ex
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GD> edit(@RequestBody D entity, @PathVariable ID id){
+    public ResponseEntity<?> edit(@RequestBody D entity, @PathVariable ID id){
         //logger.info("INICIO EDIT {}",entity.getClass());
-        return ResponseEntity.ok(facade.update(entity, id));
+        try{
+            //logger.info("INICIO CREATE {}",entity.getClass());
+            return ResponseEntity.ok(facade.update(entity, id));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @PutMapping("/alta/{id}")
     public ResponseEntity<?> alta(@PathVariable ID id){
-        //logger.info("INICIO EDIT {}",entity.getClass());
-        facade.alta(id);
-        return ResponseEntity.ok(null);
+        try{
+            //logger.info("INICIO CREATE {}",entity.getClass());
+            facade.alta(id);
+            return ResponseEntity.ok(null);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable ID id){
-        //logger.info("INICIO DELETE BY ID");
-        facade.deleteById(id);
-        return ResponseEntity.ok(null);
+        try{
+            //logger.info("INICIO DELETE BY ID");
+            facade.deleteById(id);
+            return ResponseEntity.ok(null);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }

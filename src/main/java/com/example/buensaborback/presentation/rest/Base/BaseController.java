@@ -16,7 +16,7 @@ public interface BaseController <D extends BaseDto, GD, ID extends Serializable>
 
     ResponseEntity<?> create(D entity);
 
-    ResponseEntity<GD> edit(D entity, ID id);
+    ResponseEntity<?> edit(D entity, ID id);
 
     ResponseEntity<?> alta(ID id);
     ResponseEntity<?> deleteById(ID id);
