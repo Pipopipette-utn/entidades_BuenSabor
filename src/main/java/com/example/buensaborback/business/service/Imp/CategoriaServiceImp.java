@@ -156,13 +156,13 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         categoriaExistente.setSucursales(newSucursales);
 
         // Manejar subcategorías
-        actualizarSubcategorias(categoriaExistente, newCategoria, newSucursales);
+        actualizarSubcategorias(categoriaExistente, newCategoria, newSucursales, newCategoria.isEsInsumo(), newCategoria.isEsParaVender());
 
         System.out.println(categoriaExistente.getDenominacion());
         return categoriaRepository.save(categoriaExistente);
     }
 
-    private void actualizarSubcategorias(Categoria categoriaExistente, Categoria newCategoria, Set<Sucursal> sucursales){
+    private void actualizarSubcategorias(Categoria categoriaExistente, Categoria newCategoria, Set<Sucursal> sucursales, boolean esInsumo, boolean esParaVender){
         if (newCategoria.getSubCategorias() != null && !newCategoria.getSubCategorias().isEmpty()){
             for(Categoria subcategoriaNueva: newCategoria.getSubCategorias()){
                 Optional<Categoria> subcategoriaExistenteOpt = categoriaExistente.getSubCategorias().stream()
@@ -172,8 +172,8 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                 if (subcategoriaExistenteOpt.isPresent()) {
                     Categoria subcategoriaExistente = subcategoriaExistenteOpt.get();
                     subcategoriaExistente.setDenominacion(subcategoriaNueva.getDenominacion());
-                    subcategoriaExistente.setEsInsumo(subcategoriaNueva.isEsInsumo());
-                    subcategoriaExistente.setEsParaVender(subcategoriaNueva.isEsParaVender());
+                    subcategoriaExistente.setEsInsumo(esInsumo);  // Propagar valor de newCategoria
+                    subcategoriaExistente.setEsParaVender(esParaVender);  // Propagar valor de newCategoria
                     subcategoriaExistente.setSucursales(sucursales);
                     for (Sucursal sucursal : sucursales) {
                         boolean categoriaExists = sucursal.getCategorias().stream()
@@ -183,10 +183,12 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                             sucursal.getCategorias().add(subcategoriaExistente);
                         }
                     }
-                    actualizarSubcategorias(subcategoriaExistente, subcategoriaNueva, sucursales);
+                    actualizarSubcategorias(subcategoriaExistente, subcategoriaNueva, sucursales, esInsumo, esParaVender);
                 } else {
                     subcategoriaNueva.setCategoriaPadre(categoriaExistente);
                     subcategoriaNueva.setSucursales(sucursales);
+                    subcategoriaNueva.setEsInsumo(esInsumo);  // Propagar valor de newCategoria
+                    subcategoriaNueva.setEsParaVender(esParaVender);  // Propagar valor de newCategoria
                     categoriaExistente.getSubCategorias().add(subcategoriaNueva);
 
                     // Guardar la nueva subcategoría antes de agregarla a las sucursales
@@ -195,7 +197,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                     for (Sucursal sucursal : sucursales) {
                         sucursal.getCategorias().add(savedSubcategoriaNueva);
                     }
-                    actualizarSubcategorias(savedSubcategoriaNueva, subcategoriaNueva, sucursales);
+                    actualizarSubcategorias(savedSubcategoriaNueva, subcategoriaNueva, sucursales, esInsumo, esParaVender);
                 }
             }
         }
