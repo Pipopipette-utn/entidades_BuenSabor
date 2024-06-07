@@ -1,9 +1,6 @@
 package com.example.buensaborback.domain.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
@@ -20,7 +17,7 @@ import org.hibernate.envers.NotAudited;
 public class ArticuloManufacturadoDetalle extends Base{
     private Double cantidad;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "articulo_insumo_id")
     @NotAudited
     private ArticuloInsumo articulo;

@@ -30,6 +30,7 @@ public class Categoria extends Base{
     @OneToMany
     @JoinColumn(name = "categoria_id")
     @NotAudited
+    @Builder.Default
     private Set<Articulo> articulos = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "categoriaPadre")

@@ -62,5 +62,6 @@ public class Sucursal extends  Base{
     @OneToMany
     @JoinColumn(name = "sucursal_id")
     @NotAudited
+    @Builder.Default
     private Set<Articulo> articulos = new HashSet<>();
 }
