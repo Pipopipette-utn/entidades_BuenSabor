@@ -158,7 +158,6 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         // Manejar subcategorías
         actualizarSubcategorias(categoriaExistente, newCategoria, newSucursales, newCategoria.isEsInsumo(), newCategoria.isEsParaVender());
 
-        System.out.println(categoriaExistente.getDenominacion());
         return categoriaRepository.save(categoriaExistente);
     }
 

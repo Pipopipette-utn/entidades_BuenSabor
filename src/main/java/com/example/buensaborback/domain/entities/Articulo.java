@@ -54,5 +54,10 @@ public class Articulo extends Base {
     @NotAudited
     private Sucursal sucursal;
 
+    public Articulo(String denominacion, Double precioVenta, UnidadMedida unidadMedida) {
+        this.denominacion = denominacion;
+        this.precioVenta = precioVenta;
+        this.unidadMedida = unidadMedida;
+    }
 }
 
