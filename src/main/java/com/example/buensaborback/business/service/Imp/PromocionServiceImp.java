@@ -8,6 +8,8 @@ import com.example.buensaborback.repositories.*;
 import com.example.buensaborback.utils.PublicIdService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -101,6 +103,11 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
         }
 
         return promocionRepository.saveAll(promocionesDuplicadas);
+    }
+
+    @Override
+    public Page<Promocion> findBySucursal_Id(Long sucursalId, Pageable pageable) {
+        return promocionRepository.findBySucursales_Id(sucursalId, pageable);
     }
 
     private Promocion createPromocion(Promocion request, Sucursal sucursal) {
