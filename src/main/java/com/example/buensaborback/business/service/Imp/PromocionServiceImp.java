@@ -107,7 +107,7 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
 
     @Override
     public Page<Promocion> findBySucursal_Id(Long sucursalId, Pageable pageable) {
-        return promocionRepository.findBySucursales_Id(sucursalId, pageable);
+        return promocionRepository.findBySucursal_Id(sucursalId, pageable);
     }
 
     private Promocion createPromocion(Promocion request, Sucursal sucursal) {

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PromocionRepository extends BaseRepository<Promocion,Long>{
-    Page<Promocion> findBySucursales_Id(Long sucursalId, Pageable pageable);
+    Page<Promocion> findBySucursal_Id(Long sucursalId, Pageable pageable);
 
 
 }
