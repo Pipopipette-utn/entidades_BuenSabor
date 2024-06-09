@@ -30,14 +30,11 @@ public class Sucursal extends  Base{
     @NotAudited
     private Domicilio domicilio;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @JoinTable(name = "sucursal_promocion",
-            joinColumns = @JoinColumn(name = "sucursal_id"),
-            inverseJoinColumns = @JoinColumn(name = "promocion_id"))
-    //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
+    @OneToMany
+    @JoinColumn(name = "sucursal_id")
+    @NotAudited
     @Builder.Default
-    private Set<Promocion> promociones = new HashSet<>();
+    private Set<Articulo> promociones = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @ToString.Exclude

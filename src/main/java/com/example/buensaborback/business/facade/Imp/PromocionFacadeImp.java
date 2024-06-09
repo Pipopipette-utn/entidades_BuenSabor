@@ -40,10 +40,6 @@ public class PromocionFacadeImp extends BaseFacadeImp<Promocion, PromocionDto,Pr
         super(baseService, baseMapper);
     }
 
-    public void deleteInSucursales(Long id, Long idSucursal){
-        promocionService.deleteInSucursales(id, idSucursal);
-    }
-
     public List<PromocionDto> createConSucursales(PromocionDto request) {
         Set<SucursalShortDto> sucursalesDto = request.getSucursales();
         Set<Sucursal> sucursales = sucursalMapper.toEntitiesShort(sucursalesDto);
