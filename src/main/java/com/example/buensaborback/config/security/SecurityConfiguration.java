@@ -42,9 +42,6 @@ public class SecurityConfiguration {
                 .cors(withDefaults()) //por defecto spring va a buscar un bean con el nombre "corsConfigurationSource".
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                // POST
-                                    // pueden crear insumos y manufactuados el "administrador" y "cocinero"
-                                .requestMatchers(HttpMethod.POST, "/**/create").hasAnyAuthority("administrador", "cocinero")
 
                                 // INSUMOS
                                     // al método get que no incluye eliminados pueden acceder todos
@@ -53,7 +50,9 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.GET, "/articulosInsumos/paged/insumosDirectos").permitAll()
                                     // a todos los métodos get pueden acceder "administrador" y "cocinero"
                                 .requestMatchers(HttpMethod.GET, "/articulosInsumos/**").hasAnyAuthority("administrador", "cocinero")
-                                    // pueden actualizar el "administrador" y "cocinero"
+                                    // pueden crear el "administrador" y "cocinero"
+                                .requestMatchers(HttpMethod.POST, "/articulosInsumos/create").hasAnyAuthority("administrador", "cocinero")
+                                // pueden actualizar el "administrador" y "cocinero"
                                 .requestMatchers(HttpMethod.PUT, "/articulosInsumos/{id}").hasAnyAuthority("administrador", "cocinero")
                                     // puede eliminar el "administrador"
                                 .requestMatchers(HttpMethod.DELETE, "/articulosInsumos/**").hasAuthority("administrador")
@@ -67,7 +66,9 @@ public class SecurityConfiguration {
                                 .requestMatchers("/articulosManufacturados/paged").permitAll()
                                     // a todos los métodos get pueden acceder "administrador" y "cocinero"
                                 .requestMatchers(HttpMethod.GET, "/articulosManufacturados/**").hasAnyAuthority("administrador", "cocinero")
-                                   // pueden actualizar el "administrador"  y "cocinero"
+                                    // pueden crear el "administrador" y "cocinero"
+                                .requestMatchers(HttpMethod.POST, "/articulosManufacturados/create").hasAnyAuthority("administrador", "cocinero")
+                                    // pueden actualizar el "administrador" y "cocinero"
                                 .requestMatchers(HttpMethod.PUT, "/articulosManufacturados/{id}").hasAnyAuthority("administrador", "cocinero")
                                     // puede eliminar el "administrador"
                                 .requestMatchers(HttpMethod.DELETE, "/articulosManufacturados/**").hasAuthority("administrador")
