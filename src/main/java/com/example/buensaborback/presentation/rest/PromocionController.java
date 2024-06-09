@@ -48,10 +48,6 @@ public class PromocionController extends BaseControllerImp<Promocion, PromocionD
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    @DeleteMapping("/baja/{id}/{idSucursal}")
-    public void deleteById(@PathVariable Long id, @PathVariable Long idSucursal) {
-        facade.deleteInSucursales(id, idSucursal);
-    }
 
     @GetMapping("/porSucursal/{sucursalId}")
     public ResponseEntity<Page<PromocionDto>> findAllBySucursalId(@PathVariable Long sucursalId, Pageable pageable) {
