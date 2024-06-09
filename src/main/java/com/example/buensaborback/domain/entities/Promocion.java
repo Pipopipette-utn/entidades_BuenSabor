@@ -51,7 +51,6 @@ public class Promocion  extends Base{
     private Set<ImagenPromocion> imagenes = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "sucursal_id")
     @JsonIgnoreProperties("promociones")
     @NotAudited
     private Sucursal sucursal;
