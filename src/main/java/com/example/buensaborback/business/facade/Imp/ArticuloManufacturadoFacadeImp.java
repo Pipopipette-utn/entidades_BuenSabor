@@ -14,7 +14,6 @@ import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoPos
 import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoDto;
 import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoPostDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
-import com.example.buensaborback.domain.dto.EmpleadoDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.ArticuloManufacturado;

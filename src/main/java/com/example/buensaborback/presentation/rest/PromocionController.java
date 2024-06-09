@@ -5,7 +5,6 @@ import com.example.buensaborback.business.facade.Imp.PromocionFacadeImp;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
 import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoDto;
 import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoPostDto;
-import com.example.buensaborback.domain.dto.EmpleadoDto;
 import com.example.buensaborback.domain.dto.PromocionDtos.PromocionDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.Empleado;
