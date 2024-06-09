@@ -33,7 +33,7 @@ public class Pedido extends Base{
     private FormaPago formaPago;
     private LocalDate fechaPedido;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Domicilio domicilio;
 
     @ManyToOne
@@ -56,7 +56,7 @@ public class Pedido extends Base{
     @NotAudited
     private Set<DetallePedido> detallePedidos = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "empleado_id")
     @NotAudited
     private Empleado empleado;

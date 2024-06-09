@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 public interface PromocionService extends BaseService<Promocion,Long> {
-    void deleteInSucursales(Long id, Long idSucursal);
     List<Promocion> create(Promocion request, Set<Sucursal> sucursales);
     List<Promocion> duplicateInOtherSucursales(Long id, Set<SucursalShortDto> sucursales);
     Page<Promocion> findBySucursal_Id(Long sucursalId, Pageable pageable);

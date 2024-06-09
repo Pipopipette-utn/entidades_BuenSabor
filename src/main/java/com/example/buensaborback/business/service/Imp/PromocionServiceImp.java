@@ -107,12 +107,12 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
 
     @Override
     public Page<Promocion> findBySucursal_Id(Long sucursalId, Pageable pageable) {
-        return promocionRepository.findBySucursales_Id(sucursalId, pageable);
+        return promocionRepository.findBySucursal_Id(sucursalId, pageable);
     }
 
     private Promocion createPromocion(Promocion request, Sucursal sucursal) {
         Promocion nuevaPromocion = new Promocion();
-        nuevaPromocion.setSucursales(request.getSucursales());
+        nuevaPromocion.setSucursal(request.getSucursal());
         nuevaPromocion.setTipoPromocion(request.getTipoPromocion());
         nuevaPromocion.setPrecioPromocional(request.getPrecioPromocional());
         nuevaPromocion.setDenominacion(request.getDenominacion());
@@ -150,7 +150,7 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
             throw new RuntimeException("La promoción debe tener al menos un detalle.");
         }
 
-        nuevaPromocion.setSucursales(Set.of(sucursal));
+        nuevaPromocion.setSucursal(sucursal);
         return nuevaPromocion;
     }
 
@@ -164,24 +164,6 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
         }
 
         promocionExistente.setImagenes(imagenes);
-    }
-
-    @Override
-    public void deleteInSucursales(Long id, Long idSucursal) {
-        Promocion promocionExistente = promocionRepository.getById(id);
-        if (promocionExistente == null) {
-            throw new RuntimeException("La promoción con el id " + id + " no se ha encontrado");
-        }
-
-        Sucursal sucursal = sucursalRepository.getById(idSucursal);
-        if (sucursal == null) {
-            throw new RuntimeException("La sucursal con el id " + id + " no se ha encontrado");
-        }
-
-        sucursal.getPromociones().remove(promocionExistente);
-        promocionExistente.getSucursales().remove(sucursal);
-
-        promocionRepository.save(promocionExistente);
     }
 }
 
