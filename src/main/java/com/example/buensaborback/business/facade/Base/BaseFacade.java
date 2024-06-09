@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface BaseFacade <D extends BaseDto, GD extends BaseDto, ID extends Serializable>{
-    public GD createNew(D request);
+    public GD createNew(D request) throws Exception;
     public GD getById(Long id);
     public List<GD> getAll();
     public Page<GD> getAllPaged(Pageable pageable);

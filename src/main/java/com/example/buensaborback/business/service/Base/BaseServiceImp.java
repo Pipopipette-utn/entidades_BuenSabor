@@ -21,7 +21,7 @@ public abstract class BaseServiceImp<E extends Base,ID extends Serializable> imp
     protected BaseRepository<E,ID> baseRepository;
 
     @Override
-    public E create(E request){
+    public E create(E request) throws Exception {
         var newEntity = baseRepository.save(request);
         //logger.info("Creada entidad {}",newEntity);
         return newEntity;

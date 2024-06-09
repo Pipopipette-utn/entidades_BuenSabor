@@ -64,6 +64,16 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
         return new PageImpl<>(dtos, pageable, entities.getTotalElements());
     }
 
+    public Page<ArticuloInsumoDto> buscarPorCategoriaYNombre(Pageable pageable, Long idSucursal, Long categoriaId, String nombre) {
+        Page<ArticuloInsumo> articulosFiltrados = articuloInsumoService.buscarPorCategoriaYNombre(pageable, idSucursal, categoriaId, nombre);
+        // Mapea las entidades a DTOs
+        List<ArticuloInsumoDto> dtos = articulosFiltrados.getContent().stream()
+                .map(articuloInsumoMapper::toDTO)
+                .collect(Collectors.toList());
+        // Devuelve una página de DTOs
+        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+    }
+
     public List<ArticuloInsumoDto> createConSucursales(ArticuloInsumoPostDto request) {
         Set<SucursalShortDto> sucursalesDto = request.getSucursales();
         Set<Sucursal> sucursales = sucursalMapper.toEntitiesShort(sucursalesDto);
@@ -74,14 +84,11 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
         return articuloInsumoMapper.toPostDtoList(entityCreated);
     }
 
-    public Page<ArticuloInsumoDto> buscarPorCategoriaYNombre(Pageable pageable, Long idSucursal, Long categoriaId, String nombre) {
-        Page<ArticuloInsumo> articulosFiltrados = articuloInsumoService.buscarPorCategoriaYNombre(pageable, idSucursal, categoriaId, nombre);
-        // Mapea las entidades a DTOs
-        List<ArticuloInsumoDto> dtos = articulosFiltrados.getContent().stream()
-                .map(articuloInsumoMapper::toDTO)
-                .collect(Collectors.toList());
-        // Devuelve una página de DTOs
-        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+    public List<ArticuloInsumoDto> duplicateInOtherSucursales(Long id, Set<SucursalShortDto> sucursales) {
+        // Graba una entidad
+        var entityCreated = articuloInsumoService.duplicateInOtherSucursales(id, sucursales);
+        // convierte a Dto para devolver
+        return articuloInsumoMapper.toPostDtoList(entityCreated);
     }
 
     public Page<ArticuloInsumoDto> getArticulosByCategoria(Pageable pageable, Long idSucursal,Long categoriaId) {
@@ -112,5 +119,14 @@ public class ArticuloInsumoFacadeImp extends BaseFacadeImp<ArticuloInsumo, Artic
                 .collect(Collectors.toList());
         // Devuelve una página de DTOs
         return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+    }
+
+    public List<ArticuloInsumoDto> findBySucursal(Long sucursalId) {
+        List<ArticuloInsumo> articulosFiltrados = articuloInsumoService.findBySucursal(sucursalId);
+        // Mapea las entidades a DTOs
+        List<ArticuloInsumoDto> dtos = articulosFiltrados.stream()
+                .map(articuloInsumoMapper::toDTO)
+                .collect(Collectors.toList());
+        return dtos;
     }
 }

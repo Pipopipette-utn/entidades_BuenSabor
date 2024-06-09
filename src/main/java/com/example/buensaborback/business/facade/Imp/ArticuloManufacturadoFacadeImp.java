@@ -10,6 +10,7 @@ import com.example.buensaborback.business.service.ArticuloManufacturadoService;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.domain.dto.Articulo.ArticuloPostDto;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoPostDto;
 import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoDto;
 import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoPostDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
@@ -57,6 +58,13 @@ public class ArticuloManufacturadoFacadeImp extends BaseFacadeImp<ArticuloManufa
         return articuloManufacturadoMapper.toDTOsList(entityCreated);
     }
 
+    public List<ArticuloManufacturadoDto> duplicateInOtherSucursales(Long id, Set<SucursalShortDto> sucursales) {
+        // Graba una entidad
+        var entityCreated = articuloManufacturadoService.duplicateInOtherSucursales(id, sucursales);
+        // convierte a Dto para devolver
+        return articuloManufacturadoMapper.toDTOsList(entityCreated);
+    }
+
     public Page<ArticuloManufacturadoDto> buscarPorCategoriaYNombre(Pageable pageable, Long idSucursal, Long categoriaId, String nombre) {
         Page<ArticuloManufacturado> articulosFiltrados = articuloManufacturadoService.buscarPorCategoriaYNombre(pageable, idSucursal, categoriaId, nombre);
         // Mapea las entidades a DTOs
@@ -95,5 +103,13 @@ public class ArticuloManufacturadoFacadeImp extends BaseFacadeImp<ArticuloManufa
                 .collect(Collectors.toList());
         // Devuelve una página de DTOs
         return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+    }
+
+    public List<ArticuloManufacturadoDto> findBySucursal(Long sucursalId) {
+        List<ArticuloManufacturado> articulosFiltrados = articuloManufacturadoService.findBySucursal(sucursalId);
+        // Mapea las entidades a DTOs
+        return articulosFiltrados.stream()
+                .map(articuloManufacturadoMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

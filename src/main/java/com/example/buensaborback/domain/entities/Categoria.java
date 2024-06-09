@@ -9,7 +9,6 @@ import org.hibernate.envers.NotAudited;
 
 import java.util.HashSet;
 import java.util.Set;
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,9 +17,10 @@ import java.util.Set;
 @ToString
 @SuperBuilder
 @Audited
-public class Categoria extends Base{
+public class Categoria extends Base {
     private String denominacion;
     private boolean esInsumo;
+    private boolean esParaVender;
 
     @ManyToMany(mappedBy = "categorias")
     @Builder.Default
@@ -29,6 +29,7 @@ public class Categoria extends Base{
     @OneToMany
     @JoinColumn(name = "categoria_id")
     @NotAudited
+    @Builder.Default
     private Set<Articulo> articulos = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "categoriaPadre")
@@ -42,5 +43,5 @@ public class Categoria extends Base{
     @JsonIgnoreProperties("subCategorias")
     @NotAudited
     private Categoria categoriaPadre;
-
 }
+

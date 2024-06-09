@@ -3,14 +3,18 @@ package com.example.buensaborback.presentation.rest;
 import com.example.buensaborback.business.facade.Imp.ArticuloInsumoFacadeImp;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoPostDto;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
+import com.example.buensaborback.domain.entities.Sucursal;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/articulosInsumos")
@@ -32,9 +36,22 @@ public class ArticuloInsumoController extends BaseControllerImp<ArticuloInsumo, 
         //logger.info("INICIO GET ALL insumos (gaseosas)");
         return ResponseEntity.ok(facade.findByEsParaElaborarFalse(pageable));
     }
+
     @PostMapping("/create")
-    public ResponseEntity<List<ArticuloInsumoDto>> create(@RequestBody ArticuloInsumoPostDto entity) {
-        return ResponseEntity.ok(facade.createConSucursales(entity));
+    public ResponseEntity<?> create(@RequestBody ArticuloInsumoPostDto entity) {
+        try{
+            return ResponseEntity.ok(facade.createConSucursales(entity));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/duplicate")
+    public ResponseEntity<List<ArticuloInsumoDto>> duplicateArticuloInOtherSucursales(
+            @PathVariable Long id,
+            @RequestBody Set<SucursalShortDto> sucursales
+    ) {
+        return ResponseEntity.ok(facade.duplicateInOtherSucursales(id, sucursales));
     }
 
     @GetMapping("/filtrar/{idSucursal}")
@@ -60,5 +77,10 @@ public class ArticuloInsumoController extends BaseControllerImp<ArticuloInsumo, 
     @GetMapping("/porSucursal/{sucursalId}")
     public ResponseEntity<Page<ArticuloInsumoDto>> findAllBySucursalId(@PathVariable Long sucursalId, Pageable pageable) {
         return  ResponseEntity.ok(facade.findBySucursal(sucursalId, pageable));
+    }
+
+    @GetMapping("/activos/porSucursal/{sucursalId}")
+    public ResponseEntity<List<ArticuloInsumoDto>> findAllBySucursalId(@PathVariable Long sucursalId) {
+        return  ResponseEntity.ok(facade.findBySucursal(sucursalId));
     }
 }

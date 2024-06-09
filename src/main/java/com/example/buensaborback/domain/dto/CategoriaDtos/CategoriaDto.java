@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -13,4 +15,5 @@ import lombok.Setter;
 public class CategoriaDto extends BaseDto {
     private String denominacion;
     private boolean esInsumo;
+    private boolean esParaVender;
 }

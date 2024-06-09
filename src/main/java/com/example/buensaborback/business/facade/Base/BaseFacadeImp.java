@@ -24,7 +24,7 @@ public abstract class BaseFacadeImp<E extends Base,D extends BaseDto, GD extends
         this.baseMapper = baseMapper;
     }
 
-    public GD createNew(D request){
+    public GD createNew(D request) throws Exception{
         // Convierte a entidad
         var entityToCreate = baseMapper.toEntity(request);
         // Graba una entidad
