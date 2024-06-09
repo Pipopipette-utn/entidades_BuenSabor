@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UsuarioRepository extends BaseRepository<Usuario ,Long> {
+
+    Usuario findByAuth0Id(String auth0Id);
 }

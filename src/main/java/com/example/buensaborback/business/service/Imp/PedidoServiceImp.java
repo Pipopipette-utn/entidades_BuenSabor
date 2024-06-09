@@ -189,7 +189,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
         }
 
         pedido.setEstado(Estado.CANCELADO);
-        pedidoRepository.delete(pedido);
+        pedidoRepository.save(pedido);
     }
 
     @Override
