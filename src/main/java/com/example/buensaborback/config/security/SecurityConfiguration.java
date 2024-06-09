@@ -123,6 +123,16 @@ public class SecurityConfiguration {
                                     // Pueden cambiar el estado el "administrador", "cocinero", "cajero" y "delivery"
                                 .requestMatchers(HttpMethod.PUT, "/categorias/cambiarEstado/{id}").hasAnyAuthority("administrador", "cocinero", "cajero", "delivery")
 
+                                // SUCURSALES
+                                    // puede crear el "administrador"
+                                .requestMatchers(HttpMethod.POST, "/sucursales").hasAuthority("administrador")
+                                    // puede actualizar el "administrador"
+                                .requestMatchers(HttpMethod.PUT, "/sucursales/{id}").hasAuthority("administrador")
+                                    // puede eliminar el "administrador"
+                                .requestMatchers(HttpMethod.DELETE, "/sucursales/**").hasAuthority("administrador")
+                                    // puede dar de alta el "administrador"
+                                .requestMatchers(HttpMethod.PUT, "/sucursales/alta/{id}}").hasAuthority("administrador")
+
                                 // PAISES
                                     // Nadie puede crear
                                 .requestMatchers(HttpMethod.POST, "/paises").denyAll()
