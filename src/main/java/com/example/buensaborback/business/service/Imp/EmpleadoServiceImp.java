@@ -49,18 +49,24 @@ public class EmpleadoServiceImp extends BaseServiceImp<Empleado,Long> implements
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El empleado con id " + id + " no se ha encontrado"));
 
-        Optional<Sucursal> sucursal = sucursalRepository.findById(request.getSucursal().getId());
-        if (sucursal.isEmpty()) {
-            throw new RuntimeException("La sucursal con id " + request.getSucursal().getId() + " no se ha encontrado");
-        }
-
-        // Guarda el usuario si no existe
-        Usuario usuario = request.getUsuario();
-        if (usuario != null && usuario.getId() == null) {
-            usuario = usuarioRepository.save(usuario);
-            empleado.setUsuario(usuario);
+        if (request.getSucursal() != null) {
+            Optional<Sucursal> sucursal = sucursalRepository.findById(request.getSucursal().getId());
+            if (sucursal.isEmpty()) {
+                throw new RuntimeException("La sucursal con id " + request.getSucursal().getId() + " no se ha encontrado");
+            }
+            empleado.setSucursal(sucursal.get());
         }
 
         return empleadoRepository.save(empleado);
     }
+
+    @Override
+    public Empleado findByEmail(String email) {
+        Empleado empleado = empleadoRepository.findByEmail(email);
+        if (empleado == null) {
+            throw new RuntimeException("Empleado con email " + email + " no encontrado");
+        }
+        return empleado;
+    }
+
 }
