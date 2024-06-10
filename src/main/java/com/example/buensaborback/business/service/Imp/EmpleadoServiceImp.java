@@ -11,6 +11,8 @@ import com.example.buensaborback.repositories.EmpleadoRepository;
 import com.example.buensaborback.repositories.SucursalRepository;
 import com.example.buensaborback.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -67,6 +69,11 @@ public class EmpleadoServiceImp extends BaseServiceImp<Empleado,Long> implements
             throw new RuntimeException("Empleado con email " + email + " no encontrado");
         }
         return empleado;
+    }
+
+    @Override
+    public Page<Empleado> findBySucursal_Id(Long sucursalId, Pageable pageable) {
+        return empleadoRepository.findBySucursal_Id(sucursalId, pageable);
     }
 
 }
