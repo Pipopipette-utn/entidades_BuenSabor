@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 @Service
@@ -128,6 +129,14 @@ public class ClienteServiceImp extends BaseServiceImp<Cliente,Long> implements C
 
         // Dar de baja el domicilio
         domicilioRepository.delete(domicilioToRemove);
+    }
+
+    @Override
+    public Set<Pedido> getAllPedidos(Long clienteId) throws Exception {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new RuntimeException("El cliente con id " + clienteId + " no se ha encontrado"));
+
+        return cliente.getPedidos();
     }
 
 
