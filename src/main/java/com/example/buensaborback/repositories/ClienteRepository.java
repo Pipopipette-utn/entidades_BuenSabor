@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface ClienteRepository extends BaseRepository<Cliente,Long> {
     @Query("SELECT c FROM Cliente c WHERE c.usuario.email = :email")
     Cliente findByEmail(@Param("email") String email);
+
 }
