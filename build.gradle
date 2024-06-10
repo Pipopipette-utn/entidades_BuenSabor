@@ -56,7 +56,8 @@ dependencies {
 	implementation 'com.konghq:unirest-java:3.11.12' // Para obtener el token
 	//Seguridad
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-
+	// Encriptación
+	implementation 'com.password4j:password4j:1.8.2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

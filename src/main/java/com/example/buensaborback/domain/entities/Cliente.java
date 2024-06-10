@@ -18,8 +18,9 @@ import java.util.Set;
 @SuperBuilder
 @Audited
 public class Cliente extends Persona {
+    String clave;
 
-    @ManyToMany
+    @OneToMany
     @JoinTable(name = "cliente_domicilio",
             joinColumns = @JoinColumn(name = "cliente_id"),
             inverseJoinColumns = @JoinColumn(name = "domicilio_id"))
