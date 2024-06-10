@@ -40,9 +40,35 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
     @Autowired
     ArticuloManufacturadoRepository articuloManufacturadoRepository;
 
+    @Autowired
+    ClienteRepository clienteRepository;
+
+    @Autowired
+    DomicilioRepository domicilioRepository;
+
     @Override
     @Transactional
     public Pedido create(Pedido request) throws Exception {
+        Optional<Cliente> clienteOptional = clienteRepository.findById(request.getCliente().getId());
+        if (clienteOptional.isEmpty()) {
+            throw new RuntimeException("El cliente con el id " + request.getCliente().getId() + " no se ha encontrado");
+        }
+
+        if (request.getTipoEnvio().equals(TipoEnvio.DELIVERY)) {
+            if (request.getDomicilio() == null) {
+                throw new RuntimeException("Debe proporcionar un domicilio para envío delivery");
+            }
+            Optional<Domicilio> domicilio = domicilioRepository.findById(request.getDomicilio().getId());
+            if (domicilio.isEmpty()) {
+                throw new RuntimeException("El domicilio con el id " + request.getDomicilio().getId() + " no se ha encontrado");
+            }
+            Cliente cliente = clienteOptional.get();
+            if (!cliente.getDomicilios().contains(domicilio.get())) {
+                throw new RuntimeException("El domicilio con el id " + request.getDomicilio().getId() + " no coincide con el cliente " + cliente.getId());
+            }
+        }
+
+
         Set<DetallePedido> detalles = request.getDetallePedidos(); // Guardar los detalles del body en un set
         Set<DetallePedido> detallesPersistidos = new HashSet<>(); // Inicializar un set que contendrá los detalles que pasen las validaciones
         TipoEnvio tipoEnvio = request.getTipoEnvio();
