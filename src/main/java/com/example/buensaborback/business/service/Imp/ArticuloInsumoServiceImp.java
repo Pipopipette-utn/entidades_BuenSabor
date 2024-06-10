@@ -2,6 +2,7 @@ package com.example.buensaborback.business.service.Imp;
 
 import com.example.buensaborback.business.service.ArticuloInsumoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.*;
 import com.example.buensaborback.repositories.*;
 import com.example.buensaborback.utils.PublicIdService;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long> implements ArticuloInsumoService {
@@ -40,73 +42,96 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
     @Transactional
     public List<ArticuloInsumo> create(ArticuloInsumo request, Set<Sucursal> sucursales) {
         List<ArticuloInsumo> articulosCreados = new ArrayList<>();
+        Categoria categoria = fetchAndValidateCategoria(request);
 
-        for (Sucursal sucursal: sucursales) {
-            // Crear un nuevo objeto ArticuloInsumo para cada sucursal
-            ArticuloInsumo nuevoArticulo = new ArticuloInsumo();
-            nuevoArticulo.setDenominacion(request.getDenominacion());
-            nuevoArticulo.setPrecioVenta(request.getPrecioVenta());
-            nuevoArticulo.setUnidadMedida(request.getUnidadMedida());
-            nuevoArticulo.setPrecioCompra(request.getPrecioCompra());
-            nuevoArticulo.setEsParaElaborar(request.getEsParaElaborar());
-            nuevoArticulo.setStockActual(request.getStockActual());
-            nuevoArticulo.setStockMaximo(request.getStockMaximo());
-            nuevoArticulo.setStockMinimo(request.getStockMinimo());
-
-            if (request.getCategoria() != null) {
-                Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
-                if (categoria == null ) {
-                    throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
-                }
-                if (!categoria.isEsInsumo() && request.getEsParaElaborar()) {
-                    throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
-                }
-
-                nuevoArticulo.setCategoria(categoria);
-            }
-
-            Sucursal sucursalBd = sucursalRepository.getById(sucursal.getId());
-            if (sucursalBd == null) {
-                throw new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado");
-            }
-            nuevoArticulo.setSucursal(sucursalBd);
-            // Guardar el artículo en la base de datos
-            ArticuloInsumo articuloGuardado = articuloInsumoRepository.save(nuevoArticulo);
-            articulosCreados.add(articuloGuardado);
+        for (Sucursal sucursal : sucursales) {
+            Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                    .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+            ArticuloInsumo nuevoArticulo = createArticuloInsumo(request, sucursalBd, categoria);
+            articulosCreados.add(nuevoArticulo);
         }
-        return articulosCreados;
+        List<ArticuloInsumo> articulos = articuloInsumoRepository.saveAll(articulosCreados);
+        return articulos;
     }
 
     @Override
     public ArticuloInsumo update(ArticuloInsumo request, Long id) {
+        ArticuloInsumo insumoExistente = articuloInsumoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Insumo no encontrado: { id: " + id + " }"));
 
-        ArticuloInsumo insumoExistente = articuloInsumoRepository.getById(id);
-        if (insumoExistente == null) {
-            throw new RuntimeException("Insumo no encontrado: { id: " + id + " }");
-        }
-
-        Set<ImagenArticulo> imagenes = request.getImagenes();
-
-        Set<ImagenArticulo> imagenesEliminadas = insumoExistente.getImagenes();
-        imagenesEliminadas.removeAll(imagenes);
-        for (ImagenArticulo imagen: imagenesEliminadas) {
-            imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
-        }
-
-        if (request.getCategoria() != null) {
-            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
-            if (categoria == null ) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
-            }
-            if (!categoria.isEsInsumo() && request.getEsParaElaborar()) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos");
-            }
-
-            request.setCategoria(categoria);
-        }
+        Categoria categoria = fetchAndValidateCategoria(request);
+        updateImagenes(request, insumoExistente);
+        request.setCategoria(categoria);
 
         return articuloInsumoRepository.save(request);
     }
+
+    @Transactional
+    public List<ArticuloInsumo> duplicateInOtherSucursales(Long id, Set<SucursalShortDto> sucursales) {
+        ArticuloInsumo articuloExistente = articuloInsumoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Insumo no encontrado: { id: " + id + " }"));
+
+        List<ArticuloInsumo> articulosDuplicados = new ArrayList<>();
+        Categoria categoria = articuloExistente.getCategoria();
+
+        for (SucursalShortDto sucursal : sucursales) {
+            Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                    .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+            ArticuloInsumo nuevoArticulo = createArticuloInsumo(articuloExistente, sucursalBd, categoria);
+            articulosDuplicados.add(nuevoArticulo);
+        }
+
+        return articuloInsumoRepository.saveAll(articulosDuplicados);
+    }
+
+    private Categoria fetchAndValidateCategoria(ArticuloInsumo request) {
+        if (request.getCategoria() != null) {
+            return categoriaRepository.findById(request.getCategoria().getId())
+                    .filter(categoria -> categoria.isEsInsumo() || !request.getEsParaElaborar())
+                    .orElseThrow(() -> new RuntimeException("Categoría no válida"));
+        }
+        return null;
+    }
+
+    private ArticuloInsumo createArticuloInsumo(ArticuloInsumo request, Sucursal sucursal, Categoria categoria) {
+        ArticuloInsumo nuevoArticulo = new ArticuloInsumo(
+                request.getDenominacion(),
+                request.getPrecioVenta(),
+                request.getUnidadMedida(),
+                request.getPrecioCompra(),
+                request.getStockActual(),
+                request.getStockMinimo(),
+                request.getStockMaximo(),
+                request.getEsParaElaborar()
+        );
+
+        // Copiar las imágenes del artículo de solicitud al nuevo artículo
+        nuevoArticulo.setImagenes(new HashSet<>(request.getImagenes()));
+
+        if (categoria != null) {
+            boolean categoriaExisteEnSucursal = sucursal.getCategorias().stream()
+                    .anyMatch(cat -> cat.getId().equals(categoria.getId()));
+
+            if (!categoriaExisteEnSucursal) {
+                throw new RuntimeException("La categoría " + categoria.getDenominacion() + " no existe en la sucursal " + sucursal.getNombre());
+            }
+            nuevoArticulo.setCategoria(categoria);
+        }
+
+        nuevoArticulo.setSucursal(sucursal);
+        return nuevoArticulo;
+    }
+
+    private void updateImagenes(ArticuloInsumo request, ArticuloInsumo insumoExistente) {
+        Set<ImagenArticulo> imagenes = request.getImagenes();
+        Set<ImagenArticulo> imagenesEliminadas = new HashSet<>(insumoExistente.getImagenes());
+        imagenesEliminadas.removeAll(imagenes);
+
+        for (ImagenArticulo imagen : imagenesEliminadas) {
+            imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
+        }
+    }
+
 
     @Override
     public void deleteById(Long id) {
@@ -133,12 +158,29 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
 
     @Override
     public Page<ArticuloInsumo> buscarPorCategoriaYNombre(Pageable pageable, Long idSucursal, Long categoriaId, String nombre) {
-        return articuloInsumoRepository.findBySucursal_IdAndCategoria_IdAndDenominacionContainingIgnoreCase(idSucursal, categoriaId, nombre, pageable);
+        List<Long> subcategoryIds = findAllSubcategoryIds(categoriaId);
+        subcategoryIds.add(categoriaId);  // Include the parent category ID
+        return articuloInsumoRepository.findBySucursalIdAndCategoriaIdInAndDenominacionContainingIgnoreCase(idSucursal, subcategoryIds, nombre, pageable);
     }
 
-    @Override
     public Page<ArticuloInsumo> getArticulosByCategoria(Pageable pageable, Long idSucursal, Long categoriaId) {
-        return articuloInsumoRepository.findBySucursal_IdAndCategoria_Id(idSucursal, categoriaId, pageable);
+        List<Long> subcategoryIds = findAllSubcategoryIds(categoriaId);
+        subcategoryIds.add(categoriaId);  // Include the parent category ID
+        return articuloInsumoRepository.findBySucursalIdAndCategoriaIdIn(idSucursal, subcategoryIds, pageable);
+    }
+
+    public List<Long> findAllSubcategoryIds(Long categoriaId) {
+        List<Long> subcategoryIds = new ArrayList<>();
+        findSubcategoryIdsRecursive(categoriaId, subcategoryIds);
+        return subcategoryIds;
+    }
+
+    private void findSubcategoryIdsRecursive(Long categoriaId, List<Long> subcategoryIds) {
+        List<Categoria> subcategories = categoriaRepository.findByCategoriaPadre_Id(categoriaId);
+        for (Categoria subcategory : subcategories) {
+            subcategoryIds.add(subcategory.getId());
+            findSubcategoryIdsRecursive(subcategory.getId(), subcategoryIds);
+        }
     }
 
     @Override

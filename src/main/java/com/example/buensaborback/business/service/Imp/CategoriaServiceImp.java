@@ -59,7 +59,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         List<Categoria> categorias = categoriaRepository.findAll();
         Set<Categoria> filteredCategorias = new HashSet<>();
         for (Categoria categoria: categorias){
-            if (categoria.getCategoriaPadre() == null && !categoria.isEsInsumo()) {
+            if (categoria.getCategoriaPadre() == null && categoria.isEsParaVender()) {
                 boolean exists = filteredCategorias.stream()
                         .anyMatch(existingCategoria -> existingCategoria.getDenominacion().equals(categoria.getDenominacion()));
                 if (!exists) {
@@ -132,6 +132,7 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         // Actualizar los detalles básicos de la categoría
         categoriaExistente.setDenominacion(newCategoria.getDenominacion());
         categoriaExistente.setEsInsumo(newCategoria.isEsInsumo());
+        categoriaExistente.setEsParaVender(newCategoria.isEsParaVender());
 
         // Actualizar las sucursales asociadas
         Set<Sucursal> newSucursales = new HashSet<>();
@@ -155,14 +156,13 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
         categoriaExistente.setSucursales(newSucursales);
 
         // Manejar subcategorías
-        actualizarSubcategorias(categoriaExistente, newCategoria, newSucursales);
+        actualizarSubcategorias(categoriaExistente, newCategoria, newSucursales, newCategoria.isEsInsumo(), newCategoria.isEsParaVender());
 
-        System.out.println(categoriaExistente.getDenominacion());
         return categoriaRepository.save(categoriaExistente);
     }
 
-    private void actualizarSubcategorias(Categoria categoriaExistente, Categoria newCategoria, Set<Sucursal> sucursales){
-        if (!newCategoria.getSubCategorias().isEmpty()){
+    private void actualizarSubcategorias(Categoria categoriaExistente, Categoria newCategoria, Set<Sucursal> sucursales, boolean esInsumo, boolean esParaVender){
+        if (newCategoria.getSubCategorias() != null && !newCategoria.getSubCategorias().isEmpty()){
             for(Categoria subcategoriaNueva: newCategoria.getSubCategorias()){
                 Optional<Categoria> subcategoriaExistenteOpt = categoriaExistente.getSubCategorias().stream()
                         .filter(sc -> sc.getId().equals(subcategoriaNueva.getId()))
@@ -171,7 +171,8 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                 if (subcategoriaExistenteOpt.isPresent()) {
                     Categoria subcategoriaExistente = subcategoriaExistenteOpt.get();
                     subcategoriaExistente.setDenominacion(subcategoriaNueva.getDenominacion());
-                    subcategoriaExistente.setEsInsumo(subcategoriaNueva.isEsInsumo());
+                    subcategoriaExistente.setEsInsumo(esInsumo);  // Propagar valor de newCategoria
+                    subcategoriaExistente.setEsParaVender(esParaVender);  // Propagar valor de newCategoria
                     subcategoriaExistente.setSucursales(sucursales);
                     for (Sucursal sucursal : sucursales) {
                         boolean categoriaExists = sucursal.getCategorias().stream()
@@ -181,21 +182,26 @@ public class CategoriaServiceImp extends BaseServiceImp<Categoria,Long> implemen
                             sucursal.getCategorias().add(subcategoriaExistente);
                         }
                     }
-                    actualizarSubcategorias(subcategoriaExistente, subcategoriaNueva, sucursales);
+                    actualizarSubcategorias(subcategoriaExistente, subcategoriaNueva, sucursales, esInsumo, esParaVender);
                 } else {
                     subcategoriaNueva.setCategoriaPadre(categoriaExistente);
                     subcategoriaNueva.setSucursales(sucursales);
+                    subcategoriaNueva.setEsInsumo(esInsumo);  // Propagar valor de newCategoria
+                    subcategoriaNueva.setEsParaVender(esParaVender);  // Propagar valor de newCategoria
                     categoriaExistente.getSubCategorias().add(subcategoriaNueva);
 
-                    for (Sucursal sucursal : sucursales) {
-                        sucursal.getCategorias().add(subcategoriaNueva);
-                    }
-                    actualizarSubcategorias(subcategoriaNueva, subcategoriaNueva, sucursales);
+                    // Guardar la nueva subcategoría antes de agregarla a las sucursales
+                    Categoria savedSubcategoriaNueva = categoriaRepository.save(subcategoriaNueva);
 
+                    for (Sucursal sucursal : sucursales) {
+                        sucursal.getCategorias().add(savedSubcategoriaNueva);
+                    }
+                    actualizarSubcategorias(savedSubcategoriaNueva, subcategoriaNueva, sucursales, esInsumo, esParaVender);
                 }
             }
         }
     }
+
 
     /*
     private void actualizarSubcategorias(Categoria categoriaExistente, Categoria newCategoria, Set<Sucursal> sucursales) {

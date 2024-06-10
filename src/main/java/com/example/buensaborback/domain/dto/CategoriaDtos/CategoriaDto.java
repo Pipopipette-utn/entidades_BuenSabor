@@ -15,4 +15,5 @@ import java.util.List;
 public class CategoriaDto extends BaseDto {
     private String denominacion;
     private boolean esInsumo;
+    private boolean esParaVender;
 }

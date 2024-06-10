@@ -60,14 +60,10 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
     }
 
     @Override
-    public ResponseEntity<String> uploadImages(MultipartFile[] files, Long idArticulo) {
+    public ResponseEntity<String> uploadImages(MultipartFile[] files, List<Long> idArticulos) {
         List<String> urls = new ArrayList<>();
         try {
-            Articulo articulo = articuloRepository.getById(idArticulo);
             Set<ImagenArticulo> imagenes = new HashSet<>();
-            if (articulo == null) {
-                throw new RuntimeException("El articulo con id " + idArticulo + " no se ha encontrado");
-            }
 
             for (MultipartFile file : files) {
                 if (file.isEmpty()) {
@@ -87,8 +83,15 @@ public class ImagenArticuloServiceImpl implements ImagenArticuloService {
                 urls.add(image.getUrl());
             }
 
-            articulo.getImagenes().addAll(imagenes);
-            articuloRepository.save(articulo);
+            Set<Articulo> articulos = new HashSet<>();
+            for (Long idArticulo: idArticulos){
+                Articulo articulo = articuloRepository.getById(idArticulo);
+                if (articulo == null) {
+                    throw new RuntimeException("El articulo con id " + idArticulo + " no se ha encontrado");
+                }
+                articulo.getImagenes().addAll(imagenes);
+                articuloRepository.save(articulo);
+            }
 
             return new ResponseEntity<>("Subido exitosamente: " + String.join(", ", urls), HttpStatus.OK);
         } catch (Exception e) {

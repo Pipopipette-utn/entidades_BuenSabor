@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,10 +26,16 @@ public class Articulo extends Base {
     protected String denominacion;
     protected Double precioVenta;
 
-    @OneToMany
-    @JoinColumn(name = "articulo_id")
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    //SE AGREGA EL JOIN TABLE PARA QUE JPA CREE LA TABLA INTERMEDIA
+    // EN UNA RELACION MANY TO MANY
+    @JoinTable(name = "articulo_imagen",
+            joinColumns = @JoinColumn(name = "articulo_id"),
+            inverseJoinColumns = @JoinColumn(name = "imagen_id"))
+    //SE AGREGA EL BUILDER.DEFAULT PARA QUE BUILDER NO SOBREESCRIBA LA INICIALIZACION DE LA LISTA
     @Builder.Default
-    @NotAudited
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     protected Set<ImagenArticulo> imagenes = new HashSet<>();
 
     @ManyToOne
@@ -47,5 +54,10 @@ public class Articulo extends Base {
     @NotAudited
     private Sucursal sucursal;
 
+    public Articulo(String denominacion, Double precioVenta, UnidadMedida unidadMedida) {
+        this.denominacion = denominacion;
+        this.precioVenta = precioVenta;
+        this.unidadMedida = unidadMedida;
+    }
 }
 

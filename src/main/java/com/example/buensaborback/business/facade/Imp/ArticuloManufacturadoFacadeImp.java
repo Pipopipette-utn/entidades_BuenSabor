@@ -10,10 +10,10 @@ import com.example.buensaborback.business.service.ArticuloManufacturadoService;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.domain.dto.Articulo.ArticuloPostDto;
 import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoDto;
+import com.example.buensaborback.domain.dto.ArticuloInsumoDtos.ArticuloInsumoPostDto;
 import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoDto;
 import com.example.buensaborback.domain.dto.ArticuloManufacturado.ArticuloManufacturadoPostDto;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
-import com.example.buensaborback.domain.dto.EmpleadoDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.ArticuloManufacturado;
@@ -53,6 +53,13 @@ public class ArticuloManufacturadoFacadeImp extends BaseFacadeImp<ArticuloManufa
         ArticuloManufacturado entityToCreate = articuloManufacturadoMapper.toEntityArticuloManufacturado(request);
         // Graba una entidad
         var entityCreated = articuloManufacturadoService.create(entityToCreate, sucursales);
+        // convierte a Dto para devolver
+        return articuloManufacturadoMapper.toDTOsList(entityCreated);
+    }
+
+    public List<ArticuloManufacturadoDto> duplicateInOtherSucursales(Long id, Set<SucursalShortDto> sucursales) {
+        // Graba una entidad
+        var entityCreated = articuloManufacturadoService.duplicateInOtherSucursales(id, sucursales);
         // convierte a Dto para devolver
         return articuloManufacturadoMapper.toDTOsList(entityCreated);
     }

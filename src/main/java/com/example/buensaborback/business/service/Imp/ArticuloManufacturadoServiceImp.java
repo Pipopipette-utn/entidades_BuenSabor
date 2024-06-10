@@ -2,6 +2,7 @@ package com.example.buensaborback.business.service.Imp;
 
 import com.example.buensaborback.business.service.ArticuloManufacturadoService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
+import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.*;
 import com.example.buensaborback.repositories.*;
 import com.example.buensaborback.utils.PublicIdService;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManufacturado,Long> implements ArticuloManufacturadoService {
+public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManufacturado, Long> implements ArticuloManufacturadoService {
 
     @Autowired
     ArticuloManufacturadoRepository articuloManufacturadoRepository;
@@ -37,125 +38,136 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
     @Autowired
     SucursalRepository sucursalRepository;
 
-    @Override
     @Transactional
     public List<ArticuloManufacturado> create(ArticuloManufacturado request, Set<Sucursal> sucursales) {
         List<ArticuloManufacturado> articulosCreados = new ArrayList<>();
+        Categoria categoria = fetchAndValidateCategoria(request);
 
-        for (Sucursal sucursal: sucursales) {
-            ArticuloManufacturado nuevoArticulo = new ArticuloManufacturado();
-            nuevoArticulo.setDenominacion(request.getDenominacion());
-            nuevoArticulo.setPrecioVenta(request.getPrecioVenta());
-            nuevoArticulo.setUnidadMedida(request.getUnidadMedida());
-            nuevoArticulo.setTiempoEstimadoMinutos(request.getTiempoEstimadoMinutos());
-            nuevoArticulo.setPreparacion(request.getPreparacion());
-
-
-            Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
-            Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
-
-            if (detalles != null && !detalles.isEmpty()) {
-                for (ArticuloManufacturadoDetalle detalle : detalles) {
-                    ArticuloInsumo insumo = detalle.getArticulo();
-                    if (insumo == null || insumo.getId() == null) {
-                        throw new RuntimeException("El insumo del detalle no puede ser nulo");
-                    }
-                    insumo = articuloInsumoRepository.findById(detalle.getArticulo().getId())
-                            .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
-                    detalle.setArticulo(insumo);
-                    ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
-                    detallesPersistidos.add(savedDetalle);
-                }
-                nuevoArticulo.setArticuloManufacturadoDetalles(detallesPersistidos);
-            }
-
-            if (request.getCategoria() != null) {
-                Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
-                if (categoria == null) {
-                    throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
-                }
-                if (categoria.isEsInsumo()) {
-                    throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos manufacturados");
-                }
-
-                nuevoArticulo.setCategoria(categoria);
-            }
-
-            Sucursal sucursalBd = sucursalRepository.getById(sucursal.getId());
-            if (sucursalBd == null) {
-                throw new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado");
-            }
-            nuevoArticulo.setSucursal(sucursalBd);
-            // Guardar el artículo en la base de datos
-            ArticuloManufacturado articuloGuardado = articuloManufacturadoRepository.save(nuevoArticulo);
-            articulosCreados.add(articuloGuardado);
+        for (Sucursal sucursal : sucursales) {
+            Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                    .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+            ArticuloManufacturado nuevoArticulo = createArticuloManufacturado(request, sucursalBd, categoria);
+            articulosCreados.add(nuevoArticulo);
         }
-        return articulosCreados;
+        return articuloManufacturadoRepository.saveAll(articulosCreados);
     }
 
-    @Override
     @Transactional
+    @Override
     public ArticuloManufacturado update(ArticuloManufacturado request, Long id) {
+        ArticuloManufacturado articuloExistente = articuloManufacturadoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("El artículo manufacturado con id " + id + " no se ha encontrado"));
 
-        ArticuloManufacturado articulo = articuloManufacturadoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("El articulo manufacturado con id " + id + " no se ha encontrado"));
+        updateImagenes(request, articuloExistente);
 
-        Set<ImagenArticulo> imagenes = request.getImagenes();
-        Set<ImagenArticulo> imagenesEliminadas = articulo.getImagenes();
-        Iterator<ImagenArticulo> iterator = imagenesEliminadas.iterator();
-        while (iterator.hasNext()) {
-            ImagenArticulo imagenEliminada = iterator.next();
-            for (ImagenArticulo imagen : imagenes) {
-                if (imagen.getId().equals(imagenEliminada.getId())) {
-                    iterator.remove();
-                    break;
-                }
-            }
+        Categoria categoria = fetchAndValidateCategoria(request);
+
+        // Eliminar detalles antiguos
+        articuloManufacturadoDetalleRepository.deleteAll(articuloExistente.getArticuloManufacturadoDetalles());
+
+        Set<ArticuloManufacturadoDetalle> nuevosDetalles = request.getArticuloManufacturadoDetalles();
+        if (nuevosDetalles == null || nuevosDetalles.isEmpty()) {
+            throw new RuntimeException("El artículo debe tener al menos un detalle.");
         }
 
-        for (ImagenArticulo imagen: imagenesEliminadas) {
-            imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
-        }
-        request.getImagenes().removeAll(imagenesEliminadas);
-
-        Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
-        Set<ArticuloManufacturadoDetalle> detallesPersistidos = new HashSet<>();
-
-        Set<ArticuloManufacturadoDetalle> detallesEliminados = articulo.getArticuloManufacturadoDetalles();
-        detallesEliminados.removeAll(detalles);
-        articuloManufacturadoDetalleRepository.deleteAll(detallesEliminados);
-
-        if (!detalles.isEmpty()) {
-            for (ArticuloManufacturadoDetalle detalle : detalles) {
-                ArticuloInsumo insumo = detalle.getArticulo();
-                if (insumo == null || insumo.getId() == null) {
-                    throw new RuntimeException("El insumo del detalle no puede ser nulo");
-                }
-                insumo = articuloInsumoRepository.findById(detalle.getArticulo().getId())
-                        .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
-                ArticuloManufacturadoDetalle savedDetalle = articuloManufacturadoDetalleRepository.save(detalle);
-                detallesPersistidos.add(savedDetalle);
-            }
-            articulo.setArticuloManufacturadoDetalles(detallesPersistidos);
+        Set<ArticuloManufacturadoDetalle> detallesActualizados = new HashSet<>();
+        for (ArticuloManufacturadoDetalle detalle : nuevosDetalles) {
+            ArticuloInsumo insumo = articuloInsumoRepository.findById(detalle.getArticulo().getId())
+                    .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
+            ArticuloManufacturadoDetalle nuevoDetalle = new ArticuloManufacturadoDetalle();
+            nuevoDetalle.setCantidad(detalle.getCantidad());
+            nuevoDetalle.setArticulo(insumo);
+            detallesActualizados.add(nuevoDetalle);
         }
 
-        if (!detallesPersistidos.isEmpty()) {
-            request.setArticuloManufacturadoDetalles(detallesPersistidos);
-        }
-
-        if (request.getCategoria() != null) {
-            Categoria categoria = categoriaRepository.getById(request.getCategoria().getId());
-            if (categoria == null ) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no existe");
-            }
-            if (categoria.isEsInsumo()) {
-                throw new RuntimeException("La categoría con id: " + request.getCategoria().getId() + " no pertenece a una categoría de insumos manufacturados");
-            }
-
-            request.setCategoria(categoria);
-        }
+        request.setArticuloManufacturadoDetalles(detallesActualizados);
+        request.setCategoria(categoria);
 
         return articuloManufacturadoRepository.save(request);
+    }
+
+    private ArticuloManufacturado createArticuloManufacturado(ArticuloManufacturado request, Sucursal sucursal, Categoria categoria) {
+        ArticuloManufacturado nuevoArticulo = new ArticuloManufacturado(
+                request.getDenominacion(),
+                request.getPrecioVenta(),
+                request.getUnidadMedida(),
+                request.getDescripcion(),
+                request.getTiempoEstimadoMinutos(),
+                request.getPreparacion()
+        );
+
+        nuevoArticulo.setImagenes(new HashSet<>(request.getImagenes()));
+
+        if (categoria != null) {
+            boolean categoriaExisteEnSucursal = sucursal.getCategorias().stream()
+                    .anyMatch(cat -> cat.getId().equals(categoria.getId()));
+
+            if (!categoriaExisteEnSucursal) {
+                throw new RuntimeException("La categoría " + categoria.getDenominacion() + " no existe en la sucursal " + sucursal.getNombre());
+            }
+            nuevoArticulo.setCategoria(categoria);
+        }
+
+        Set<ArticuloManufacturadoDetalle> detalles = request.getArticuloManufacturadoDetalles();
+        Set<ArticuloManufacturadoDetalle> nuevosDetalles = new HashSet<>();
+
+        if (detalles != null && !detalles.isEmpty()) {
+            for (ArticuloManufacturadoDetalle detalle : detalles) {
+                ArticuloInsumo insumoExistente = articuloInsumoRepository.findBySucursal_IdAndDenominacionContainingIgnoreCase(sucursal.getId(), detalle.getArticulo().getDenominacion());
+                if (insumoExistente == null){
+                    throw new RuntimeException("El insumo con nombre " + detalle.getArticulo().getDenominacion() + " no se ha encontrado en la sucursal " + sucursal.getNombre());
+                }
+                ArticuloManufacturadoDetalle nuevoDetalle = new ArticuloManufacturadoDetalle();
+                nuevoDetalle.setCantidad(detalle.getCantidad());
+                nuevoDetalle.setArticulo(insumoExistente);
+                nuevosDetalles.add(nuevoDetalle);
+            }
+            nuevoArticulo.setArticuloManufacturadoDetalles(nuevosDetalles);
+        } else {
+            throw new RuntimeException("El artículo debe tener al menos un detalle.");
+        }
+
+        nuevoArticulo.setSucursal(sucursal);
+        return nuevoArticulo;
+    }
+
+    @Transactional
+    public List<ArticuloManufacturado> duplicateInOtherSucursales(Long id, Set<SucursalShortDto> sucursales) {
+        ArticuloManufacturado articuloExistente = articuloManufacturadoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Artículo manufacturado no encontrado: { id: " + id + " }"));
+
+        List<ArticuloManufacturado> articulosDuplicados = new ArrayList<>();
+        Categoria categoria = articuloExistente.getCategoria();
+
+        for (SucursalShortDto sucursal : sucursales) {
+            Sucursal sucursalBd = sucursalRepository.findById(sucursal.getId())
+                    .orElseThrow(() -> new RuntimeException("La sucursal con id " + sucursal.getId() + " no se ha encontrado"));
+            ArticuloManufacturado nuevoArticulo = createArticuloManufacturado(articuloExistente, sucursalBd, categoria);
+            articulosDuplicados.add(nuevoArticulo);
+        }
+
+        return articuloManufacturadoRepository.saveAll(articulosDuplicados);
+    }
+
+    private void updateImagenes(ArticuloManufacturado request, ArticuloManufacturado insumoExistente) {
+        Set<ImagenArticulo> imagenes = request.getImagenes();
+        Set<ImagenArticulo> imagenesEliminadas = new HashSet<>(insumoExistente.getImagenes());
+        imagenesEliminadas.removeAll(imagenes);
+
+        for (ImagenArticulo imagen : imagenesEliminadas) {
+            imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
+        }
+
+        insumoExistente.setImagenes(imagenes);
+    }
+
+    private Categoria fetchAndValidateCategoria(ArticuloManufacturado request) {
+        if (request.getCategoria() != null) {
+            return categoriaRepository.findById(request.getCategoria().getId())
+                    .filter(categoria -> !categoria.isEsInsumo())
+                    .orElseThrow(() -> new RuntimeException("Categoría no válida"));
+        }
+        return null;
     }
 
     @Override
@@ -169,25 +181,43 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
     @Override
     public Page<ArticuloManufacturado> buscarPorCategoriaYNombre(Pageable pageable, Long idSucursal, Long categoriaId, String nombre) {
-        return articuloManufacturadoRepository.findBySucursal_IdAndCategoria_IdAndDenominacionContainingIgnoreCase(idSucursal, categoriaId, nombre, pageable);
+        List<Long> subcategoryIds = findAllSubcategoryIds(categoriaId);
+        subcategoryIds.add(categoriaId);  // Include the parent category ID
+        return articuloManufacturadoRepository.findBySucursalIdAndCategoriaIdInAndDenominacionContainingIgnoreCase(idSucursal, subcategoryIds, nombre, pageable);
     }
 
-    @Override
     public Page<ArticuloManufacturado> getArticulosByCategoria(Pageable pageable, Long idSucursal, Long categoriaId) {
-        return articuloManufacturadoRepository.findBySucursal_IdAndCategoria_Id(idSucursal, categoriaId, pageable);
+        List<Long> subcategoryIds = findAllSubcategoryIds(categoriaId);
+        subcategoryIds.add(categoriaId);  // Include the parent category ID
+        return articuloManufacturadoRepository.findBySucursalIdAndCategoriaIdIn(idSucursal, subcategoryIds, pageable);
+    }
+
+    public List<Long> findAllSubcategoryIds(Long categoriaId) {
+        List<Long> subcategoryIds = new ArrayList<>();
+        findSubcategoryIdsRecursive(categoriaId, subcategoryIds);
+        return subcategoryIds;
+    }
+
+    private void findSubcategoryIdsRecursive(Long categoriaId, List<Long> subcategoryIds) {
+        List<Categoria> subcategories = categoriaRepository.findByCategoriaPadre_Id(categoriaId);
+        for (Categoria subcategory : subcategories) {
+            subcategoryIds.add(subcategory.getId());
+            findSubcategoryIdsRecursive(subcategory.getId(), subcategoryIds);
+        }
     }
 
     @Override
     public Page<ArticuloManufacturado> getArticulosByNombre(Pageable pageable, Long idSucursal, String nombre) {
         return articuloManufacturadoRepository.findBySucursal_IdAndDenominacionContainingIgnoreCase(idSucursal, nombre, pageable);
     }
+
     @Override
     public Page<ArticuloManufacturado> findBySucursal(Long sucursalId, Pageable pageable) {
         return articuloManufacturadoRepository.findBySucursal_Id(sucursalId, pageable);
     }
 
     @Override
-    public List<ArticuloManufacturado> findBySucursal(Long sucursalId ) {
+    public List<ArticuloManufacturado> findBySucursal(Long sucursalId) {
         return articuloManufacturadoRepository.findBySucursal_IdAndBajaFalse(sucursalId);
     }
 }

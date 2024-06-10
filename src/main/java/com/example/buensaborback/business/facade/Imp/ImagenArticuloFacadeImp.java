@@ -20,11 +20,9 @@ public class ImagenArticuloFacadeImp implements ImagenArticuloFacade {
         return imagenArticuloService.getAllImages().getBody();
     }
 
-    @Override
-    public String uploadImages(MultipartFile[] files, Long idArticulo) {
-        var respuesta = imagenArticuloService.uploadImages(files, idArticulo);
-        System.out.println(respuesta);
-        System.out.println(respuesta.getBody());
+
+    public String uploadImages(MultipartFile[] files, List<Long> idArticulos) {
+        var respuesta = imagenArticuloService.uploadImages(files, idArticulos);
         return respuesta.getBody();
     }
 
