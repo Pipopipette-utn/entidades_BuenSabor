@@ -73,6 +73,9 @@ public class ClienteServiceImp extends BaseServiceImp<Cliente,Long> implements C
         }
 
         boolean verified = Password.check(request.getClave(), cliente.getClave()).addSalt("fixedSalt").withPBKDF2();
+        if (!verified) {
+            throw new RuntimeException("Credenciales incorrectas");
+        }
         return cliente;
     }
 }
