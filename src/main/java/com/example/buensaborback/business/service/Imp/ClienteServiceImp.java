@@ -22,9 +22,6 @@ public class ClienteServiceImp extends BaseServiceImp<Cliente,Long> implements C
     ClienteRepository clienteRepository;
 
     @Autowired
-    SucursalRepository sucursalRepository;
-
-    @Autowired
     UsuarioRepository usuarioRepository;
 
     @Autowired
@@ -78,4 +75,60 @@ public class ClienteServiceImp extends BaseServiceImp<Cliente,Long> implements C
         }
         return cliente;
     }
+
+    @Override
+    public Cliente update(Cliente request, Long id) {
+        Optional<Cliente> clienteOptional = clienteRepository.findById(id);
+        if (clienteOptional.isEmpty()) {
+            throw new RuntimeException("El cliente con id " + id + " no se ha encontrado");
+        }
+
+        Cliente clienteExistente = clienteOptional.get();
+
+        // Comprobar y guardar los nuevos domicilios
+        Set<Domicilio> nuevosDomicilios = request.getDomicilios();
+        if (nuevosDomicilios != null && !nuevosDomicilios.isEmpty()) {
+            for (Domicilio domicilio : nuevosDomicilios) {
+                Domicilio domicilioGuardado = domicilioRepository.save(domicilio);
+                clienteExistente.getDomicilios().add(domicilioGuardado);
+            }
+        }
+
+        // Guardar el cliente actualizado
+        return clienteRepository.save(clienteExistente);
+    }
+
+    @Override
+    public void removeDomicilio(Long clienteId, Long domicilioId) throws Exception {
+        Optional<Cliente> clienteOptional = clienteRepository.findById(clienteId);
+        if (clienteOptional.isEmpty()) {
+            throw new RuntimeException("El cliente con id " + clienteId + " no se ha encontrado");
+        }
+
+        Cliente cliente = clienteOptional.get();
+
+        // Buscar el domicilio en el conjunto de domicilios del cliente
+        Domicilio domicilioToRemove = null;
+        for (Domicilio domicilio : cliente.getDomicilios()) {
+            if (domicilio.getId().equals(domicilioId)) {
+                domicilioToRemove = domicilio;
+                break;
+            }
+        }
+
+        if (domicilioToRemove == null) {
+            throw new RuntimeException("El domicilio con id " + domicilioId + " no está asociado al cliente con id " + clienteId);
+        }
+
+        // Eliminar el domicilio del conjunto de domicilios del cliente
+        cliente.getDomicilios().remove(domicilioToRemove);
+
+        // Guardar el cliente actualizado
+        clienteRepository.save(cliente);
+
+        // Dar de baja el domicilio
+        domicilioRepository.delete(domicilioToRemove);
+    }
+
+
 }

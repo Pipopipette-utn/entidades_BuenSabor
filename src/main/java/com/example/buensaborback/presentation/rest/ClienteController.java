@@ -32,4 +32,14 @@ public class ClienteController extends BaseControllerImp<Cliente, ClienteDto,Cli
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @DeleteMapping("/{clienteId}/removeDomicilio/{domicilioId}")
+    public ResponseEntity<?> removeDomicilio(@PathVariable Long clienteId, @PathVariable Long domicilioId) throws Exception{
+        try{
+            facade.removeDomicilio(clienteId, domicilioId);
+            return ResponseEntity.ok(null);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
