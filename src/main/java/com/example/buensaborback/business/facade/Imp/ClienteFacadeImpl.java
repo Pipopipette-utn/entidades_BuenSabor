@@ -40,4 +40,7 @@ public class ClienteFacadeImpl extends BaseFacadeImp<Cliente, ClienteDto, Client
         return clienteMapper.toDTO(entityCreated);
     }
 
+    public void removeDomicilio(Long id, Long idDomicilio) throws Exception {
+        clienteService.removeDomicilio(id, idDomicilio);
+    }
 }

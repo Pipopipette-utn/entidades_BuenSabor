@@ -9,4 +9,6 @@ import org.springframework.data.domain.Pageable;
 public interface ClienteService extends BaseService<Cliente,Long> {
 
     Cliente login(Cliente request, String email) throws Exception;
+
+    void removeDomicilio(Long clienteId, Long domicilioId) throws Exception;
 }
