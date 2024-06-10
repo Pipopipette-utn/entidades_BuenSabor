@@ -57,7 +57,7 @@ public class SecurityConfiguration {
                                     // puede eliminar el "administrador"
                                 .requestMatchers(HttpMethod.DELETE, "/articulosInsumos/**").hasAuthority("administrador")
                                     // puede dar de alta el "administrador"
-                                .requestMatchers(HttpMethod.PUT, "/articulosInsumos/alta/{id}}").hasAuthority("administrador")
+                                .requestMatchers(HttpMethod.PUT, "/articulosInsumos/alta/{id}").hasAuthority("administrador")
 
                                 // MANUFACTURADOS
                                     // al método get que no incluye eliminados pueden acceder todos
@@ -73,7 +73,7 @@ public class SecurityConfiguration {
                                     // puede eliminar el "administrador"
                                 .requestMatchers(HttpMethod.DELETE, "/articulosManufacturados/**").hasAuthority("administrador")
                                     // puede dar de alta el "administrador"
-                                .requestMatchers(HttpMethod.PUT, "/articulosManufacturados/alta/{id}}").hasAuthority("administrador")
+                                .requestMatchers(HttpMethod.PUT, "/articulosManufacturados/alta/{id}").hasAuthority("administrador")
 
                                 // PROMOCIONES
                                     // al método get que no incluye eliminados pueden acceder todos
@@ -91,7 +91,7 @@ public class SecurityConfiguration {
                                     // puede eliminar el "administrador"
                                 .requestMatchers(HttpMethod.DELETE, "/promociones/**").hasAuthority("administrador")
                                     // puede dar de alta el "administrador"
-                                .requestMatchers(HttpMethod.PUT, "/promociones/alta/{id}}").hasAuthority("administrador")
+                                .requestMatchers(HttpMethod.PUT, "/promociones/alta/{id}").hasAuthority("administrador")
 
                                 // UNIDADES DE MEDIDAS
                                     // a todos los métodos get pueden acceder "administrador" y "cocinero"
@@ -103,7 +103,7 @@ public class SecurityConfiguration {
                                     // puede eliminar el "administrador"
                                 .requestMatchers(HttpMethod.DELETE, "/unidadesMedidas/**").hasAuthority("administrador")
                                     // puede dar de alta el "administrador"
-                                .requestMatchers(HttpMethod.PUT, "/unidadesMedidas/alta/{id}}").hasAuthority("administrador")
+                                .requestMatchers(HttpMethod.PUT, "/unidadesMedidas/alta/{id}").hasAuthority("administrador")
 
                                 // CATEGORÍAS
                                     // Pueden acceder todos
@@ -117,7 +117,7 @@ public class SecurityConfiguration {
                                     // puede eliminar el "administrador"
                                 .requestMatchers(HttpMethod.DELETE, "/categorias/**").hasAuthority("administrador")
                                     // puede dar de alta el "administrador"
-                                .requestMatchers(HttpMethod.PUT, "/categorias/alta/{id}}").hasAuthority("administrador")
+                                .requestMatchers(HttpMethod.PUT, "/categorias/alta/{id}").hasAuthority("administrador")
 
                                 // PEDIDOS
                                     // Pueden cambiar el estado el "administrador", "cocinero", "cajero" y "delivery"
@@ -131,7 +131,7 @@ public class SecurityConfiguration {
                                     // puede eliminar el "administrador"
                                 .requestMatchers(HttpMethod.DELETE, "/sucursales/**").hasAuthority("administrador")
                                     // puede dar de alta el "administrador"
-                                .requestMatchers(HttpMethod.PUT, "/sucursales/alta/{id}}").hasAuthority("administrador")
+                                .requestMatchers(HttpMethod.PUT, "/sucursales/alta/{id}").hasAuthority("administrador")
 
                                 // PAISES
                                     // Nadie puede crear
