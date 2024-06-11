@@ -139,7 +139,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
             if (stockDescontado <= ((ArticuloInsumo) articulo).getStockMinimo()) {
                 throw new RuntimeException("El insumo con id " + articulo.getId() + " alcanzó el stock mínimo");
             }
-            ((ArticuloInsumo) articulo).setStockActual(stockDescontado); // Asignarle al insumo, el stock descontado
+            ((ArticuloInsumo) articulo).setStockActual(stockDescontado); // Asignarle al insumo el stock descontado
         }else if(articulo instanceof ArticuloManufacturado){
             // Obtener los detalles del manufacturado
             Set<ArticuloManufacturadoDetalle> detalles = ((ArticuloManufacturado) articulo).getArticuloManufacturadoDetalles();
@@ -152,8 +152,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
                         throw new RuntimeException("El insumo con id " + insumo.getId() + " presente en el artículo "
                                 + articulo.getDenominacion() + " (id " + articulo.getId() + ") alcanzó el stock mínimo");
                     }
-                    insumo.setStockActual(stockDescontado); // Asignarle al insumo, el stock descontado
-                    articuloInsumoRepository.save(insumo); // Guardar cambios
+                    insumo.setStockActual(stockDescontado); // Asignarle al insumo el stock descontado
                 }
             }
         }else{
