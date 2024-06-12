@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public interface PedidoRepository extends BaseRepository<Pedido,Long>{
     Page<Pedido> findBySucursal_Id(Long sucursalId, Pageable pageable);
+    Page<Pedido> findBySucursal_IdAndEstado(Long sucursalId, Estado estado, Pageable pageable);
 
     @Query(value = "select am.id as id_articulo, am.denominacion, sum(dp.cantidad) as veces_vendido " +
             "from pedido p " +
