@@ -33,10 +33,10 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
         super(baseService, baseMapper);
     }
 
-    public PedidoEstadoDto cambiarEstado(PedidoEstadoDto request, Long id){
+    public PedidoGetDto cambiarEstado(PedidoEstadoDto request, Long id){
         var pedidoEntidad = pedidoMapper.toEntityEstado(request);
         var pedidoUpdate = pedidoService.cambiarEstado(pedidoEntidad, id);
-        return pedidoMapper.toDtoEstado(pedidoUpdate);
+        return pedidoMapper.toDTO(pedidoUpdate);
     }
 
     public Page<PedidoGetDto> findBySucursal(Long sucursalId, Pageable pageable) {
