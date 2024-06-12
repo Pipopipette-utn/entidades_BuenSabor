@@ -223,7 +223,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
                 .orElseThrow(() -> new RuntimeException("El pedido con id " + id + " no se ha encontrado"));
 
         pedido.setEstado(request.getEstado());
-        return pedidoRepository.save(request);
+        return pedidoRepository.save(pedido);
     }
 
     @Override
