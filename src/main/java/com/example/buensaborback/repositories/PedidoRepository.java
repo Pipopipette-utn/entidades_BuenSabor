@@ -9,6 +9,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PedidoRepository extends BaseRepository<Pedido,Long>{
     Page<Pedido> findBySucursal_Id(Long sucursalId, Pageable pageable);
-    Page<Pedido> findBySucursal_IdAndEstado(Long sucursalId, Estado estado, Pageable pageable);
-
 }
