@@ -3,12 +3,14 @@ package com.example.buensaborback.business.service.Imp;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.SucursalService;
 import com.example.buensaborback.domain.entities.Categoria;
+import com.example.buensaborback.domain.entities.Empresa;
 import com.example.buensaborback.domain.entities.Promocion;
 import com.example.buensaborback.domain.entities.Sucursal;
 import com.example.buensaborback.repositories.DomicilioRepository;
 import com.example.buensaborback.repositories.EmpresaRepository;
 import com.example.buensaborback.repositories.SucursalRepository;
 import jakarta.transaction.Transactional;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,5 +120,10 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
     @Override
     public List<Sucursal> findAllActiveByEmpresa(Long empresaId) {
         return sucursalRepository.findByEmpresa_Id(empresaId);
+    }
+
+    public Empresa getEmpresaBySucursalId(Long id) {
+        Sucursal sucursal = sucursalRepository.findById(id).orElseThrow(() -> new RuntimeException("Empresa no encontrada."));
+        return sucursal.getEmpresa();
     }
 }
