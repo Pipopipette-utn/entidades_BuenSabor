@@ -12,6 +12,7 @@ import com.example.buensaborback.domain.dto.PedidoDtos.PedidoEstadoDto;
 import com.example.buensaborback.domain.dto.PedidoDtos.PedidoGetDto;
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
 import com.example.buensaborback.domain.entities.Pedido;
+import com.example.buensaborback.domain.enums.Estado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -39,13 +40,13 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
         return pedidoMapper.toDtoEstado(pedidoUpdate);
     }
 
-    public Page<PedidoGetDto> findBySucursal(Long sucursalId, Pageable pageable) {
-        Page<Pedido> articulosFiltrados = pedidoService.findBySucursal(sucursalId, pageable);
+    public Page<PedidoGetDto> findBySucursalAndEstado(Long sucursalId, Estado estado, Pageable pageable) {
+        Page<Pedido> pedidosFiltrados = pedidoService.findBySucursalAndEstado(sucursalId, estado, pageable.getPageNumber(), pageable.getPageSize());
         // Mapea las entidades a DTOs
-        List<PedidoGetDto> dtos = articulosFiltrados.getContent().stream()
+        List<PedidoGetDto> dtos = pedidosFiltrados.getContent().stream()
                 .map(pedidoMapper::toDTO)
                 .collect(Collectors.toList());
         // Devuelve una página de DTOs
-        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+        return new PageImpl<>(dtos, pageable, pedidosFiltrados.getTotalElements());
     }
 }
