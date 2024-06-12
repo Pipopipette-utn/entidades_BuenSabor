@@ -1,4 +1,4 @@
-package com.example.buensaborback.domain.dto.Articulo;
+package com.example.buensaborback.domain.dto.EmpresaDtos;
 
 import com.example.buensaborback.domain.dto.BaseDto;
 import lombok.AllArgsConstructor;
@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticuloShortDto extends BaseDto {
-    protected String denominacion;
+public class EmpresaShortDto extends BaseDto {
+    private String nombre;
+    private String logo;
 }

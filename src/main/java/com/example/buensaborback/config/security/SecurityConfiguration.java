@@ -49,7 +49,7 @@ public class SecurityConfiguration {
                                     // Todos pueden acceder a los insumos directos (bebidas...)
                                 .requestMatchers(HttpMethod.GET, "/articulosInsumos/paged/insumosDirectos").permitAll()
                                     // a todos los métodos get pueden acceder "administrador" y "cocinero"
-                                .requestMatchers(HttpMethod.GET, "/articulosInsumos/**").hasAnyAuthority("superadmin", "administrador", "cocinero")
+                                .requestMatchers(HttpMethod.GET, "/articulosInsumos/**").hasAnyAuthority("superadmin", "administrador", "cocinero", "cajero")
                                     // pueden crear el "administrador" y "cocinero"
                                 .requestMatchers(HttpMethod.POST, "/articulosInsumos/create").hasAnyAuthority("superadmin", "administrador", "cocinero")
                                 // pueden actualizar el "administrador" y "cocinero"
@@ -65,7 +65,7 @@ public class SecurityConfiguration {
                                     // al método get paginado que no incluye eliminados pueden acceder todos
                                 .requestMatchers("/articulosManufacturados/paged").permitAll()
                                     // a todos los métodos get pueden acceder "administrador" y "cocinero"
-                                .requestMatchers(HttpMethod.GET, "/articulosManufacturados/**").hasAnyAuthority("superadmin", "administrador", "cocinero")
+                                .requestMatchers(HttpMethod.GET, "/articulosManufacturados/**").hasAnyAuthority("superadmin", "administrador", "cocinero", "cajero")
                                     // pueden crear el "administrador" y "cocinero"
                                 .requestMatchers(HttpMethod.POST, "/articulosManufacturados/create").hasAnyAuthority("superadmin", "administrador", "cocinero")
                                     // pueden actualizar el "administrador" y "cocinero"
@@ -83,7 +83,7 @@ public class SecurityConfiguration {
                                     // al método get paginado que no incluye eliminados pueden acceder todos
                                 .requestMatchers("/promociones/paged").permitAll()
                                     // a todos los métodos get pueden acceder "administrador" y "cocinero"
-                                .requestMatchers(HttpMethod.GET, "/promociones/**").hasAnyAuthority("superadmin", "administrador", "cocinero")
+                                .requestMatchers(HttpMethod.GET, "/promociones/**").hasAnyAuthority("superadmin", "administrador", "cocinero", "cajero")
                                     // pueden crear el "administrador" y "cocinero"
                                 .requestMatchers(HttpMethod.POST, "/promociones").hasAnyAuthority("superadmin", "administrador", "cocinero")
                                     // pueden actualizar el "administrador" y "cocinero"
@@ -109,7 +109,7 @@ public class SecurityConfiguration {
                                     // Pueden acceder todos
                                 .requestMatchers(HttpMethod.GET, "/sucursales/{id}/categorias").permitAll()
                                     // Pueden ver todas las categorías el "administrador" y "cocinero"
-                                .requestMatchers(HttpMethod.GET, "/categorias/**").hasAnyAuthority("superadmin", "administrador", "cocinero")
+                                .requestMatchers(HttpMethod.GET, "/categorias/**").hasAnyAuthority("superadmin", "administrador", "cocinero", "cajero")
                                     // pueden crear el "administrador" y "cocinero"
                                 .requestMatchers(HttpMethod.POST, "/categorias").hasAnyAuthority("superadmin", "administrador", "cocinero")
                                     // pueden actualizar el "administrador" y "cocinero"

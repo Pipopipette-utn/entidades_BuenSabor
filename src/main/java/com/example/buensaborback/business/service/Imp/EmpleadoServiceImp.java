@@ -2,6 +2,7 @@ package com.example.buensaborback.business.service.Imp;
 
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.EmpleadoService;
+import com.example.buensaborback.domain.entities.Cliente;
 import com.example.buensaborback.domain.entities.Empleado;
 import com.example.buensaborback.domain.entities.Sucursal;
 import com.example.buensaborback.domain.entities.Usuario;
@@ -34,32 +35,19 @@ public class EmpleadoServiceImp extends BaseServiceImp<Empleado,Long> implements
 
     @Override
     public Empleado create(Empleado request) throws Exception {
+        Empleado existeEmpleado = empleadoRepository.findByEmail(request.getUsuario().getEmail());
+        if (existeEmpleado != null) {
+            throw new RuntimeException("El email del empleado ya está registrado");
+        }
+
         Optional<Sucursal> sucursal = sucursalRepository.findById(request.getSucursal().getId());
         if (sucursal.isEmpty()) {
             throw new RuntimeException("La sucursal con el id " + request.getSucursal().getId() + " no se ha encontrado");
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String role = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .findFirst()
-                .orElse("No Role");
-
-        if (role.startsWith("ROLE_")) {
-            role = role.substring(5);
-        }
-
         // Verificar si el rol es válido
-        Rol userRol;
-        try {
-            userRol = Rol.valueOf(role);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("El rol " + role + " no existe");
-        }
-
         Usuario usuario = request.getUsuario();
         if (usuario != null && usuario.getId() == null) {
-            usuario.setRol(userRol);
             usuario = usuarioRepository.save(usuario);
             request.setUsuario(usuario);
         }

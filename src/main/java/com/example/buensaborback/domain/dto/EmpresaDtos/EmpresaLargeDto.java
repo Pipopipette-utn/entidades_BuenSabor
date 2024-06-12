@@ -1,5 +1,6 @@
-package com.example.buensaborback.domain.dto;
+package com.example.buensaborback.domain.dto.EmpresaDtos;
 
+import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

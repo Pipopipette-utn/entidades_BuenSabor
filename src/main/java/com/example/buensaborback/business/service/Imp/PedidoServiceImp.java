@@ -40,9 +40,35 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
     @Autowired
     ArticuloManufacturadoRepository articuloManufacturadoRepository;
 
+    @Autowired
+    ClienteRepository clienteRepository;
+
+    @Autowired
+    DomicilioRepository domicilioRepository;
+
     @Override
     @Transactional
     public Pedido create(Pedido request) throws Exception {
+        Optional<Cliente> clienteOptional = clienteRepository.findById(request.getCliente().getId());
+        if (clienteOptional.isEmpty()) {
+            throw new RuntimeException("El cliente con el id " + request.getCliente().getId() + " no se ha encontrado");
+        }
+
+        if (request.getTipoEnvio().equals(TipoEnvio.DELIVERY)) {
+            if (request.getDomicilio() == null) {
+                throw new RuntimeException("Debe proporcionar un domicilio para envío delivery");
+            }
+            Optional<Domicilio> domicilio = domicilioRepository.findById(request.getDomicilio().getId());
+            if (domicilio.isEmpty()) {
+                throw new RuntimeException("El domicilio con el id " + request.getDomicilio().getId() + " no se ha encontrado");
+            }
+            Cliente cliente = clienteOptional.get();
+            if (!cliente.getDomicilios().contains(domicilio.get())) {
+                throw new RuntimeException("El domicilio con el id " + request.getDomicilio().getId() + " no coincide con el cliente " + cliente.getId());
+            }
+        }
+
+
         Set<DetallePedido> detalles = request.getDetallePedidos(); // Guardar los detalles del body en un set
         Set<DetallePedido> detallesPersistidos = new HashSet<>(); // Inicializar un set que contendrá los detalles que pasen las validaciones
         TipoEnvio tipoEnvio = request.getTipoEnvio();
@@ -113,7 +139,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
             if (stockDescontado <= ((ArticuloInsumo) articulo).getStockMinimo()) {
                 throw new RuntimeException("El insumo con id " + articulo.getId() + " alcanzó el stock mínimo");
             }
-            ((ArticuloInsumo) articulo).setStockActual(stockDescontado); // Asignarle al insumo, el stock descontado
+            ((ArticuloInsumo) articulo).setStockActual(stockDescontado); // Asignarle al insumo el stock descontado
         }else if(articulo instanceof ArticuloManufacturado){
             // Obtener los detalles del manufacturado
             Set<ArticuloManufacturadoDetalle> detalles = ((ArticuloManufacturado) articulo).getArticuloManufacturadoDetalles();
@@ -126,8 +152,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
                         throw new RuntimeException("El insumo con id " + insumo.getId() + " presente en el artículo "
                                 + articulo.getDenominacion() + " (id " + articulo.getId() + ") alcanzó el stock mínimo");
                     }
-                    insumo.setStockActual(stockDescontado); // Asignarle al insumo, el stock descontado
-                    articuloInsumoRepository.save(insumo); // Guardar cambios
+                    insumo.setStockActual(stockDescontado); // Asignarle al insumo el stock descontado
                 }
             }
         }else{

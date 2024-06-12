@@ -58,6 +58,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// Encriptación
 	implementation 'com.password4j:password4j:1.8.2'
+	// MP
+	implementation 'com.mercadopago:sdk-java:2.1.24'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
