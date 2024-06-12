@@ -5,6 +5,7 @@ import com.example.buensaborback.domain.dto.PedidoDtos.PedidoDto;
 import com.example.buensaborback.domain.dto.PedidoDtos.PedidoEstadoDto;
 import com.example.buensaborback.domain.dto.PedidoDtos.PedidoGetDto;
 import com.example.buensaborback.domain.entities.Pedido;
+import com.example.buensaborback.domain.enums.Estado;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
 import com.example.buensaborback.repositories.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,11 @@ public class PedidoController extends BaseControllerImp<Pedido, PedidoDto, Pedid
     }
 
     @GetMapping("/porSucursal/{sucursalId}")
-    public ResponseEntity<Page<PedidoGetDto>> findAllBySucursalId(@PathVariable Long sucursalId, Pageable pageable) {
-        return  ResponseEntity.ok(facade.findBySucursal(sucursalId, pageable));
+    public ResponseEntity<Page<PedidoGetDto>> findAllBySucursalId(
+            @PathVariable Long sucursalId,
+            @RequestParam(required = false) Estado estado,
+            Pageable pageable) {
+        return ResponseEntity.ok(facade.findBySucursalAndEstado(sucursalId, estado, pageable));
     }
 
     @GetMapping("/rankingComidas")
