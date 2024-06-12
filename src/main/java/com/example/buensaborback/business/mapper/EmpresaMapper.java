@@ -1,9 +1,9 @@
 package com.example.buensaborback.business.mapper;
 
 
-import com.example.buensaborback.domain.dto.EmpresaDto;
+import com.example.buensaborback.domain.dto.EmpresaDtos.EmpresaDto;
 import com.example.buensaborback.domain.entities.Empresa;
-import com.example.buensaborback.domain.dto.EmpresaLargeDto;
+import com.example.buensaborback.domain.dto.EmpresaDtos.EmpresaLargeDto;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
