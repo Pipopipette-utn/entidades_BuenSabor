@@ -4,7 +4,7 @@ package com.example.buensaborback.presentation.rest;
 import com.example.buensaborback.business.facade.Imp.SucursalFacadeImp;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
-import com.example.buensaborback.domain.dto.EmpresaDto;
+import com.example.buensaborback.domain.dto.EmpresaDtos.EmpresaDto;
 import com.example.buensaborback.domain.dto.PromocionDtos.PromocionDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalDto;
 import com.example.buensaborback.domain.entities.Sucursal;

@@ -10,7 +10,7 @@ import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.SucursalService;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
-import com.example.buensaborback.domain.dto.EmpresaDto;
+import com.example.buensaborback.domain.dto.EmpresaDtos.EmpresaDto;
 import com.example.buensaborback.domain.dto.PromocionDtos.PromocionDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalDto;
 import com.example.buensaborback.domain.entities.Empresa;
