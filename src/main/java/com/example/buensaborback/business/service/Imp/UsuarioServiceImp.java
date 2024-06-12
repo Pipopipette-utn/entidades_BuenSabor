@@ -4,6 +4,7 @@ import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.UnidadMedidaService;
 import com.example.buensaborback.business.service.UsuarioService;
 import com.example.buensaborback.domain.entities.Articulo;
+import com.example.buensaborback.domain.entities.Empleado;
 import com.example.buensaborback.domain.entities.UnidadMedida;
 import com.example.buensaborback.domain.entities.Usuario;
 import com.example.buensaborback.repositories.ArticuloRepository;
@@ -19,4 +20,13 @@ public class UsuarioServiceImp extends BaseServiceImp<Usuario,Long> implements U
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Override
+    public Usuario findByEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        if (usuario == null) {
+            throw new RuntimeException("Usuario con email " + email + " no encontrado");
+        }
+        return usuario;
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManufacturado, Long> implements ArticuloManufacturadoService {
@@ -62,28 +63,47 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
         Categoria categoria = fetchAndValidateCategoria(request);
 
-        // Eliminar detalles antiguos
-        articuloManufacturadoDetalleRepository.deleteAll(articuloExistente.getArticuloManufacturadoDetalles());
-
+        Set<ArticuloManufacturadoDetalle> detallesExistentes = articuloExistente.getArticuloManufacturadoDetalles();
         Set<ArticuloManufacturadoDetalle> nuevosDetalles = request.getArticuloManufacturadoDetalles();
+
         if (nuevosDetalles == null || nuevosDetalles.isEmpty()) {
             throw new RuntimeException("El artículo debe tener al menos un detalle.");
         }
 
+        Map<Long, ArticuloManufacturadoDetalle> detalleExistenteMap = detallesExistentes.stream()
+                .collect(Collectors.toMap(detalle -> detalle.getArticulo().getId(), detalle -> detalle));
+
         Set<ArticuloManufacturadoDetalle> detallesActualizados = new HashSet<>();
-        for (ArticuloManufacturadoDetalle detalle : nuevosDetalles) {
-            ArticuloInsumo insumo = articuloInsumoRepository.findById(detalle.getArticulo().getId())
-                    .orElseThrow(() -> new RuntimeException("El insumo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
-            ArticuloManufacturadoDetalle nuevoDetalle = new ArticuloManufacturadoDetalle();
-            nuevoDetalle.setCantidad(detalle.getCantidad());
-            nuevoDetalle.setArticulo(insumo);
-            detallesActualizados.add(nuevoDetalle);
+
+        for (ArticuloManufacturadoDetalle nuevoDetalle : nuevosDetalles) {
+            ArticuloInsumo insumo = articuloInsumoRepository.findById(nuevoDetalle.getArticulo().getId())
+                    .orElseThrow(() -> new RuntimeException("El insumo con id " + nuevoDetalle.getArticulo().getId() + " no se ha encontrado"));
+
+            ArticuloManufacturadoDetalle detalleExistente = detalleExistenteMap.get(insumo.getId());
+
+            if (detalleExistente != null) {
+                detalleExistente.setCantidad(nuevoDetalle.getCantidad());
+                detallesActualizados.add(detalleExistente);
+                detalleExistenteMap.remove(insumo.getId());
+            } else {
+                ArticuloManufacturadoDetalle nuevoDetalleCreado = new ArticuloManufacturadoDetalle();
+                nuevoDetalleCreado.setCantidad(nuevoDetalle.getCantidad());
+                nuevoDetalleCreado.setArticulo(insumo);
+                detallesActualizados.add(nuevoDetalleCreado);
+            }
         }
 
-        request.setArticuloManufacturadoDetalles(detallesActualizados);
-        request.setCategoria(categoria);
+        // Set articuloManufacturado to null for details that are no longer present
+        for (ArticuloManufacturadoDetalle detalleParaEliminar : detalleExistenteMap.values()) {
+            detalleParaEliminar.setArticulo(null);
+            detalleParaEliminar.setBaja(true);
+            articuloManufacturadoDetalleRepository.save(detalleParaEliminar);
+        }
 
-        return articuloManufacturadoRepository.save(request);
+        articuloExistente.setArticuloManufacturadoDetalles(detallesActualizados);
+        articuloExistente.setCategoria(categoria);
+
+        return articuloManufacturadoRepository.save(articuloExistente);
     }
 
     private ArticuloManufacturado createArticuloManufacturado(ArticuloManufacturado request, Sucursal sucursal, Categoria categoria) {
