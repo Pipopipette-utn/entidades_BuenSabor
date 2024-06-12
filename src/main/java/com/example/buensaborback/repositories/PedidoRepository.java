@@ -18,9 +18,10 @@ public interface PedidoRepository extends BaseRepository<Pedido,Long>{
             "from pedido p " +
             "inner join detalle_pedido dp on p.id = dp.pedido_id " +
             "inner join articulo am on am.id = dp.articulo_id " +
+            "inner join articulo_manufacturado amf on am.id = amf.id " +
             "where p.fecha_pedido between :fecha1 and :fecha2 " +
             "and p.sucursal_id = :sucursalId " +
-            "group by am.id " +
+            "group by am.id, am.denominacion " +
             "order by veces_vendido desc", nativeQuery = true)
     List<Object> findRankingComidasMasPedidas(@Param("fecha1") Date fecha1, @Param("fecha2") Date fecha2, @Param("sucursalId") Long sucursalId);
 
@@ -54,6 +55,7 @@ select am.id as id_articulo, am.denominacion, sum(dp.cantidad) as veces_vendido
 from pedido p
 inner join detalle_pedido dp on p.id = dp.pedido_id
 inner join articulo am on am.id = dp.articulo_id
+inner join articulo_manufacturado amf on am.id = amf.id
 where p.fecha_pedido between '2024-01-01' and '2024-07-01'
 and p.sucursal_id = 2
 group by am.id
