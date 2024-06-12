@@ -20,9 +20,6 @@ import java.util.List;
 @RequestMapping(path= "/mercadoPago")
 public class MercadoPagoController {
 
-    @Value("${web.cors.allowed-origins}")
-    private String corsAllowedOrigins;
-
     @PostMapping("/preference_mp")
     public PreferenceMp getPreferenciaIdMercadoPago(@RequestBody Pedido pedido) throws MPException {
         try {
@@ -39,9 +36,8 @@ public class MercadoPagoController {
             List<PreferenceItemRequest> items = new ArrayList<>();
             items.add(itemRequest);
 
-            String origen = System.getenv("web.cors.allowed-origins");
-            PreferenceBackUrlsRequest backURL = PreferenceBackUrlsRequest.builder().success(origen + "/mpsuccess")
-                    .pending(origen + "/mppending").failure(origen + "/mpfailure").build();
+            PreferenceBackUrlsRequest backURL = PreferenceBackUrlsRequest.builder().success("http://localhost:5173/menu")
+                    .pending("http://localhost:5173/menu").failure("http://localhost:5173/menu").build();
 
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(items)
