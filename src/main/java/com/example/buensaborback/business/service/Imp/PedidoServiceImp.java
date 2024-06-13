@@ -218,11 +218,16 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
     }
 
     @Override
+    @Transactional
     public Pedido cambiarEstado(Pedido request, Long id) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El pedido con id " + id + " no se ha encontrado"));
 
         pedido.setEstado(request.getEstado());
+
+        if (pedido.getEstado().equals(Estado.PREPARACION)) {
+        }
+
         return pedidoRepository.save(pedido);
     }
 
