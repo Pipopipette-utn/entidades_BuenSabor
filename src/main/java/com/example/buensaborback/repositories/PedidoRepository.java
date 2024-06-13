@@ -25,7 +25,7 @@ public interface PedidoRepository extends BaseRepository<Pedido,Long>{
             "and p.sucursal_id = :sucursalId " +
             "group by am.id, am.denominacion " +
             "order by veces_vendido desc", nativeQuery = true)
-    List<Object> findRankingComidasMasPedidas(@Param("fecha1") Date fecha1, @Param("fecha2") Date fecha2, @Param("sucursalId") Long sucursalId);
+    List<Object[]> findRankingComidasMasPedidas(@Param("fecha1") Date fecha1, @Param("fecha2") Date fecha2, @Param("sucursalId") Long sucursalId);
 
     @Query(value = "select sum(total) total_recaudado from pedido " +
             "where fecha_pedido between :fecha1 and :fecha2 " +
@@ -41,7 +41,7 @@ public interface PedidoRepository extends BaseRepository<Pedido,Long>{
             "and p.sucursal_id = :sucursalId " +
             "group by c.id, u.username " +
             "order by pedidos desc", nativeQuery = true)
-    List<Object> findClientePedidos(@Param("fechaInicio") Date fechaInicio, @Param("fechaFin") Date fechaFin, @Param("sucursalId") Long sucursalId);
+    List<Object[]> findClientePedidos(@Param("fechaInicio") Date fechaInicio, @Param("fechaFin") Date fechaFin, @Param("sucursalId") Long sucursalId);
 
     @Query(value = "select sum(total - total_costo) as total_ganancia " +
             "from pedido " +
