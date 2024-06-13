@@ -4,13 +4,16 @@ import com.example.buensaborback.business.facade.Base.BaseFacadeImp;
 import com.example.buensaborback.business.facade.SucursalFacade;
 import com.example.buensaborback.business.mapper.BaseMapper;
 import com.example.buensaborback.business.mapper.CategoriaMapper;
+import com.example.buensaborback.business.mapper.EmpresaMapper;
 import com.example.buensaborback.business.mapper.PromocionMapper;
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
 import com.example.buensaborback.business.service.SucursalService;
 import com.example.buensaborback.domain.dto.CategoriaDtos.CategoriaGetDto;
+import com.example.buensaborback.domain.dto.EmpresaDtos.EmpresaDto;
 import com.example.buensaborback.domain.dto.PromocionDtos.PromocionDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalDto;
+import com.example.buensaborback.domain.entities.Empresa;
 import com.example.buensaborback.domain.entities.Sucursal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +32,8 @@ public class SucursalFacadeImp extends BaseFacadeImp<Sucursal, SucursalDto, Sucu
     CategoriaMapper categoriaMapper;
     @Autowired
     PromocionMapper promocionMapper;
-
+    @Autowired
+    EmpresaMapper empresaMapper;
     public SucursalFacadeImp(BaseService<Sucursal, Long> baseService, BaseMapper<Sucursal, SucursalDto, SucursalDto> baseMapper) {
         super(baseService, baseMapper);
     }
@@ -84,4 +88,12 @@ public class SucursalFacadeImp extends BaseFacadeImp<Sucursal, SucursalDto, Sucu
                 .collect(Collectors.toList());
     }
 
+    public EmpresaDto getEmpresaBySucursalId(Long id) {
+        // Busca una entidad por id
+        Empresa empresa = sucursalService.getEmpresaBySucursalId(id);
+
+        // convierte la entidad a DTO
+        return empresaMapper.toDTO(empresa);
+    }
+    
 }

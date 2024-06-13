@@ -2,6 +2,7 @@ package com.example.buensaborback.business.service;
 
 import com.example.buensaborback.business.service.Base.BaseService;
 import com.example.buensaborback.domain.entities.Categoria;
+import com.example.buensaborback.domain.entities.Empresa;
 import com.example.buensaborback.domain.entities.Promocion;
 import com.example.buensaborback.domain.entities.Sucursal;
 
@@ -13,6 +14,7 @@ public interface SucursalService  extends BaseService<Sucursal, Long> {
     List<Categoria> findCategoriasBySucursalId(Long sucursalId);
     List<Promocion> findPromocionBySucursalId(Long sucursalId);
     List<Sucursal> findAllActiveByEmpresa(Long empresaId);
+    Empresa getEmpresaBySucursalId(Long empresaId);
 
 }
 
