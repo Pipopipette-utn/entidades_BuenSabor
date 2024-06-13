@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/factura")
@@ -24,10 +26,14 @@ public class FacturaController {
             // Crear un nuevo documento
             facturaService.crearFacturaPdf(pedidoId, outputStream);
 
+            LocalDate currentDate = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            String formattedDate = currentDate.format(formatter);
+
             // Establecer las cabeceras de la respuesta
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
-            headers.setContentDispositionFormData("attachment", "documento.pdf");
+            headers.setContentDispositionFormData("attachment", "pedido" + formattedDate + ".pdf");
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
             // Devolver el archivo PDF como parte de la respuesta HTTP
