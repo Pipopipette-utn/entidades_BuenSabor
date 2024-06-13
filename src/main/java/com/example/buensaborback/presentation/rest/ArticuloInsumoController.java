@@ -47,11 +47,15 @@ public class ArticuloInsumoController extends BaseControllerImp<ArticuloInsumo, 
     }
 
     @PostMapping("/{id}/duplicate")
-    public ResponseEntity<List<ArticuloInsumoDto>> duplicateArticuloInOtherSucursales(
+    public ResponseEntity<?> duplicateArticuloInOtherSucursales(
             @PathVariable Long id,
             @RequestBody Set<SucursalShortDto> sucursales
     ) {
-        return ResponseEntity.ok(facade.duplicateInOtherSucursales(id, sucursales));
+        try{
+            return ResponseEntity.ok(facade.duplicateInOtherSucursales(id, sucursales));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping("/filtrar/{idSucursal}")
