@@ -220,17 +220,42 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
     }
 
     @Override
-    @Transactional
-    public Pedido cambiarEstado(Pedido request, Long id) {
+    public Pedido cambiarEstado(Pedido request, Long id) throws Exception {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El pedido con id " + id + " no se ha encontrado"));
 
-        pedido.setEstado(request.getEstado());
-
-        if (pedido.getEstado().equals(Estado.PREPARACION)) {
+        if (pedido.getEstado() == Estado.CANCELADO){
+            for(DetallePedido detalle: pedido.getDetallePedidos()){
+                Articulo articulo = articuloRepository.findById(detalle.getArticulo().getId()).orElseThrow(() -> new RuntimeException("El artículo con id " + detalle.getArticulo().getId() + " no se ha encontrado."));
+                devolverStock(articulo, detalle.getCantidad());
+            }
         }
 
+        pedido.setEstado(request.getEstado());
         return pedidoRepository.save(pedido);
+    }
+
+    @Transactional
+    public void devolverStock(Articulo articulo, int cantidad) throws Exception{
+        if (articulo instanceof ArticuloInsumo){
+            // Si el articulo es un insumo
+            Double stockAumentado = ((ArticuloInsumo) articulo).getStockActual() + cantidad; // Aumentar cantidad a stock actual
+            ((ArticuloInsumo) articulo).setStockActual(stockAumentado); // Asignarle al insumo el stock descontado
+        }else if(articulo instanceof ArticuloManufacturado){
+            // Obtener los detalles del manufacturado
+            Set<ArticuloManufacturadoDetalle> detalles = ((ArticuloManufacturado) articulo).getArticuloManufacturadoDetalles();
+            if (detalles != null && !detalles.isEmpty()) {
+                for (ArticuloManufacturadoDetalle detalle : detalles) { // Recorrer los detalles
+                    ArticuloInsumo insumo = detalle.getArticulo();
+                    Double cantidadInsumo = detalle.getCantidad() * cantidad; // Multiplicar la cantidad necesaria de insumo por la cantidad de manufacturados del pedido
+                    double stockAumentado = insumo.getStockActual() + cantidadInsumo; // Aumentar el stock actual
+                    insumo.setStockActual(stockAumentado); // Asignarle al insumo el stock descontado
+                }
+            }
+        }else{
+            throw new RuntimeException("Artículo con id " + articulo.getId() + " no encontrado");
+        }
+
     }
 
     @Override
