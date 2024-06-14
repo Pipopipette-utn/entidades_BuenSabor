@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PedidoService extends BaseService<Pedido,Long> {
-    Pedido cambiarEstado(Pedido request, Long id);
+    Pedido cambiarEstado(Pedido request, Long id) throws Exception;
     Page<Pedido> findBySucursalAndEstado(Long sucursalId, Estado estado, int page, int size);
 
 }
