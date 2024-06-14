@@ -33,7 +33,7 @@ public class PedidoController extends BaseControllerImp<Pedido, PedidoDto, Pedid
     PedidoRepository pedidoRepository;
 
     @PutMapping("/cambiarEstado/{id}")
-    public ResponseEntity<PedidoGetDto> cambiarEstado(@RequestBody PedidoEstadoDto entity, @PathVariable Long id){
+    public ResponseEntity<PedidoGetDto> cambiarEstado(@RequestBody PedidoEstadoDto entity, @PathVariable Long id) throws Exception{
         return ResponseEntity.ok(facade.cambiarEstado(entity, id));
     }
 
