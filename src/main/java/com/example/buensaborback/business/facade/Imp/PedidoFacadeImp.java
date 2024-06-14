@@ -34,7 +34,7 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
         super(baseService, baseMapper);
     }
 
-    public PedidoGetDto cambiarEstado(PedidoEstadoDto request, Long id){
+    public PedidoGetDto cambiarEstado(PedidoEstadoDto request, Long id) throws Exception{
         var pedidoEntidad = pedidoMapper.toEntityEstado(request);
         var pedidoUpdate = pedidoService.cambiarEstado(pedidoEntidad, id);
         return pedidoMapper.toDTO(pedidoUpdate);
