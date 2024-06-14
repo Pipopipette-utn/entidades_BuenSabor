@@ -110,10 +110,10 @@ public class FacturaServiceImpl implements FacturaService {
 
         Domicilio domicilio = sucursal.getDomicilio();
         String domicilioExist = domicilio != null ? domicilio.getCalle() : "";
-        Integer numeroExist = domicilio != null ? domicilio.getNumero() : 0;
+
         Localidad localidad = domicilio.getLocalidad();
         String localidadExist = localidad != null ? localidad.getNombre() : "";
-        document.add(new Paragraph(domicilioExist + " " + numeroExist + " " + localidadExist, texto));
+        document.add(new Paragraph(domicilioExist +  " " + localidadExist, texto));
 
         addEmptyLine(document, 1);
     }
