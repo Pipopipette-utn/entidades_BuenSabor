@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -61,16 +62,20 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
         // Agregar encabezados de las columnas
         data.add(Arrays.asList("Artículo", "Total ventas"));
 
+        // Obtener los resultados de la consulta
         List<Object[]> results = pedidoService.findRankingComidasMasPedidas(fechaInicio, fechaFin, sucursalId);
 
         for (Object[] result : results) {
             String articulo = (String) result[0];
-            Long vecesVendido = (Long) result[1];
+            // Obtener el BigDecimal y convertirlo a Long
+            BigDecimal vecesVendidoBD = (BigDecimal) result[1];
+            Long vecesVendido = vecesVendidoBD.longValue();
             data.add(Arrays.asList(articulo, vecesVendido));
         }
 
         return data;
     }
+
 
     public List<List<Object>> getTotalRecaudadoDiario(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
         List<List<Object>> data = new ArrayList<>();

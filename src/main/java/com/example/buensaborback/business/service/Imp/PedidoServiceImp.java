@@ -226,7 +226,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El pedido con id " + id + " no se ha encontrado"));
 
-        if (pedido.getEstado() == Estado.CANCELADO){
+        if (request.getEstado() == Estado.CANCELADO){
             for(DetallePedido detalle: pedido.getDetallePedidos()){
                 Articulo articulo = articuloRepository.findById(detalle.getArticulo().getId()).orElseThrow(() -> new RuntimeException("El artículo con id " + detalle.getArticulo().getId() + " no se ha encontrado."));
                 devolverStock(articulo, detalle.getCantidad());
@@ -237,7 +237,6 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
         return pedidoRepository.save(pedido);
     }
 
-    @Transactional
     public void devolverStock(Articulo articulo, int cantidad) throws Exception{
         if (articulo instanceof ArticuloInsumo){
             // Si el articulo es un insumo

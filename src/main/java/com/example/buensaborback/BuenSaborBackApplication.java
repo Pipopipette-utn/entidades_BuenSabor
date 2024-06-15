@@ -21,7 +21,7 @@ public class BuenSaborBackApplication {
 // Aca tiene que inyectar todos los repositorios
 // Es por ello que deben crear el paquete repositorio
 
-    private static final Logger logger = LoggerFactory.getLogger(BuenSaborBackApplication.class);
+	private static final Logger logger = LoggerFactory.getLogger(BuenSaborBackApplication.class);
 	public static void main(String[] args) {
 		SpringApplication.run(BuenSaborBackApplication.class, args);
 		logger.info("Estoy activo en el main");
