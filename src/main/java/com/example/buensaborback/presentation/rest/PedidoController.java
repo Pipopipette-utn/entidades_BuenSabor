@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,9 +29,6 @@ public class PedidoController extends BaseControllerImp<Pedido, PedidoDto, Pedid
     public PedidoController(PedidoFacadeImp facade) {
         super(facade);
     }
-
-    @Autowired
-    PedidoRepository pedidoRepository;
 
     @PutMapping("/cambiarEstado/{id}")
     public ResponseEntity<PedidoGetDto> cambiarEstado(@RequestBody PedidoEstadoDto entity, @PathVariable Long id) throws Exception{
@@ -45,48 +43,34 @@ public class PedidoController extends BaseControllerImp<Pedido, PedidoDto, Pedid
         return ResponseEntity.ok(facade.findBySucursalAndEstado(sucursalId, estado, pageable));
     }
 
+    // REPORTES -------------------------------------------------------------------------------------
     @GetMapping("/rankingComidas")
-    public List<List<Object>> getRankingComidasMasPedidas(@RequestParam Date fechaInicio, @RequestParam Date fechaFin, @RequestParam Long sucursalId) throws SQLException {
-        List<List<Object>> data = new ArrayList<>();
-        // Agregar encabezados de las columnas
-        data.add(Arrays.asList("ID Articulo", "Denominacion", "Veces Vendido"));
-
-        List<Object[]> results = pedidoRepository.findRankingComidasMasPedidas(fechaInicio, fechaFin, sucursalId);
-
-        for (Object[] result : results) {
-            Long idArticulo = (Long) result[0];
-            String denominacion = (String) result[1];
-            Long vecesVendido = (Long) result[2];
-            data.add(Arrays.asList(idArticulo, denominacion, vecesVendido));
-        }
-
-        return data;
+    public List<List<Object>> getRankingComidasMasPedidas(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getRankingComidasMasPedidas(fechaInicio, fechaFin, sucursalId);
     }
 
-    @GetMapping("/totalRecaudado")
-    public Double totalRecaudado(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha1, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha2, @RequestParam Long sucursalId) {
-        return pedidoRepository.calcularTotalRecaudado(fecha1, fecha2, sucursalId);
+    @GetMapping("/totalRecaudadoDiario")
+    public List<List<Object>> totalRecaudadoDiario(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getTotalRecaudadoDiario(fechaInicio, fechaFin, sucursalId);
+    }
+
+    @GetMapping("/totalRecaudadoMensual")
+    public List<List<Object>> totalRecaudadoMensual(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getTotalRecaudadoMensual(fechaInicio, fechaFin, sucursalId);
     }
 
     @GetMapping("/rankingClientes")
-    public List<List<Object>> getClientePedidos(@RequestParam Date fechaInicio, @RequestParam Date fechaFin, @RequestParam Long sucursalId) throws SQLException {
-        List<List<Object>> data = new ArrayList<>();
-        // Agregar encabezados de las columnas
-        data.add(Arrays.asList("Cliente ID", "Username", "Total Pedidos"));
-
-        List<Object[]> results = pedidoRepository.findClientePedidos(fechaInicio, fechaFin, sucursalId);
-
-        for (Object[] result : results) {
-            Long id = (Long) result[0];
-            String username = (String) result[1];
-            Long pedidos = (Long) result[2];
-            data.add(Arrays.asList(id, username, pedidos));
-        }
-
-        return data;
+    public List<List<Object>> getClientePedidos(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getClientePedidos(fechaInicio, fechaFin, sucursalId);
     }
-    @GetMapping("/ganancias")
-    public Double calcularGanancia(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha1, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha2, @RequestParam Long sucursalId) {
-        return pedidoRepository.calcularGanancia(fecha1, fecha2, sucursalId);
+
+    @GetMapping("/totalGananciaDiario")
+    public List<List<Object>> totalGananciaDiario(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getTotalGananciaDiario(fechaInicio, fechaFin, sucursalId);
+    }
+
+    @GetMapping("/totalGananciaMensual")
+    public List<List<Object>> totalGananciaMensual(@RequestParam LocalDate fecha1, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getTotalGananciaMensual(fecha1, fechaFin, sucursalId);
     }
 }

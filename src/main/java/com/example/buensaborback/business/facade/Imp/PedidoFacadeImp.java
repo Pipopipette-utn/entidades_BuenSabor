@@ -18,7 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,5 +53,105 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
                 .collect(Collectors.toList());
         // Devuelve una página de DTOs
         return new PageImpl<>(dtos, pageable, pedidosFiltrados.getTotalElements());
+    }
+
+    // REPORTES ----------------------------------------------------------------------------
+    public List<List<Object>> getRankingComidasMasPedidas(LocalDate fechaInicio, LocalDate fechaFin, Long sucursalId) throws SQLException {
+        List<List<Object>> data = new ArrayList<>();
+        // Agregar encabezados de las columnas
+        data.add(Arrays.asList("Artículo", "Total ventas"));
+
+        List<Object[]> results = pedidoService.findRankingComidasMasPedidas(fechaInicio, fechaFin, sucursalId);
+
+        for (Object[] result : results) {
+            String articulo = (String) result[0];
+            Long vecesVendido = (Long) result[1];
+            data.add(Arrays.asList(articulo, vecesVendido));
+        }
+
+        return data;
+    }
+
+    public List<List<Object>> getTotalRecaudadoDiario(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        List<List<Object>> data = new ArrayList<>();
+        data.add(Arrays.asList("Fecha", "Total recaudado"));
+        List<Object[]> results = pedidoService.calcularTotalRecaudado(fecha1, fecha2, sucursalId);
+
+        for (Object[] result : results) {
+            String fecha = result[0] + "-" + result[1] + "-" + result[2];
+            Double totalRecaudado = ((Number) result[3]).doubleValue();
+            data.add(Arrays.asList(fecha, totalRecaudado));
+        }
+        return data;
+    }
+
+    public List<List<Object>> getTotalRecaudadoMensual(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        List<List<Object>> data = new ArrayList<>();
+        data.add(Arrays.asList("Mes - Año", "Total recaudado"));
+        List<Object[]> results = pedidoService.calcularTotalRecaudadoPorMes(fecha1, fecha2, sucursalId);
+
+        String[] meses = {
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        };
+
+        for (Object[] result : results) {
+            int mesNum = (int) result[0] - 1;
+            String mes = meses[mesNum];
+
+            String fecha = mes + "-" + result[1];
+            Double totalRecaudado = ((Number) result[2]).doubleValue();
+            data.add(Arrays.asList(fecha, totalRecaudado));
+        }
+        return data;
+    }
+
+    public List<List<Object>> getClientePedidos(LocalDate fechaInicio, LocalDate fechaFin, Long sucursalId) throws SQLException {
+        List<List<Object>> data = new ArrayList<>();
+        data.add(Arrays.asList("Username", "Total Pedidos"));
+
+        List<Object[]> results = pedidoService.findClientePedidos(fechaInicio, fechaFin, sucursalId);
+
+        for (Object[] result : results) {
+            String username = (String) result[0];
+            Long pedidos = ((Number) result[1]).longValue();
+            data.add(Arrays.asList(username, pedidos));
+        }
+
+        return data;
+    }
+
+    public List<List<Object>> getTotalGananciaDiario(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        List<List<Object>> data = new ArrayList<>();
+        data.add(Arrays.asList("Fecha", "Ganancia"));
+        List<Object[]> results = pedidoService.calcularGanancia(fecha1, fecha2, sucursalId);
+
+        for (Object[] result : results) {
+            String fecha = result[0] + "-" + result[1] + "-" + result[2];
+            Double ganancia = ((Number) result[3]).doubleValue();
+            data.add(Arrays.asList(fecha, ganancia));
+        }
+        return data;
+    }
+
+    public List<List<Object>> getTotalGananciaMensual(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        List<List<Object>> data = new ArrayList<>();
+        data.add(Arrays.asList("Mes - Año", "Ganancia"));
+        List<Object[]> results = pedidoService.calcularGananciaPorMes(fecha1, fecha2, sucursalId);
+
+        String[] meses = {
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        };
+
+        for (Object[] result : results) {
+            int mesNum = (int) result[0] - 1;
+            String mes = meses[mesNum];
+
+            String fecha = mes + "-" + result[1];
+            Double ganancia = ((Number) result[2]).doubleValue();
+            data.add(Arrays.asList(fecha, ganancia));
+        }
+        return data;
     }
 }

@@ -14,11 +14,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -268,4 +270,28 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
         }
     }
 
+    // REPORTES -------------------------------------------------------------------------------------
+    public List<Object[]> findRankingComidasMasPedidas(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.findRankingComidasMasPedidas(fecha1, fecha2, sucursalId);
+    }
+
+    public List<Object[]> calcularTotalRecaudado(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.calcularTotalRecaudado(fecha1, fecha2, sucursalId);
+    }
+
+    public List<Object[]> calcularTotalRecaudadoPorMes(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.calcularTotalRecaudadoPorMes(fecha1, fecha2, sucursalId);
+    }
+
+    public List<Object[]> findClientePedidos(LocalDate fechaInicio, LocalDate fechaFin, Long sucursalId) throws SQLException {
+        return pedidoRepository.findClientePedidos(fechaInicio, fechaFin, sucursalId);
+    }
+
+    public List<Object[]> calcularGanancia(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.calcularGanancia(fecha1, fecha2, sucursalId);
+    }
+
+    public List<Object[]> calcularGananciaPorMes(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.calcularGananciaPorMes(fecha1, fecha2, sucursalId);
+    }
 }
