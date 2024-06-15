@@ -70,7 +70,7 @@ public class PedidoController extends BaseControllerImp<Pedido, PedidoDto, Pedid
     }
 
     @GetMapping("/totalGananciaMensual")
-    public List<List<Object>> totalGananciaMensual(@RequestParam LocalDate fecha1, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
-        return facade.getTotalGananciaMensual(fecha1, fechaFin, sucursalId);
+    public List<List<Object>> totalGananciaMensual(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getTotalGananciaMensual(fechaInicio, fechaFin, sucursalId);
     }
 }
