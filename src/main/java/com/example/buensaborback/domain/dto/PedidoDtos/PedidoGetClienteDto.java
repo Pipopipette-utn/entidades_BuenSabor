@@ -1,5 +1,6 @@
 package com.example.buensaborback.domain.dto.PedidoDtos;
 
+import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalPedidoDto;
 import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.enums.Estado;
@@ -17,7 +18,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PedidoGetClienteDto {
+public class PedidoGetClienteDto extends BaseDto {
     private Double total;
     private TipoEnvio tipoEnvio;
     private LocalDate fechaPedido;
