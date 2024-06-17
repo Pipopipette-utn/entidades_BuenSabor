@@ -15,5 +15,5 @@ public interface PromocionService extends BaseService<Promocion,Long> {
     List<Promocion> create(Promocion request, Set<Sucursal> sucursales);
     List<Promocion> duplicateInOtherSucursales(Long id, Set<SucursalShortDto> sucursales);
     Page<Promocion> findBySucursal_Id(Long sucursalId, Pageable pageable);
-
+    Page<Promocion> getPromocionesByNombre(Pageable pageable, Long idSucursal, String denominacion);
 }

@@ -165,5 +165,9 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
 
         promocionExistente.setImagenes(imagenes);
     }
+
+    public Page<Promocion> getPromocionesByNombre(Pageable pageable, Long idSucursal, String denominacion) {
+        return promocionRepository.findBySucursal_IdAndDenominacionContainingIgnoreCase(idSucursal, denominacion, pageable);
+    }
 }
 

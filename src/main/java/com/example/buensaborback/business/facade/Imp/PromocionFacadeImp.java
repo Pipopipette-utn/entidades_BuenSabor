@@ -67,4 +67,13 @@ public class PromocionFacadeImp extends BaseFacadeImp<Promocion, PromocionDto,Pr
         return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
     }
 
+    public Page<PromocionDto> getPromocionesByNombre(Pageable pageable, Long idSucursal, String nombre) {
+        Page<Promocion> articulosFiltrados = promocionService.getPromocionesByNombre(pageable, idSucursal, nombre);
+        // Mapea las entidades a DTOs
+        List<PromocionDto> dtos = articulosFiltrados.getContent().stream()
+                .map(promocionMapper::toDTO)
+                .collect(Collectors.toList());
+        // Devuelve una página de DTOs
+        return new PageImpl<>(dtos, pageable, articulosFiltrados.getTotalElements());
+    }
 }
