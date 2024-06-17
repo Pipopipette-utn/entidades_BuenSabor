@@ -24,7 +24,10 @@ public class Sucursal extends  Base{
     private LocalTime horarioApertura;
     private LocalTime horarioCierre;
     private boolean esCasaMatriz;
-    private String logo;
+
+    @OneToOne
+    @NotAudited
+    private ImagenSucursal imagenSucursal;
 
     @OneToOne
     @NotAudited
