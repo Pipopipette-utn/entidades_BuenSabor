@@ -1,5 +1,6 @@
 package com.example.buensaborback.business.service.Imp;
 
+import com.example.buensaborback.business.service.EmailService;
 import com.example.buensaborback.config.email.EmailDto;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
