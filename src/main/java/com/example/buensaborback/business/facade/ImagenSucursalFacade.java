@@ -4,6 +4,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 public interface ImagenSucursalFacade {
-    String uploadImages(MultipartFile file, Long idPersona);
+    String uploadImages(MultipartFile file, Long idSucursal);
     String deleteImage(String publicId, Long id);
 }

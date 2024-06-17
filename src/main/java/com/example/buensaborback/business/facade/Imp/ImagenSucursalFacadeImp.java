@@ -15,8 +15,8 @@ public class ImagenSucursalFacadeImp implements ImagenSucursalFacade {
     private ImagenSucursalService imagenSucursalService;
 
     @Override
-    public String uploadImages(MultipartFile file, Long idPersona) {
-        var respuesta = imagenSucursalService.uploadImages(file, idPersona);
+    public String uploadImages(MultipartFile file, Long idSucursal) {
+        var respuesta = imagenSucursalService.uploadImages(file, idSucursal);
         System.out.println(respuesta);
         System.out.println(respuesta.getBody());
         return respuesta.getBody();
