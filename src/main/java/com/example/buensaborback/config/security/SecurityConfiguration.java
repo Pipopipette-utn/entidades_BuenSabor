@@ -76,6 +76,8 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.PUT, "/articulosManufacturados/alta/{id}").hasAnyAuthority("superadmin", "administrador")
 
                                 // PROMOCIONES
+                                    // al método get para filtrar por nombre pueden acceder todos
+                                .requestMatchers(HttpMethod.GET, "/promociones/filtrar/{sucursalId}").permitAll()
                                     // al método get que no incluye eliminados pueden acceder todos
                                 .requestMatchers(HttpMethod.GET, "/promociones/porSucursal/{sucursalId}").permitAll()
                                     // al método get que no incluye eliminados pueden acceder todos

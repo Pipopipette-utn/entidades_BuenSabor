@@ -1,0 +1,43 @@
+package com.example.buensaborback.business.service.Imp;
+
+import com.example.buensaborback.business.service.EmailService;
+import com.example.buensaborback.config.email.EmailDto;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamSource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+@Service
+public class EmailServiceImpl implements EmailService {
+    private final JavaMailSender javaMailSender;
+
+    private final TemplateEngine templateEngine;
+
+    public EmailServiceImpl(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
+        this.javaMailSender = javaMailSender;
+        this.templateEngine = templateEngine;
+    }
+
+    @Override
+    public void enviarEmail(EmailDto emailDto, ByteArrayOutputStream facturaPdf) throws MessagingException, IOException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf8");
+        helper.setTo(emailDto.getDestinatario());
+        helper.setSubject(emailDto.getAsunto());
+        helper.setText(emailDto.getMensaje(), true);
+
+        InputStreamSource attachment = new ByteArrayResource(facturaPdf.toByteArray());
+        helper.addAttachment("factura.pdf", attachment);
+
+        javaMailSender.send(message);
+    }
+
+}

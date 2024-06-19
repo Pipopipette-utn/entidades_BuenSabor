@@ -11,7 +11,9 @@ import com.example.buensaborback.domain.entities.Empleado;
 import com.example.buensaborback.domain.entities.Promocion;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,4 +54,23 @@ public class PromocionController extends BaseControllerImp<Promocion, PromocionD
     public ResponseEntity<Page<PromocionDto>> findAllBySucursalId(@PathVariable Long sucursalId, Pageable pageable) {
         return  ResponseEntity.ok(facade.findBySucursal(sucursalId, pageable));
     }
+
+    @GetMapping("/filtrar/{sucursalId}")
+    public ResponseEntity<Page<PromocionDto>> filtrarPromociones(
+            @PathVariable Long sucursalId,
+            @RequestParam(required = false) String denominacion,
+            @RequestParam(required = false, defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "precioPromocional"));
+
+        if (denominacion != null && !denominacion.isEmpty()) {
+            return ResponseEntity.ok(facade.getPromocionesByNombre(pageable, sucursalId, denominacion));
+        } else {
+            return ResponseEntity.ok(facade.findBySucursal(sucursalId, pageable));
+        }
+    }
+
 }

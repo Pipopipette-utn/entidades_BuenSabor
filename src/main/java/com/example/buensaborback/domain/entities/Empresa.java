@@ -22,7 +22,10 @@ public class Empresa extends Base{
     private String razonSocial;
     @Column(unique = true)
     private Long cuil;
-    private String logo;
+
+    @OneToOne
+    @NotAudited
+    private ImagenEmpresa imagenEmpresa;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "empresa")
     @Builder.Default

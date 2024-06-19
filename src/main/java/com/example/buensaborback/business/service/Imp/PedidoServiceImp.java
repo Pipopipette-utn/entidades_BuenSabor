@@ -1,7 +1,10 @@
 package com.example.buensaborback.business.service.Imp;
 
 import com.example.buensaborback.business.service.Base.BaseServiceImp;
+import com.example.buensaborback.business.service.EmailService;
+import com.example.buensaborback.business.service.FacturaService;
 import com.example.buensaborback.business.service.PedidoService;
+import com.example.buensaborback.config.email.EmailDto;
 import com.example.buensaborback.domain.entities.*;
 import com.example.buensaborback.domain.enums.Estado;
 import com.example.buensaborback.domain.enums.TipoEnvio;
@@ -9,14 +12,18 @@ import com.example.buensaborback.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
+import java.io.ByteArrayOutputStream;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,25 +33,22 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
     PedidoRepository pedidoRepository;
 
     @Autowired
-    DetallePedidoRepository detallePedidoRepository;
-
-    @Autowired
     ArticuloRepository articuloRepository;
 
     @Autowired
     SucursalRepository sucursalRepository;
 
     @Autowired
-    ArticuloInsumoRepository articuloInsumoRepository;
-
-    @Autowired
-    ArticuloManufacturadoRepository articuloManufacturadoRepository;
-
-    @Autowired
     ClienteRepository clienteRepository;
 
     @Autowired
     DomicilioRepository domicilioRepository;
+
+    @Autowired
+    FacturaService facturaService;
+
+    @Autowired
+    EmailService emailService;
 
     @Override
     @Transactional
@@ -218,17 +222,102 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
     }
 
     @Override
-    public Pedido cambiarEstado(Pedido request, Long id) {
+    public Pedido cambiarEstado(Pedido request, Long id) throws Exception {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El pedido con id " + id + " no se ha encontrado"));
 
+        // Si el pedido está en proceso no se puede cancelar
+        if (request.getEstado() == Estado.CANCELADO && pedido.getEstado() != Estado.PENDIENTE) {
+            throw new RuntimeException("El pedido no se puede cancelar porque está en proceso");
+        }
+
+        // Si el pedido se cancela, restaurar stock
+        if (request.getEstado() == Estado.CANCELADO){
+            for(DetallePedido detalle: pedido.getDetallePedidos()){
+                Articulo articulo = articuloRepository.findById(detalle.getArticulo().getId()).orElseThrow(() -> new RuntimeException("El artículo con id " + detalle.getArticulo().getId() + " no se ha encontrado."));
+                devolverStock(articulo, detalle.getCantidad());
+            }
+        }
+
+        // Si el pedido es aprobado, envíar factura
+        if (request.getEstado() == Estado.PREPARACION) {
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                // Crear un nuevo documento
+                facturaService.crearFacturaPdf(id, outputStream);
+
+                // Configurar detalles del correo
+                EmailDto emailDto = new EmailDto();
+                emailDto.setDestinatario(pedido.getCliente().getUsuario().getEmail());
+                emailDto.setAsunto("Factura de su pedido #" + id);
+                emailDto.setMensaje("¡Gracias por tu compra " + pedido.getCliente().getNombre() + " 🍕🍟🍔🥐! " +
+                        "A continuación encontrarás la factura.");
+
+                // Enviar el correo con la factura adjunta
+                emailService.enviarEmail(emailDto, outputStream);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error al generar o enviar la factura", e);
+            }
+        }
+
         pedido.setEstado(request.getEstado());
-        return pedidoRepository.save(request);
+        return pedidoRepository.save(pedido);
+    }
+
+    public void devolverStock(Articulo articulo, int cantidad) throws Exception{
+        if (articulo instanceof ArticuloInsumo){
+            // Si el articulo es un insumo
+            Double stockAumentado = ((ArticuloInsumo) articulo).getStockActual() + cantidad; // Aumentar cantidad a stock actual
+            ((ArticuloInsumo) articulo).setStockActual(stockAumentado); // Asignarle al insumo el stock descontado
+        }else if(articulo instanceof ArticuloManufacturado){
+            // Obtener los detalles del manufacturado
+            Set<ArticuloManufacturadoDetalle> detalles = ((ArticuloManufacturado) articulo).getArticuloManufacturadoDetalles();
+            if (detalles != null && !detalles.isEmpty()) {
+                for (ArticuloManufacturadoDetalle detalle : detalles) { // Recorrer los detalles
+                    ArticuloInsumo insumo = detalle.getArticulo();
+                    Double cantidadInsumo = detalle.getCantidad() * cantidad; // Multiplicar la cantidad necesaria de insumo por la cantidad de manufacturados del pedido
+                    double stockAumentado = insumo.getStockActual() + cantidadInsumo; // Aumentar el stock actual
+                    insumo.setStockActual(stockAumentado); // Asignarle al insumo el stock descontado
+                }
+            }
+        }else{
+            throw new RuntimeException("Artículo con id " + articulo.getId() + " no encontrado");
+        }
+
     }
 
     @Override
-    public Page<Pedido> findBySucursal(Long sucursalId, Pageable pageable) {
+    public Page<Pedido> findBySucursalAndEstado(Long sucursalId, Estado estado, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "fechaPedido"));
+        if (estado != null) {
+            return pedidoRepository.findBySucursal_IdAndEstado(sucursalId, estado, pageable);
+        } else {
+            return pedidoRepository.findBySucursal_Id(sucursalId, pageable);
+        }
+    }
 
-        return pedidoRepository.findBySucursal_Id(sucursalId, pageable);
+    // REPORTES -------------------------------------------------------------------------------------
+    public List<Object[]> findRankingComidasMasPedidas(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.findRankingComidasMasPedidas(fecha1, fecha2, sucursalId);
+    }
+
+    public List<Object[]> calcularTotalRecaudado(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.calcularTotalRecaudado(fecha1, fecha2, sucursalId);
+    }
+
+    public List<Object[]> calcularTotalRecaudadoPorMes(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.calcularTotalRecaudadoPorMes(fecha1, fecha2, sucursalId);
+    }
+
+    public List<Object[]> findClientePedidos(LocalDate fechaInicio, LocalDate fechaFin, Long sucursalId) throws SQLException {
+        return pedidoRepository.findClientePedidos(fechaInicio, fechaFin, sucursalId);
+    }
+
+    public List<Object[]> calcularGanancia(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.calcularGanancia(fecha1, fecha2, sucursalId);
+    }
+
+    public List<Object[]> calcularGananciaPorMes(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
+        return pedidoRepository.calcularGananciaPorMes(fecha1, fecha2, sucursalId);
     }
 }

@@ -107,8 +107,9 @@ public class ArticuloManufacturadoFacadeImp extends BaseFacadeImp<ArticuloManufa
     public List<ArticuloManufacturadoDto> findBySucursal(Long sucursalId) {
         List<ArticuloManufacturado> articulosFiltrados = articuloManufacturadoService.findBySucursal(sucursalId);
         // Mapea las entidades a DTOs
-        return articulosFiltrados.stream()
+        List<ArticuloManufacturadoDto> dtos = articulosFiltrados.stream()
                 .map(articuloManufacturadoMapper::toDTO)
                 .collect(Collectors.toList());
+        return dtos;
     }
 }

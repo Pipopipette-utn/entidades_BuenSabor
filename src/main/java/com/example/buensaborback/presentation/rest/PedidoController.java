@@ -5,6 +5,7 @@ import com.example.buensaborback.domain.dto.PedidoDtos.PedidoDto;
 import com.example.buensaborback.domain.dto.PedidoDtos.PedidoEstadoDto;
 import com.example.buensaborback.domain.dto.PedidoDtos.PedidoGetDto;
 import com.example.buensaborback.domain.entities.Pedido;
+import com.example.buensaborback.domain.enums.Estado;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
 import com.example.buensaborback.repositories.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -25,35 +30,47 @@ public class PedidoController extends BaseControllerImp<Pedido, PedidoDto, Pedid
         super(facade);
     }
 
-    @Autowired
-    PedidoRepository pedidoRepository;
-
     @PutMapping("/cambiarEstado/{id}")
-    public ResponseEntity<PedidoEstadoDto> cambiarEstado(@RequestBody PedidoEstadoDto entity, @PathVariable Long id){
+    public ResponseEntity<PedidoGetDto> cambiarEstado(@RequestBody PedidoEstadoDto entity, @PathVariable Long id) throws Exception{
         return ResponseEntity.ok(facade.cambiarEstado(entity, id));
     }
 
     @GetMapping("/porSucursal/{sucursalId}")
-    public ResponseEntity<Page<PedidoGetDto>> findAllBySucursalId(@PathVariable Long sucursalId, Pageable pageable) {
-        return  ResponseEntity.ok(facade.findBySucursal(sucursalId, pageable));
+    public ResponseEntity<Page<PedidoGetDto>> findAllBySucursalId(
+            @PathVariable Long sucursalId,
+            @RequestParam(required = false) Estado estado,
+            Pageable pageable) {
+        return ResponseEntity.ok(facade.findBySucursalAndEstado(sucursalId, estado, pageable));
     }
 
+    // REPORTES -------------------------------------------------------------------------------------
     @GetMapping("/rankingComidas")
-    public List<Object> getRanking(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha1, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha2, @RequestParam Long sucursalId) {
-        return pedidoRepository.findRankingComidasMasPedidas(fecha1, fecha2, sucursalId);
+    public List<List<Object>> getRankingComidasMasPedidas(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getRankingComidasMasPedidas(fechaInicio, fechaFin, sucursalId);
     }
 
-    @GetMapping("/totalRecaudado")
-    public Double totalRecaudado(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha1, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha2, @RequestParam Long sucursalId) {
-        return pedidoRepository.calcularTotalRecaudado(fecha1, fecha2, sucursalId);
+    @GetMapping("/totalRecaudadoDiario")
+    public List<List<Object>> totalRecaudadoDiario(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getTotalRecaudadoDiario(fechaInicio, fechaFin, sucursalId);
+    }
+
+    @GetMapping("/totalRecaudadoMensual")
+    public List<List<Object>> totalRecaudadoMensual(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getTotalRecaudadoMensual(fechaInicio, fechaFin, sucursalId);
     }
 
     @GetMapping("/rankingClientes")
-    public List<Object> findClientePedidos(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha1, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha2, @RequestParam Long sucursalId) {
-        return pedidoRepository.findClientePedidos(fecha1, fecha2, sucursalId);
+    public List<List<Object>> getClientePedidos(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getClientePedidos(fechaInicio, fechaFin, sucursalId);
     }
-    @GetMapping("/ganancias")
-    public Double calcularGanancia(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha1, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha2, @RequestParam Long sucursalId) {
-        return pedidoRepository.calcularGanancia(fecha1, fecha2, sucursalId);
+
+    @GetMapping("/totalGananciaDiario")
+    public List<List<Object>> totalGananciaDiario(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getTotalGananciaDiario(fechaInicio, fechaFin, sucursalId);
+    }
+
+    @GetMapping("/totalGananciaMensual")
+    public List<List<Object>> totalGananciaMensual(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin, @RequestParam Long sucursalId) throws SQLException {
+        return facade.getTotalGananciaMensual(fechaInicio, fechaFin, sucursalId);
     }
 }

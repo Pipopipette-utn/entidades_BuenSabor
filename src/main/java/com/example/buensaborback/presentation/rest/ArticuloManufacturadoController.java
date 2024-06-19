@@ -9,7 +9,9 @@ import com.example.buensaborback.domain.dto.SucursalDtos.SucursalShortDto;
 import com.example.buensaborback.domain.entities.ArticuloManufacturado;
 import com.example.buensaborback.presentation.rest.Base.BaseControllerImp;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,10 +51,16 @@ public class ArticuloManufacturadoController extends BaseControllerImp<ArticuloM
 
     @GetMapping("/filtrar/{idSucursal}")
     public ResponseEntity<Page<ArticuloManufacturadoDto>> filtrarArticulos(
-            Pageable pageable,
             @PathVariable Long idSucursal,
             @RequestParam(required = false) Long categoriaId,
-            @RequestParam(required = false) String nombre) {
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false, defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "precioVenta"));
+
         if (categoriaId != null && nombre != null && !nombre.isEmpty()) {
             return ResponseEntity.ok(facade.buscarPorCategoriaYNombre(pageable, idSucursal, categoriaId, nombre));
         } else {

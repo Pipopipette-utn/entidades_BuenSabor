@@ -60,6 +60,11 @@ dependencies {
 	implementation 'com.password4j:password4j:1.8.2'
 	// MP
 	implementation 'com.mercadopago:sdk-java:2.1.24'
+	// PDF
+	implementation group: 'com.lowagie', name: 'itext', version: '2.1.7'
+	// Emails
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
