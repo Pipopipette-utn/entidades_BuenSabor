@@ -81,7 +81,7 @@ public class ArticuloInsumoController extends BaseControllerImp<ArticuloInsumo, 
             if (nombre != null && !nombre.isEmpty()) {
                 return ResponseEntity.ok(facade.getArticulosByNombre(pageable, idSucursal, nombre));
             } else {
-                return ResponseEntity.ok(facade.getAllPaged(pageable));
+                return ResponseEntity.ok(facade.findBySucursal(idSucursal, pageable));
             }
         }
     }

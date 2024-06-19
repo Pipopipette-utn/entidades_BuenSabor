@@ -6,6 +6,6 @@ import com.example.buensaborback.domain.dto.EmpresaDtos.EmpresaShortDto;
 
 public class SucursalPedidoDto extends BaseDto {
     private String nombre;
-    private String logo;
+    private ImagenSucursalDto imagenSucursal;
     private EmpresaShortDto empresa;
 }

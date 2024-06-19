@@ -236,6 +236,7 @@ public class PedidoServiceImp extends BaseServiceImp<Pedido,Long> implements Ped
             for(DetallePedido detalle: pedido.getDetallePedidos()){
                 Articulo articulo = articuloRepository.findById(detalle.getArticulo().getId()).orElseThrow(() -> new RuntimeException("El artículo con id " + detalle.getArticulo().getId() + " no se ha encontrado."));
                 devolverStock(articulo, detalle.getCantidad());
+                detalle.setArticulo(articulo);
             }
         }
 

@@ -68,6 +68,12 @@ public class EmpleadoServiceImp extends BaseServiceImp<Empleado,Long> implements
             empleado.setSucursal(sucursal.get());
         }
 
+        // Verificar si la imagen del empleado está vacía
+        if (request.getImagenPersona() != null && request.getImagenPersona().getUrl() == null) {
+            // Dar de baja la imagen existente
+            empleado.setImagenPersona(null);
+        }
+
         return empleadoRepository.save(empleado);
     }
 

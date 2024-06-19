@@ -61,6 +61,12 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
         domicilioRepository.save(sucursal.getDomicilio());
         var empresa = empresaRepository.findById(sucursal.getEmpresa().getId());
 
+        // Verificar si la imagen del empleado está vacía
+        if (sucursal.getImagenSucursal() != null && sucursal.getImagenSucursal().getUrl() == null) {
+            // Dar de baja la imagen existente
+            sucursal.setImagenSucursal(null);
+        }
+
         sucursal.setDomicilio(domicilio.get());
         sucursal.setEmpresa(empresa.get());
         return sucursalRepository.save(sucursal);

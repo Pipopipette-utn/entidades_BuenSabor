@@ -3,6 +3,7 @@ package com.example.buensaborback.domain.dto.SucursalDtos;
 import com.example.buensaborback.domain.dto.BaseDto;
 import com.example.buensaborback.domain.dto.DomicilioDto;
 import com.example.buensaborback.domain.dto.EmpresaDtos.EmpresaDto;
+import com.example.buensaborback.domain.dto.EmpresaDtos.ImagenEmpresaDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class SucursalDto extends BaseDto {
     @Schema(type = "string", format = "time", pattern = "HH:mm:ss")
     private LocalTime horarioCierre;
     private boolean esCasaMatriz;
-    private String logo;
+    private ImagenSucursalDto imagenSucursal;
 
     private DomicilioDto domicilio;
 
