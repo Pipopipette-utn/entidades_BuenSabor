@@ -1,6 +1,7 @@
 package com.example.buensaborback.repositories;
 
 import com.example.buensaborback.domain.entities.ArticuloInsumo;
+import com.example.buensaborback.domain.entities.ArticuloManufacturado;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,8 @@ public interface ArticuloInsumoRepository extends BaseRepository<ArticuloInsumo,
     @Query("SELECT ai FROM ArticuloInsumo ai WHERE ai.sucursal.id = :sucursalId AND ai.categoria.id IN :categoriaIds")
     Page<ArticuloInsumo> findBySucursalIdAndCategoriaIdIn(@Param("sucursalId") Long sucursalId, @Param("categoriaIds") List<Long> categoriaIds, Pageable pageable);
     Page<ArticuloInsumo> findBySucursal_IdAndDenominacionContainingIgnoreCase(Long sucursalId, String denominacion, Pageable pageable);
+
+    ArticuloInsumo findBySucursal_IdAndDenominacionIgnoreCase(Long sucursalId, String denominacion);
 
     ArticuloInsumo findBySucursal_IdAndDenominacionContainingIgnoreCase(Long sucursalId, String denominacion);
 

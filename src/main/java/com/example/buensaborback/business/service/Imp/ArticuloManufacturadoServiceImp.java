@@ -133,7 +133,7 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
         if (detalles != null && !detalles.isEmpty()) {
             for (ArticuloManufacturadoDetalle detalle : detalles) {
-                ArticuloInsumo insumoExistente = articuloInsumoRepository.findBySucursal_IdAndDenominacionContainingIgnoreCase(sucursal.getId(), detalle.getArticulo().getDenominacion());
+                ArticuloInsumo insumoExistente = articuloInsumoRepository.findBySucursal_IdAndDenominacionIgnoreCase(sucursal.getId(), detalle.getArticulo().getDenominacion());
                 if (insumoExistente == null){
                     throw new RuntimeException("El insumo con nombre " + detalle.getArticulo().getDenominacion() + " no se ha encontrado en la sucursal " + sucursal.getNombre());
                 }
