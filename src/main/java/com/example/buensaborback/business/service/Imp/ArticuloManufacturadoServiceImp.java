@@ -63,6 +63,13 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
 
         Categoria categoria = fetchAndValidateCategoria(request);
 
+        articuloExistente.setDenominacion(request.getDenominacion());
+        articuloExistente.setPrecioVenta(request.getPrecioVenta());
+        articuloExistente.setTiempoEstimadoMinutos(request.getTiempoEstimadoMinutos());
+        articuloExistente.setUnidadMedida(request.getUnidadMedida());
+        articuloExistente.setPreparacion(request.getPreparacion());
+        articuloExistente.setDescripcion(request.getDescripcion());
+
         Set<ArticuloManufacturadoDetalle> detallesExistentes = articuloExistente.getArticuloManufacturadoDetalles();
         Set<ArticuloManufacturadoDetalle> nuevosDetalles = request.getArticuloManufacturadoDetalles();
 
