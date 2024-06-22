@@ -29,7 +29,7 @@ public class Sucursal extends  Base{
     @NotAudited
     private ImagenSucursal imagenSucursal;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @NotAudited
     private Domicilio domicilio;
 
