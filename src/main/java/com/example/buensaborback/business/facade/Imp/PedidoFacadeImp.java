@@ -58,22 +58,39 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
 
     // REPORTES ----------------------------------------------------------------------------
     public List<List<Object>> getRankingComidasMasPedidas(LocalDate fechaInicio, LocalDate fechaFin, Long sucursalId) throws SQLException {
-        List<List<Object>> data = new ArrayList<>();
-        // Agregar encabezados de las columnas
-        data.add(Arrays.asList("Artículo", "Total ventas"));
+    List<List<Object>> data = new ArrayList<>();
+    // Agregar encabezados de las columnas
+    data.add(Arrays.asList("Artículo", "Total ventas"));
 
-        // Obtener los resultados de la consulta
-        List<Object[]> results = pedidoService.findRankingComidasMasPedidas(fechaInicio, fechaFin, sucursalId);
+    // Obtener los resultados de la consulta
+    List<Object[]> results = pedidoService.findRankingComidasMasPedidas(fechaInicio, fechaFin, sucursalId);
 
-        for (Object[] result : results) {
-            String articulo = (String) result[0];
-            // Obtener el Long directamente
-            Long vecesVendido = (Long) result[1];
-            data.add(Arrays.asList(articulo, vecesVendido));
+    for (Object[] result : results) {
+        // Obtener el artículo
+        String articulo = (String) result[0];
+
+        // Manejar el tipo de vecesVendido
+        Object vecesVendidoObj = result[1];
+        Long vecesVendido = null;
+
+        if (vecesVendidoObj instanceof BigDecimal) {
+            // Convertir BigDecimal a Long
+            vecesVendido = ((BigDecimal) vecesVendidoObj).longValue();
+        } else if (vecesVendidoObj instanceof Long) {
+            // Usar Long directamente
+            vecesVendido = (Long) vecesVendidoObj;
+        } else {
+            // Manejo de error si el tipo de dato es inesperado
+            throw new ClassCastException("Tipo de dato inesperado: " + vecesVendidoObj.getClass().getName());
         }
 
-        return data;
+        // Agregar la fila a la lista
+        data.add(Arrays.asList(articulo, vecesVendido));
     }
+
+    return data;
+}
+
 
 
     public List<List<Object>> getTotalRecaudadoDiario(LocalDate fecha1, LocalDate fecha2, Long sucursalId) throws SQLException {
