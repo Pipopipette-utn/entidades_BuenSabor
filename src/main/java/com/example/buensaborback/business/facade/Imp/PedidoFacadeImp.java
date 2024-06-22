@@ -68,7 +68,8 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
         for (Object[] result : results) {
             String articulo = (String) result[0];
             // Obtener el BigDecimal y convertirlo a Long
-            Long vecesVendido = (Long) result[1];
+            BigDecimal vecesVendidoBigDecimal = (BigDecimal) result[1];
+            Long vecesVendido = vecesVendidoBigDecimal.longValue(); // Convert BigDecimal to Long
             data.add(Arrays.asList(articulo, vecesVendido));
         }
 
