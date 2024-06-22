@@ -130,6 +130,8 @@ public class ArticuloInsumoServiceImp extends BaseServiceImp<ArticuloInsumo,Long
         for (ImagenArticulo imagen : imagenesEliminadas) {
             imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
         }
+
+        insumoExistente.setImagenes(imagenes);
     }
 
 

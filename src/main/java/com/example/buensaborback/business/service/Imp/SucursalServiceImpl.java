@@ -39,9 +39,6 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
         if(domicilio.getId() != null){
             var domicilioBd = domicilioRepository.findById(domicilio.getId());
             domicilioBd.ifPresent(sucursal::setDomicilio);
-        }else{
-            domicilioRepository.save(domicilio);
-            sucursal.setDomicilio(domicilio);
         }
         var empresa = empresaRepository.findById(sucursal.getEmpresa().getId());
         if(empresa.isEmpty()){
@@ -52,24 +49,33 @@ public class SucursalServiceImpl extends BaseServiceImp<Sucursal,Long> implement
     }
 
     @Override
-    public Sucursal actualizarSucursal(Long id,Sucursal sucursal) {
-        var sucursalActualizar = sucursalRepository.findById(sucursal.getId());
-        if(sucursalActualizar.isEmpty()){
+    public Sucursal actualizarSucursal(Long id, Sucursal sucursal) {
+        var sucursalActualizar = sucursalRepository.findById(id);
+        if (sucursalActualizar.isEmpty()) {
             throw new RuntimeException("Sucursal no encontrada: { id: " + id + " }");
         }
-        var domicilio = domicilioRepository.findById(sucursal.getDomicilio().getId());
-        domicilioRepository.save(sucursal.getDomicilio());
+        Sucursal sucursalBd = sucursalActualizar.get();
         var empresa = empresaRepository.findById(sucursal.getEmpresa().getId());
 
-        // Verificar si la imagen del empleado está vacía
+        // Actualizar solo los campos necesarios
+        sucursalBd.setNombre(sucursal.getNombre());
+        sucursalBd.setDomicilio(sucursal.getDomicilio());
+        sucursalBd.setEsCasaMatriz(sucursal.isEsCasaMatriz());
+        sucursalBd.setHorarioApertura(sucursal.getHorarioApertura());
+        sucursalBd.setHorarioCierre(sucursal.getHorarioCierre());
+
+        // Manejar la imagen de la sucursal
         if (sucursal.getImagenSucursal() != null && sucursal.getImagenSucursal().getUrl() == null) {
-            // Dar de baja la imagen existente
-            sucursal.setImagenSucursal(null);
+            sucursalBd.setImagenSucursal(null);
+        } else {
+            sucursalBd.setImagenSucursal(sucursal.getImagenSucursal());
         }
 
-        sucursal.setDomicilio(domicilio.get());
-        sucursal.setEmpresa(empresa.get());
-        return sucursalRepository.save(sucursal);
+        // Mantener las relaciones existentes
+        sucursalBd.setEmpresa(empresa.get());
+
+        // Actualización de la sucursal con las relaciones preservadas
+        return sucursalRepository.save(sucursalBd);
     }
 
     @Override

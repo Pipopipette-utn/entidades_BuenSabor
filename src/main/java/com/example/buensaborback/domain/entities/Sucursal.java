@@ -39,7 +39,7 @@ public class Sucursal extends  Base{
     @Builder.Default
     private Set<Articulo> promociones = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @ToString.Exclude
     //SE AGREGA EL JOIN TABLE PARA QUE JPA CREE LA TABLA INTERMEDIA
     // EN UNA RELACION MANY TO MANY
