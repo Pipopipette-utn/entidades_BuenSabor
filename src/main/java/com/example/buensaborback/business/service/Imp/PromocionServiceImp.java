@@ -75,7 +75,7 @@ public class PromocionServiceImp extends BaseServiceImp<Promocion,Long> implemen
 
         Set<PromocionDetalle> detallesActualizados = new HashSet<>();
         for (PromocionDetalle detalle : nuevosDetalles) {
-            Articulo articulo = articuloInsumoRepository.findById(detalle.getArticulo().getId())
+            Articulo articulo = articuloRepository.findById(detalle.getArticulo().getId())
                     .orElseThrow(() -> new RuntimeException("El artículo con id " + detalle.getArticulo().getId() + " no se ha encontrado"));
             PromocionDetalle nuevoDetalle = new PromocionDetalle();
             nuevoDetalle.setCantidad(detalle.getCantidad());
