@@ -67,14 +67,15 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
 
         for (Object[] result : results) {
             if (result[1] instanceof BigDecimal) {
-            BigDecimal vecesVendidoBigDecimal = (BigDecimal) result[1];
-            Long vecesVendido = vecesVendidoBigDecimal.longValue(); // Convert BigDecimal to Long
-            data.add(Arrays.asList(articulo, vecesVendido));
-        } else if (result[1] instanceof Long) {
-            Long vecesVendido = (Long) result[1];
-            data.add(Arrays.asList(articulo, vecesVendido));
-        } else {
-            throw new ClassCastException("Tipo de dato inesperado: " + result[1].getClass());
+                BigDecimal vecesVendidoBigDecimal = (BigDecimal) result[1];
+                Long vecesVendido = vecesVendidoBigDecimal.longValue(); // Convert BigDecimal to Long
+                data.add(Arrays.asList(articulo, vecesVendido));
+            } else if (result[1] instanceof Long) {
+                Long vecesVendido = (Long) result[1];
+                data.add(Arrays.asList(articulo, vecesVendido));
+            } else {
+                throw new ClassCastException("Tipo de dato inesperado: " + result[1].getClass());
+            }
         }
 
         return data;
