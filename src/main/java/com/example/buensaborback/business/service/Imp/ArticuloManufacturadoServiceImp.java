@@ -169,16 +169,16 @@ public class ArticuloManufacturadoServiceImp extends BaseServiceImp<ArticuloManu
         return articuloManufacturadoRepository.saveAll(articulosDuplicados);
     }
 
-    private void updateImagenes(ArticuloManufacturado request, ArticuloManufacturado insumoExistente) {
+    private void updateImagenes(ArticuloManufacturado request, ArticuloManufacturado articuloExistente) {
         Set<ImagenArticulo> imagenes = request.getImagenes();
-        Set<ImagenArticulo> imagenesEliminadas = new HashSet<>(insumoExistente.getImagenes());
+        Set<ImagenArticulo> imagenesEliminadas = new HashSet<>(articuloExistente.getImagenes());
         imagenesEliminadas.removeAll(imagenes);
 
         for (ImagenArticulo imagen : imagenesEliminadas) {
             imagenArticuloService.deleteImage(publicIdService.obtenerPublicId(imagen.getUrl()), imagen.getId());
         }
 
-        insumoExistente.setImagenes(imagenes);
+        articuloExistente.setImagenes(imagenes);
     }
 
     private Categoria fetchAndValidateCategoria(ArticuloManufacturado request) {

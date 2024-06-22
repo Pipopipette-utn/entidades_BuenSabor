@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface ArticuloManufacturadoRepository extends BaseRepository<ArticuloManufacturado,Long> {
-    @Query("SELECT ai FROM ArticuloManufacturado ai WHERE ai.sucursal.id = :sucursalId AND ai.categoria.id IN :categoriaIds AND ai.denominacion LIKE %:denominacion%")
+    @Query("SELECT ai FROM ArticuloManufacturado ai WHERE ai.sucursal.id = :sucursalId AND ai.categoria.id IN :categoriaIds AND LOWER(ai.denominacion) LIKE LOWER(CONCAT('%', :denominacion, '%'))")
     Page<ArticuloManufacturado> findBySucursalIdAndCategoriaIdInAndDenominacionContainingIgnoreCase(@Param("sucursalId") Long sucursalId, @Param("categoriaIds") List<Long> categoriaIds, @Param("denominacion") String denominacion, Pageable pageable);
 
     @Query("SELECT ai FROM ArticuloManufacturado ai WHERE ai.sucursal.id = :sucursalId AND ai.categoria.id IN :categoriaIds")

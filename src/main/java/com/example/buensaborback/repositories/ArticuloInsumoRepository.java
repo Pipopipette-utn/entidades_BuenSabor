@@ -15,7 +15,7 @@ public interface ArticuloInsumoRepository extends BaseRepository<ArticuloInsumo,
     Page<ArticuloInsumo> findByEsParaElaborarTrue(Pageable pageable);
     Page<ArticuloInsumo> findByEsParaElaborarFalse(Pageable pageable);
 
-    @Query("SELECT ai FROM ArticuloInsumo ai WHERE ai.sucursal.id = :sucursalId AND ai.categoria.id IN :categoriaIds AND ai.denominacion LIKE %:denominacion%")
+    @Query("SELECT ai FROM ArticuloInsumo ai WHERE ai.sucursal.id = :sucursalId AND ai.categoria.id IN :categoriaIds AND LOWER(ai.denominacion) LIKE LOWER(CONCAT('%', :denominacion, '%'))")
     Page<ArticuloInsumo> findBySucursalIdAndCategoriaIdInAndDenominacionContainingIgnoreCase(@Param("sucursalId") Long sucursalId, @Param("categoriaIds") List<Long> categoriaIds, @Param("denominacion") String denominacion, Pageable pageable);
 
     @Query("SELECT ai FROM ArticuloInsumo ai WHERE ai.sucursal.id = :sucursalId AND ai.categoria.id IN :categoriaIds")
