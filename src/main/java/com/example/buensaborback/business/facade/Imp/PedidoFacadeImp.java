@@ -66,11 +66,15 @@ public class PedidoFacadeImp extends BaseFacadeImp<Pedido, PedidoDto, PedidoGetD
         List<Object[]> results = pedidoService.findRankingComidasMasPedidas(fechaInicio, fechaFin, sucursalId);
 
         for (Object[] result : results) {
-            String articulo = (String) result[0];
-            // Obtener el BigDecimal y convertirlo a Long
+            if (result[1] instanceof BigDecimal) {
             BigDecimal vecesVendidoBigDecimal = (BigDecimal) result[1];
             Long vecesVendido = vecesVendidoBigDecimal.longValue(); // Convert BigDecimal to Long
             data.add(Arrays.asList(articulo, vecesVendido));
+        } else if (result[1] instanceof Long) {
+            Long vecesVendido = (Long) result[1];
+            data.add(Arrays.asList(articulo, vecesVendido));
+        } else {
+            throw new ClassCastException("Tipo de dato inesperado: " + result[1].getClass());
         }
 
         return data;
