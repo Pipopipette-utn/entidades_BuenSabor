@@ -19,15 +19,15 @@ public interface PedidoRepository extends BaseRepository<Pedido,Long>{
 
     // REPORTES ----------------------------------------------------------------------------
     // Comidas más vendidas
-    @Query(value = "select am.denominacion, sum(dp.cantidad) as veces_vendido " +
-            "from pedido p " +
-            "inner join detalle_pedido dp on p.id = dp.pedido_id " +
-            "inner join articulo am on am.id = dp.articulo_id " +
-            "inner join articulo_manufacturado amf on am.id = amf.id " +
-            "where p.fecha_pedido between :fecha1 and :fecha2 " +
-            "and p.sucursal_id = :sucursalId " +
-            "group by am.id, am.denominacion " +
-            "order by veces_vendido desc", nativeQuery = true)
+    @Query("SELECT am.denominacion, SUM(dp.cantidad) AS vecesVendido " +
+            "FROM Pedido p " +
+            "JOIN p.detallePedidos dp " +
+            "JOIN dp.articulo am " +
+            "JOIN ArticuloManufacturado amf ON am.id = amf.id " +
+            "WHERE p.fechaPedido BETWEEN :fecha1 AND :fecha2 " +
+            "AND p.sucursal.id = :sucursalId " +
+            "GROUP BY am.id, am.denominacion " +
+            "ORDER BY vecesVendido DESC")
     List<Object[]> findRankingComidasMasPedidas(@Param("fecha1") LocalDate fecha1, @Param("fecha2") LocalDate fecha2, @Param("sucursalId") Long sucursalId);
 
     // Total recaudado por día
