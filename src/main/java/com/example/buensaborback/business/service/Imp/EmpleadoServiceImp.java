@@ -64,7 +64,9 @@ public class EmpleadoServiceImp extends BaseServiceImp<Empleado,Long> implements
         empleado.setApellido(request.getApellido());
         empleado.setFechaNacimiento(request.getFechaNacimiento());
         empleado.setTelefono(request.getTelefono());
-        empleado.setUsuario(request.getUsuario());
+        empleado.getUsuario().setEmail(request.getUsuario().getEmail());
+        empleado.getUsuario().setRol(request.getUsuario().getRol());
+        empleado.getUsuario().setUsername(request.getUsuario().getUsername());
 
         if (request.getSucursal() != null) {
             Optional<Sucursal> sucursal = sucursalRepository.findById(request.getSucursal().getId());
