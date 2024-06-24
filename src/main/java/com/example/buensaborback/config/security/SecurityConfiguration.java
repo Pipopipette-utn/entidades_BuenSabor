@@ -110,8 +110,8 @@ public class SecurityConfiguration {
                                 // CATEGORÍAS
                                     // Pueden acceder todos
                                 .requestMatchers(HttpMethod.GET, "/sucursales/{id}/categorias").permitAll()
-                                    // Pueden ver todas las categorías el "administrador" y "cocinero"
-                                .requestMatchers(HttpMethod.GET, "/categorias/**").hasAnyAuthority("superadmin", "administrador", "cocinero", "cajero")
+                                    // Pueden ver todas las categorías todos
+                                .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
                                     // pueden crear el "administrador" y "cocinero"
                                 .requestMatchers(HttpMethod.POST, "/categorias").hasAnyAuthority("superadmin", "administrador", "cocinero")
                                     // pueden actualizar el "administrador" y "cocinero"
