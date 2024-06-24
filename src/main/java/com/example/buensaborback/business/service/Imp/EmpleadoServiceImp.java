@@ -60,6 +60,12 @@ public class EmpleadoServiceImp extends BaseServiceImp<Empleado,Long> implements
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("El empleado con id " + id + " no se ha encontrado"));
 
+        empleado.setNombre(request.getNombre());
+        empleado.setApellido(request.getApellido());
+        empleado.setFechaNacimiento(request.getFechaNacimiento());
+        empleado.setTelefono(request.getTelefono());
+        empleado.setUsuario(request.getUsuario());
+
         if (request.getSucursal() != null) {
             Optional<Sucursal> sucursal = sucursalRepository.findById(request.getSucursal().getId());
             if (sucursal.isEmpty()) {

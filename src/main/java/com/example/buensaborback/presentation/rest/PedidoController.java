@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +32,12 @@ public class PedidoController extends BaseControllerImp<Pedido, PedidoDto, Pedid
     }
 
     @PutMapping("/cambiarEstado/{id}")
-    public ResponseEntity<PedidoGetDto> cambiarEstado(@RequestBody PedidoEstadoDto entity, @PathVariable Long id) throws Exception{
-        return ResponseEntity.ok(facade.cambiarEstado(entity, id));
+    public ResponseEntity<?> cambiarEstado(@RequestBody PedidoEstadoDto entity, @PathVariable Long id) throws Exception{
+        try{
+            return ResponseEntity.ok(facade.cambiarEstado(entity, id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping("/porSucursal/{sucursalId}")
